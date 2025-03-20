@@ -7,3 +7,5 @@ Sdc-qrf uses in [fhir-emr](https://github.com/beda-software/fhir-emr) project. A
 ```sh
 npm i sdc-qrf
 ```
+
+P.S. the package was allocated from https://github.com/beda-software/sdc-ide with commits history
