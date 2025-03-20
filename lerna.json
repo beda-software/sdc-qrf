@@ -1,5 +1,0 @@
-{
-    "packages": ["web", "shared", "sdc-qrf"],
-    "npmClient": "yarn",
-    "version": "independent"
-}

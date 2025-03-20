@@ -1,43 +1,14 @@
-import { createRequire } from 'module';
+import * as path from 'path';
 
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { getBaseConfig } from './vite.config';
 
-const require = createRequire(import.meta.url);
-
-// https://vitejs.dev/config/
-export const getBaseConfig = ({ plugins = [], build = {}, test = {} }) =>
-    defineConfig(({ command }) => ({
-        server: {
-            port: command === 'build' ? 5000 : 3001,
-        },
-        plugins: [
-            viteCommonjs(),
-            react({
-                babel: {
-                    plugins: ['macros'],
-                },
-            }),
-            ...plugins,
-        ],
-        define: command === 'build' ? {} : { global: {} },
-        build: {
-            commonjsOptions: {
-                defaultIsModuleExports(id) {
-                    try {
-                        const module = require(id);
-                        if (module?.default) {
-                            return false;
-                        }
-                        return 'auto';
-                    } catch (error) {
-                        return 'auto';
-                    }
-                },
-                transformMixedEsModules: true,
-            },
-            ...build,
-        },
-        test,
-    }));
+export default getBaseConfig({
+    test: {
+        globals: true, // To use the Vitest APIs globally like Jest
+        environment: 'jsdom', // https://vitest.dev/config/#environment
+        setupFiles: 'src/setupTests.ts', //  https://vitest.dev/config/#setupfiles
+    },
+    build: {
+        outDir: path.resolve(__dirname, 'lib'),
+    },
+});
