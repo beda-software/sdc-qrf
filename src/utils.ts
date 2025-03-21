@@ -12,7 +12,7 @@ import {
     QuestionnaireResponse,
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
-} from 'shared/src/contrib/aidbox';
+} from '@beda.software/aidbox-types';
 
 import {
     AnswerValue,

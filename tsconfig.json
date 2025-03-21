@@ -19,6 +19,7 @@
         "noUncheckedIndexedAccess": true,
         "allowImportingTsExtensions": false,
         "skipLibCheck": true,
+        "esModuleInterop": true
     },
     "include": [
         "src"

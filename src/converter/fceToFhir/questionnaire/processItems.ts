@@ -13,7 +13,7 @@ import {
     QuestionnaireItemEnableWhenAnswer as FCEQuestionnaireItemEnableWhenAnswer,
     QuestionnaireItemAnswerOption as FCEQuestionnaireItemAnswerOption,
     QuestionnaireItemInitial as FCEQuestionnaireItemInitial,
-} from 'shared/src/contrib/aidbox';
+} from '@beda.software/aidbox-types';
 
 import { convertFromFHIRExtension, convertToFHIRExtension, toFHIRReference } from '../..';
 

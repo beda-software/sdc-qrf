@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import {
     QuestionnaireResponseItem as FCEQuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer as FCEQuestionnaireResponseItemAnswer,
-} from 'shared/src/contrib/aidbox';
+} from '@beda.software/aidbox-types';
 
 import { toFHIRReference } from '../../../converter';
 

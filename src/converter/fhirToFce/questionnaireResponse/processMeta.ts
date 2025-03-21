@@ -1,6 +1,6 @@
 import { Meta as FHIRMeta } from 'fhir/r4b';
 
-import { Meta as FCEMeta } from 'shared/src/contrib/aidbox';
+import { Meta as FCEMeta } from '@beda.software/aidbox-types';
 
 import { extractExtension } from '../../../converter';
 

@@ -8,7 +8,7 @@ import {
     Extension as FCEExtension,
     QuestionnaireItem as FCEQuestionnaireItem,
     InternalReference,
-} from 'shared/src/contrib/aidbox';
+} from '@beda.software/aidbox-types';
 
 import { ExtensionIdentifier, extensionTransformers } from './extensions';
 import { fromFirstClassExtension, fromFirstClassExtensionV2 } from './fceToFhir';

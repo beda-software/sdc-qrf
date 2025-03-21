@@ -1,6 +1,6 @@
 import { QuestionnaireResponse as FHIRQuestionnaireResponse } from 'fhir/r4b';
 
-import { QuestionnaireResponse as FCEQuestionnaireResponse } from 'shared/src/contrib/aidbox';
+import { QuestionnaireResponse as FCEQuestionnaireResponse } from '@beda.software/aidbox-types';
 
 import { fromFHIRReference } from '../../../converter';
 

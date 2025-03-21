@@ -1,4 +1,4 @@
-import { Questionnaire, QuestionnaireResponse } from 'shared/src/contrib/aidbox';
+import { Questionnaire, QuestionnaireResponse } from '@beda.software/aidbox-types';
 
 import { allergiesQuestionnaire } from './resources/questionnaire';
 import {

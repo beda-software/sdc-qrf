@@ -6,7 +6,7 @@ import {
 import {
     QuestionnaireResponse as FCEQuestionnaireResponse,
     Questionnaire as FCEQuestionnaire,
-} from 'shared/src/contrib/aidbox';
+} from '@beda.software/aidbox-types';
 
 // fce questionnaire
 import fce_allergies from './resources/questionnaire_fce/allergies.json';

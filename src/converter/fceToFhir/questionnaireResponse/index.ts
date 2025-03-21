@@ -1,7 +1,7 @@
 import { QuestionnaireResponse as FHIRQuestionnaireResponse } from 'fhir/r4b';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { QuestionnaireResponse as FCEQuestionnaireResponse } from 'shared/src/contrib/aidbox';
+import { QuestionnaireResponse as FCEQuestionnaireResponse } from '@beda.software/aidbox-types';
 
 import { processAnswers } from './processAnswers';
 import { processMeta } from './processMeta';
