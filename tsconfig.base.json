@@ -22,7 +22,9 @@
 
         "baseUrl": "./src",
         "noUncheckedIndexedAccess": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
     },
     "include": ["src", "tests"],
 }
