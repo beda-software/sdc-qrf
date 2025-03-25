@@ -1,5 +1,5 @@
 import { Expression } from "fhir/r4b";
-import { evaluate as fhirPathEvaluate } from "fhirpath";
+import fhirpath from "fhirpath";
 import _ from "lodash";
 import isEqual from "lodash/isEqual";
 import React, {
@@ -380,10 +380,12 @@ export function evaluateQuestionItemExpression(
   }
 
   try {
-    return fhirPathEvaluate(
+    return fhirpath.evaluate(
       context.context ?? {},
       expression.expression!,
-      context
+      context,
+      undefined,
+      { async: false }
     );
   } catch (err: unknown) {
     throw Error(
