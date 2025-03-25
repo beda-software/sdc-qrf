@@ -6,7 +6,7 @@
         "test": "vitest --watch=false",
         "test:watch": "vitest --watch",
         "test:coverage": "vitest --coverage",
-        "typecheck": "tsc -p tsconfig.base.json",
+        "typecheck": "tsc",
         "build": "tsc"
     },
     "dependencies": {
