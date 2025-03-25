@@ -1,7 +1,30 @@
 {
-    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "noEmit": false
+        "target": "ES2020",
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "module": "NodeNext",
+        "moduleResolution": "nodenext",
+
+        "strict": true,
+        "jsx": "react-jsx",
+
+        "allowJs": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "noEmitOnError": true,
+
+        "skipLibCheck": true,
+
+        "outDir": "dist",
+        // "esModuleInterop": true,
+
+        "baseUrl": "./src",
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
     },
-    "exclude": ["src/setupTests.ts", "src/**/*.test.ts", "src/**/*.test.tsx", "tests"]
+    "include": ["src/**/*"],
+    "exclude": ["src/setupTests.ts", "src/**/*.test.ts", "src/**/*.test.tsx"]
 }

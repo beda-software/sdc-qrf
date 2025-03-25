@@ -2,6 +2,7 @@ import {
     QuestionnaireResponse as FHIRQuestionnaireResponse,
     Questionnaire as FHIRQuestionnaire,
 } from 'fhir/r4b';
+import {describe, expect, test} from 'vitest'
 
 import {
     QuestionnaireResponse as FCEQuestionnaireResponse,

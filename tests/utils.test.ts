@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { Questionnaire, QuestionnaireResponse } from '@beda.software/aidbox-types';
 
 import { allergiesQuestionnaire } from './resources/questionnaire';
