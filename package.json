@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "classnames": "^2.5.1",
-        "fhirpath": "^3.17.3",
+        "fhirpath": "^3.18.0",
         "lodash": "^4.17.21",
         "query-string": "^9.1.1"
     },
