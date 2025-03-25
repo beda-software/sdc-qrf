@@ -9,10 +9,10 @@ import { QuestionnaireItem } from '@beda.software/aidbox-types';
 import { useQuestionnaireResponseFormContext } from '.';
 import { QRFContext } from './context';
 import { FormAnswerItems, ItemContext, QRFContextData, QuestionItemProps, QuestionItemsProps } from './types';
-import { calcContext, getBranchItems, getEnabledQuestions, wrapAnswerValue } from './utils';
+import { calcContext, getBranchItems, getEnabledQuestions, wrapAnswerValue } from './utils.js';
 
 export function usePreviousValue<T = any>(value: T) {
-    const prevValue = useRef<T>(value);
+    const prevValue = useRef<T | undefined>(value);
 
     useEffect(() => {
         prevValue.current = value;
