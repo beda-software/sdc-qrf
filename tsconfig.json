@@ -1,31 +1,7 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "lib": [
-            "DOM",
-            "ES5",
-            "DOM.Iterable"
-        ],
-        "baseUrl": "./src",
-        "sourceMap": true,
-        "outDir": "./lib",
-        "declaration": true,
-        "allowJs": true,
-        "jsx": "react-jsx",
-        "moduleResolution": "node",
-        "noEmit": false,
-        "importHelpers": true,
-        "noUncheckedIndexedAccess": true,
-        "allowImportingTsExtensions": false,
-        "skipLibCheck": true,
-        "esModuleInterop": true
+        "noEmit": false
     },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "src/**/*.test.ts",
-        "src/**/*.test.tsx"
-    ]
+    "exclude": ["src/setupTests.ts", "src/**/*.test.ts", "src/**/*.test.tsx", "tests"]
 }

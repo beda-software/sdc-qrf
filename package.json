@@ -3,11 +3,11 @@
     "license": "MIT",
     "version": "0.3.16",
     "scripts": {
-        "build": "tsc",
         "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
         "prepare": "npm run build",
         "test": "vitest run --no-threads",
-        "typecheck": "tsc"
+        "typecheck": "tsc -p tsconfig.base.json",
+        "build": "tsc"
     },
     "dependencies": {
         "classnames": "^2.5.1",
@@ -36,10 +36,10 @@
         "react": ">=16"
     },
     "files": [
-        "lib/**/*",
+        "dist/**/*",
         "src/**/*",
         "README.md",
         "LICENSE"
     ],
-    "main": "./lib/index.js"
+    "main": "./dist/index.js"
 }
