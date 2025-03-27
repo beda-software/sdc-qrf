@@ -163,6 +163,10 @@
             "valueReference": {
                 "reference": "Mapping/test-mapper"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "encounter-create"
         }
     ],
     "status": "active",

@@ -384,6 +384,7 @@
     "name": "Review of Systems",
     "status": "active",
     "subjectType": ["Encounter"],
+    "assembledFrom": "review-of-systems",
     "id": "review-of-systems",
     "resourceType": "Questionnaire"
 }

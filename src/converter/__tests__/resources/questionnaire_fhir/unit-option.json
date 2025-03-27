@@ -34,6 +34,12 @@
     "meta": {
         "profile": ["https://beda.software/beda-emr-questionnaire"]
     },
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "unit-option"
+        }
+    ],
     "status": "active",
     "id": "unit-option",
     "resourceType": "Questionnaire"

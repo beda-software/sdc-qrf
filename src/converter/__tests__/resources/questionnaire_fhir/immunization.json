@@ -202,6 +202,10 @@
             "valueReference": {
                 "reference": "Mapping/immunization-extract"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "immunization"
         }
     ],
     "status": "active",

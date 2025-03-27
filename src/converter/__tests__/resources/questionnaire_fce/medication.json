@@ -184,6 +184,7 @@
     ],
     "resourceType": "Questionnaire",
     "status": "active",
+    "assembledFrom": "medication",
     "id": "medication",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/medication"
 }

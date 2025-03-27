@@ -536,6 +536,10 @@
                     "valueString": "Patient is answering the questionnaire"
                 }
             ]
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "physical-exam"
         }
     ],
     "status": "active",

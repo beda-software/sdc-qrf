@@ -185,6 +185,10 @@
             "valueReference": {
                 "reference": "Mapping/practitioner-edit"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "practitioner-edit"
         }
     ],
     "status": "active",

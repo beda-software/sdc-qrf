@@ -79,6 +79,7 @@
     "resourceType": "Questionnaire",
     "title": "Patient create",
     "status": "active",
+    "assembledFrom": "patient-create",
     "id": "patient-create",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/patient-create"
 }

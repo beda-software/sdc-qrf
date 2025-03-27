@@ -32,6 +32,7 @@
     "resourceType": "Questionnaire",
     "title": "Create practitioner role",
     "status": "active",
+    "assembledFrom": "practitioner-role-create",
     "id": "practitioner-role-create",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/practitioner-role-create"
 }

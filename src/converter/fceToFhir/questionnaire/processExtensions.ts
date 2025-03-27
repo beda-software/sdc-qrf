@@ -3,7 +3,8 @@ import { Extension as FHIRExtension, Questionnaire as FHIRQuestionnaire } from '
 import { Questionnaire as FCEQuestionnaire } from '@beda.software/aidbox-types';
 
 export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
-    const { launchContext, mapping, sourceQueries, targetStructureMap, ...fhirQuestionnaire } = questionnaire;
+    const { launchContext, mapping, sourceQueries, targetStructureMap, assembledFrom, ...fhirQuestionnaire } =
+        questionnaire;
 
     let extensions: FHIRExtension[] = [];
 
@@ -65,6 +66,13 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
                 valueCanonical: targetStructureMapRef,
             })),
         );
+    }
+
+    if (assembledFrom) {
+        extensions.push({
+            url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom',
+            valueCanonical: assembledFrom,
+        });
     }
 
     if (extensions.length) {

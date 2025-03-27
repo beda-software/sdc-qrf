@@ -90,6 +90,12 @@
     "resourceType": "Questionnaire",
     "title": "CQF Examples",
     "status": "active",
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "cqf-examples"
+        }
+    ],
     "id": "cqf-examples",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/cqf-examples"
 }

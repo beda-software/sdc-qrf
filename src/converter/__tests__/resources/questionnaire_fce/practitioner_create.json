@@ -85,6 +85,7 @@
     "resourceType": "Questionnaire",
     "title": "Practitioner create",
     "status": "active",
+    "assembledFrom": "practitioner-create",
     "id": "practitioner-create",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/practitioner-create"
 }

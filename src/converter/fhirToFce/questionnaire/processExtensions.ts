@@ -1,3 +1,4 @@
+import { canonical } from '@beda.software/aidbox-types';
 import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
 
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
@@ -5,17 +6,20 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     mapping?: any[];
     sourceQueries?: any[];
     targetStructureMap?: any[];
+    assembledFrom?: any;
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
     const sourceQueries = processSourceQueries(fhirQuestionnaire);
     const targetStructureMap = processTargetStructureMap(fhirQuestionnaire);
+    const assembledFrom = processAssembledFrom(fhirQuestionnaire);
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
         mapping: mapping?.length ? mapping : undefined,
         sourceQueries: sourceQueries?.length ? sourceQueries : undefined,
         targetStructureMap: targetStructureMap?.length ? targetStructureMap : undefined,
+        assembledFrom: assembledFrom ? assembledFrom : undefined,
     };
 }
 
@@ -102,4 +106,16 @@ function processTargetStructureMap(fhirQuestionnaire: FHIRQuestionnaire): string
     }
 
     return extensions.map((extension) => extension.valueCanonical!);
+}
+
+function processAssembledFrom(fhirQuestionnaire: FHIRQuestionnaire): canonical | undefined {
+    const extension = fhirQuestionnaire.extension?.find(
+        (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom',
+    );
+
+    if (!extension) {
+        return undefined;
+    }
+
+    return extension.valueCanonical;
 }

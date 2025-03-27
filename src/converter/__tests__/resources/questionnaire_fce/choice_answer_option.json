@@ -42,6 +42,7 @@
     ],
     "status": "draft",
     "subjectType": ["Patient"],
+    "assembledFrom": "choice-answer-option",
     "id": "example",
     "resourceType": "Questionnaire",
     "meta": {

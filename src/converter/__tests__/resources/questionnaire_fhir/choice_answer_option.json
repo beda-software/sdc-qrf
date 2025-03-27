@@ -35,6 +35,12 @@
     "subjectType": ["Patient"],
     "id": "example",
     "resourceType": "Questionnaire",
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "choice-answer-option"
+        }
+    ],
     "meta": {
         "profile": ["https://beda.software/beda-emr-questionnaire"],
         "lastUpdated": "2023-04-24T00:09:09.518780Z",

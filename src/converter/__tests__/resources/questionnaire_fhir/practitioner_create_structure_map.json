@@ -83,6 +83,10 @@
         {
             "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-targetStructureMap",
             "valueCanonical": "StructureMap/practitioner-create"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "practitioner-create-structure-map"
         }
     ],
     "status": "active",
