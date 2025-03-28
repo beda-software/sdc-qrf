@@ -67,6 +67,7 @@
     "name": "Beverages",
     "status": "draft",
     "subjectType": ["Patient"],
+    "assembledFrom": "beverages",
     "id": "beverages",
     "resourceType": "Questionnaire"
 }

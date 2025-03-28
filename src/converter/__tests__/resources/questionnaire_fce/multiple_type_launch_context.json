@@ -393,6 +393,7 @@
     ],
     "resourceType": "Questionnaire",
     "status": "active",
+    "assembledFrom": "multiple-type-launch-context",
     "id": "allergies",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/allergies"
 }

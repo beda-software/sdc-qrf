@@ -362,6 +362,12 @@
         }
     ],
     "resourceType": "Questionnaire",
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "review-of-systems"
+        }
+    ],
     "status": "active",
     "id": "review-of-systems",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/review-of-systems"

@@ -476,6 +476,10 @@
             "valueReference": {
                 "reference": "Mapping/gad-7-extract"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "gad-7"
         }
     ],
     "status": "active",

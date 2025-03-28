@@ -79,6 +79,10 @@
             "valueReference": {
                 "reference": "Mapping/practitioner-create"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "practitioner-create"
         }
     ],
     "status": "active",

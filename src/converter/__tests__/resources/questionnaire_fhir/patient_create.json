@@ -89,6 +89,10 @@
             "valueReference": {
                 "reference": "Mapping/patient-create"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "patient-create"
         }
     ],
     "status": "active",

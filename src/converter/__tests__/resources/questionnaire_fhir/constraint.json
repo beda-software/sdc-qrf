@@ -61,6 +61,12 @@
         "profile": ["https://beda.software/beda-emr-questionnaire"]
     },
     "status": "active",
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "constraint"
+        }
+    ],
     "resourceType": "Questionnaire",
     "id": "constraint"
 }

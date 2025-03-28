@@ -65,6 +65,7 @@
     "resourceType": "Questionnaire",
     "title": "CQF Examples",
     "status": "active",
+    "assembledFrom": "cqf-examples",
     "id": "cqf-examples",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/cqf-examples"
 }

@@ -139,6 +139,7 @@
     "resourceType": "Questionnaire",
     "title": "Practitioner edit",
     "status": "active",
+    "assembledFrom": "practitioner-edit",
     "id": "practitioner-edit",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/practitioner-edit"
 }

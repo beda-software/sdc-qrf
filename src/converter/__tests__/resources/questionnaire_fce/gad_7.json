@@ -445,6 +445,7 @@
     ],
     "resourceType": "Questionnaire",
     "status": "active",
+    "assembledFrom": "gad-7",
     "id": "gad-7",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/gad7"
 }

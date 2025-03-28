@@ -572,6 +572,10 @@
             "valueReference": {
                 "reference": "Mapping/phq2phq9-extract"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "phq2phq9"
         }
     ],
     "status": "active",

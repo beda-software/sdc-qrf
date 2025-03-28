@@ -32,6 +32,10 @@
             "valueReference": {
                 "reference": "#Bundle#PrePopQuery"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "source-queries"
         }
     ]
 }

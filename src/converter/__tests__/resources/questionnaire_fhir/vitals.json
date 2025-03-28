@@ -309,6 +309,10 @@
             "valueReference": {
                 "reference": "Mapping/vitals"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "vitals"
         }
     ],
     "status": "active",

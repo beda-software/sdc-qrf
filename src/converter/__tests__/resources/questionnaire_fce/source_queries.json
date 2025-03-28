@@ -11,6 +11,7 @@
     ],
     "status": "active",
     "resourceType": "Questionnaire",
+    "assembledFrom": "source-queries",
     "contained": [
         {
             "id": "PrePopQuery",

@@ -168,6 +168,7 @@
     ],
     "resourceType": "Questionnaire",
     "status": "active",
+    "assembledFrom": "immunization",
     "id": "immunization",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/immunization"
 }

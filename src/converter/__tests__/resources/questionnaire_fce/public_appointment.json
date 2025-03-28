@@ -84,6 +84,7 @@
             "resourceType": "Mapping"
         }
     ],
+    "assembledFrom": "public-appointment",
     "id": "public-appointment",
     "resourceType": "Questionnaire"
 }

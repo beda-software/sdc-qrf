@@ -420,6 +420,10 @@
             "valueReference": {
                 "reference": "Mapping/allergy-extract"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "allergies"
         }
     ],
     "status": "active",

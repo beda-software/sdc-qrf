@@ -111,6 +111,10 @@
             "valueReference": {
                 "reference": "Mapping/consent-extract"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "consent"
         }
     ],
     "status": "active",

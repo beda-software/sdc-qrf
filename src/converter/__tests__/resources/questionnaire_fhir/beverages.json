@@ -92,6 +92,12 @@
             ]
         }
     ],
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "beverages"
+        }
+    ],
     "resourceType": "Questionnaire",
     "status": "draft",
     "id": "beverages",

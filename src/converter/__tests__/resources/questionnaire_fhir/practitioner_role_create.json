@@ -36,6 +36,10 @@
             "valueReference": {
                 "reference": "Mapping/practitioner-role-create"
             }
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "practitioner-role-create"
         }
     ],
     "status": "active",

@@ -380,6 +380,7 @@
     ],
     "resourceType": "Questionnaire",
     "status": "active",
+    "assembledFrom": "physical-exam",
     "id": "physical-exam",
     "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/physical-exam"
 }
