@@ -22,7 +22,7 @@
         "@beda.software/aidbox-types": "file:contrib/aidbox-types",
         "@types/fhir": "^0.0.41",
         "@types/lodash": "^4.17.16",
-        "@types/react": "^19.0.12",
+        "@types/react": "^18",
         "@vitest/coverage-v8": "^3.0.9",
         "prettier": "3.5.3",
         "tslib": "^2.8.0",
@@ -30,7 +30,7 @@
         "vitest": "^3.0.9"
     },
     "peerDependencies": {
-        "react": ">=16"
+        "react": "18.x"
     },
     "files": [
         "dist/**/*",
