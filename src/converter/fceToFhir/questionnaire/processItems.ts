@@ -17,10 +17,7 @@ import {
 
 import { convertFromFHIRExtension, convertToFHIRExtension, toFHIRReference } from '../..';
 
-export function processItems(
-    items: FCEQuestionnaireItem[],
-    onlyExtensions = false,
-): FHIRQuestionnaireItem[] {
+export function processItems(items: FCEQuestionnaireItem[], onlyExtensions = false): FHIRQuestionnaireItem[] {
     return items.map((item) => {
         const extensions = convertToFHIRExtension(item);
         if (extensions.length > 0) {
@@ -29,21 +26,13 @@ export function processItems(
                 .filter((ext): ext is Partial<FCEQuestionnaireItem> => ext !== undefined)
                 .flatMap(Object.keys);
             for (const field of fieldsToOmit) {
-                //@ts-ignore
+                //@ts-expect-error: Element implicitly has an 'any' type
                 delete item[field];
             }
             item.extension = extensions.sort();
         }
 
-        const {
-            enableBehavior,
-            enableWhen,
-            answerOption,
-            initial,
-            item: nestedItems,
-            type,
-            ...commonOptions
-        } = item;
+        const { enableBehavior, enableWhen, answerOption, initial, item: nestedItems, type, ...commonOptions } = item;
 
         const fhirItem: FHIRQuestionnaireItem = {
             ...commonOptions,
@@ -54,19 +43,17 @@ export function processItems(
             const element = item[property as keyof FCEQuestionnaireItem];
 
             if (property.startsWith('_') && element instanceof Object) {
-                // @ts-ignore
+                //@ts-expect-error: Element implicitly has an 'any' type
                 fhirItem[property] = {
                     // TODO: update convertToFHIRExtension to accept element type to convert
-                    // @ts-ignore
+                    //@ts-expect-error: Argument of type is not assignable to parameter of type 'QuestionnaireItem'
                     extension: convertToFHIRExtension(element),
                 };
             }
         }
 
         if (answerOption !== undefined) {
-            fhirItem.answerOption = onlyExtensions
-                ? answerOption
-                : processAnswerOption(answerOption);
+            fhirItem.answerOption = onlyExtensions ? answerOption : processAnswerOption(answerOption);
         }
 
         if (enableBehavior !== undefined) {
@@ -96,7 +83,7 @@ const convertEnableWhen = (
     answerType: string,
     result: FHIRQuestionnaireItemEnableWhen,
 ) => {
-    //@ts-ignore
+    //@ts-expect-error: Element implicitly has an 'any' type
     if (answer[answerType] !== undefined) {
         switch (answerType) {
             case 'boolean':
@@ -135,9 +122,7 @@ const convertEnableWhen = (
     }
 };
 
-function processAnswerOption(
-    options: FCEQuestionnaireItemAnswerOption[],
-): FHIRQuestionnaireItemAnswerOption[] {
+function processAnswerOption(options: FCEQuestionnaireItemAnswerOption[]): FHIRQuestionnaireItemAnswerOption[] {
     return options.map((option) => {
         const { value, ...commonOptions } = option;
 

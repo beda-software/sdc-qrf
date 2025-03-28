@@ -25,9 +25,7 @@ export function processAnswers(items: FHIRQuestionnaireResponseItem[]) {
     }
 }
 
-function processAnswer(
-    answer: FHIRQuestionnaireResponseItemAnswer,
-): FCEQuestionnaireResponseItemAnswer {
+function processAnswer(answer: FHIRQuestionnaireResponseItemAnswer): FCEQuestionnaireResponseItemAnswer {
     const fceAnswer: FCEQuestionnaireResponseItemAnswer = { ...answer };
     const valueHandlers = {
         valueString: (value: string) => ({ string: value }),
@@ -47,11 +45,11 @@ function processAnswer(
 
     for (const key in valueHandlers) {
         if (key in fceAnswer) {
-            //@ts-ignore
+            //@ts-expect-error: Element implicitly has an 'any' type
             const value = fceAnswer[key];
-            //@ts-ignore
+            //@ts-expect-error: Element implicitly has an 'any' type
             delete fceAnswer[key];
-            //@ts-ignore
+            //@ts-expect-error: Element implicitly has an 'any' type
             fceAnswer.value = valueHandlers[key]?.(value);
         }
     }

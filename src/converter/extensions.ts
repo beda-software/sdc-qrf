@@ -50,9 +50,7 @@ export type ExtensionTransformer = {
     [key in ExtensionIdentifier]:
         | {
               transform: {
-                  fromExtensions: (
-                      extensions: FHIRExtension[],
-                  ) => Partial<FCEQuestionnaireItem> | undefined;
+                  fromExtensions: (extensions: FHIRExtension[]) => Partial<FCEQuestionnaireItem> | undefined;
                   toExtensions: (item: FCEQuestionnaireItem) => FHIRExtension[];
               };
           }
@@ -186,16 +184,11 @@ export const extensionTransformers: ExtensionTransformer = {
 
                         return {
                             key: itemConstraintExtension.find((obj) => obj.url === 'key')!.valueId!,
-                            requirements: itemConstraintExtension.find(
-                                (obj) => obj.url === 'requirements',
-                            )?.valueString,
-                            severity: itemConstraintExtension.find((obj) => obj.url === 'severity')!
-                                .valueCode!,
-                            human: itemConstraintExtension.find((obj) => obj.url === 'human')!
-                                .valueString!,
-                            expression: itemConstraintExtension.find(
-                                (obj) => obj.url === 'expression',
-                            )!.valueString!,
+                            requirements: itemConstraintExtension.find((obj) => obj.url === 'requirements')
+                                ?.valueString,
+                            severity: itemConstraintExtension.find((obj) => obj.url === 'severity')!.valueCode!,
+                            human: itemConstraintExtension.find((obj) => obj.url === 'human')!.valueString!,
+                            expression: itemConstraintExtension.find((obj) => obj.url === 'expression')!.valueString!,
                         };
                     }),
                 };
@@ -254,10 +247,8 @@ export const extensionTransformers: ExtensionTransformer = {
 
                         return {
                             forDisplay:
-                                choiceColumnExtension.find((obj) => obj.url === 'forDisplay')
-                                    ?.valueBoolean ?? false,
-                            path: choiceColumnExtension.find((obj) => obj.url === 'path')
-                                ?.valueString,
+                                choiceColumnExtension.find((obj) => obj.url === 'forDisplay')?.valueBoolean ?? false,
+                            path: choiceColumnExtension.find((obj) => obj.url === 'path')?.valueString,
                         };
                     }),
                 };
@@ -284,7 +275,7 @@ export const extensionTransformers: ExtensionTransformer = {
         },
     },
     [ExtensionIdentifier.CqfExpression]: {
-        // @ts-ignore
+        // @ts-expect-error: Type '"cqfExpression"' is not assignable to type 'keyof QuestionnaireItem'
         path: { extension: 'valueExpression', questionnaire: 'cqfExpression' },
     },
 

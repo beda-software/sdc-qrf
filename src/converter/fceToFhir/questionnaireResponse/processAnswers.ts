@@ -19,9 +19,7 @@ export function processAnswers(items: FCEQuestionnaireResponseItem[]) {
     }
 }
 
-function processAnswer(
-    answerItem: FCEQuestionnaireResponseItemAnswer,
-): FHIRQuestionnaireResponseItemAnswer {
+function processAnswer(answerItem: FCEQuestionnaireResponseItemAnswer): FHIRQuestionnaireResponseItemAnswer {
     if (!answerItem.value) {
         return answerItem;
     }
@@ -41,10 +39,10 @@ function processAnswer(
     };
     for (const key in valueMappings) {
         if (key in value) {
-            //@ts-ignore
+            //@ts-expect-error: Element implicitly has an 'any' type
             const newKey = valueMappings[key];
             if (newKey) {
-                //@ts-ignore
+                //@ts-expect-error: Element implicitly has an 'any' type
                 fhirAnswerItem[newKey] = value[key];
             }
             break;
