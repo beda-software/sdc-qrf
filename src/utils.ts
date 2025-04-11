@@ -274,7 +274,7 @@ function mapResponseToFormRecursive(
     questionnaireItems: QuestionnaireItem[],
 ): FormItems {
     return questionnaireItems.reduce((acc, question) => {
-        const { linkId, initial, repeats, text } = question;
+        const { linkId, initial, repeats, text, required } = question;
 
         if (!linkId) {
             console.warn('The question has no linkId');
@@ -287,20 +287,30 @@ function mapResponseToFormRecursive(
             if (repeats) {
                 return {
                     ...acc,
-                    [linkId]: populateItemKey({
+                    [linkId]: {
                         question: text,
                         items: qrItems.map((qrItem) => {
                             return mapResponseToFormRecursive(qrItem.item ?? [], question.item ?? []);
                         }),
-                    }),
+                    },
                 };
             } else {
                 return {
                     ...acc,
-                    [linkId]: populateItemKey({
+                    [linkId]: {
                         question: text,
                         items: mapResponseToFormRecursive(qrItems[0]?.item ?? [], question.item ?? []),
-                    }),
+                    },
+                };
+            }
+        } else {
+            if (repeats && required) {
+                return {
+                    ...acc,
+                    [linkId]: {
+                        question: text,
+                        items: [populateItemKey({})],
+                    },
                 };
             }
         }
@@ -315,15 +325,13 @@ function mapResponseToFormRecursive(
 
         return {
             ...acc,
-            [linkId]: answers.map((answer) =>
-                populateItemKey({
-                    question: text,
-                    value: answer.value,
-                    items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
-                }),
-            ),
+            [linkId]: answers.map((answer) => ({
+                question: text,
+                value: answer.value,
+                items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
+            })),
         };
-    }, {});
+    }, populateItemKey({}));
 }
 
 export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire: Questionnaire) {
