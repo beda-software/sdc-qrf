@@ -3,6 +3,7 @@ import _ from 'lodash';
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import queryString from 'query-string';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
     Extension,
@@ -253,6 +254,21 @@ export function mapFormToResponse(
     };
 }
 
+const ITEM_KEY = '_itemKey';
+export function getItemKey(items: FormGroupItems | FormAnswerItems) {
+    return (items as any)[ITEM_KEY];
+}
+export function populateItemKey(items: FormGroupItems | FormAnswerItems) {
+    if ((items as any)[ITEM_KEY]) {
+        return items;
+    }
+
+    return {
+        ...(items as any),
+        [ITEM_KEY]: uuidv4(),
+    };
+}
+
 function mapResponseToFormRecursive(
     questionnaireResponseItems: QuestionnaireResponseItem[],
     questionnaireItems: QuestionnaireItem[],
@@ -271,20 +287,20 @@ function mapResponseToFormRecursive(
             if (repeats) {
                 return {
                     ...acc,
-                    [linkId]: {
+                    [linkId]: populateItemKey({
                         question: text,
                         items: qrItems.map((qrItem) => {
                             return mapResponseToFormRecursive(qrItem.item ?? [], question.item ?? []);
                         }),
-                    },
+                    }),
                 };
             } else {
                 return {
                     ...acc,
-                    [linkId]: {
+                    [linkId]: populateItemKey({
                         question: text,
                         items: mapResponseToFormRecursive(qrItems[0]?.item ?? [], question.item ?? []),
-                    },
+                    }),
                 };
             }
         }
@@ -299,11 +315,13 @@ function mapResponseToFormRecursive(
 
         return {
             ...acc,
-            [linkId]: answers.map((answer) => ({
-                question: text,
-                value: answer.value,
-                items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
-            })),
+            [linkId]: answers.map((answer) =>
+                populateItemKey({
+                    question: text,
+                    value: answer.value,
+                    items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
+                }),
+            ),
         };
     }, {});
 }
