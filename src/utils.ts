@@ -283,35 +283,37 @@ function mapResponseToFormRecursive(
 
         const qrItems = questionnaireResponseItems.filter((qrItem) => qrItem.linkId === linkId) ?? [];
 
-        if (qrItems.length && isGroup(question)) {
-            if (repeats) {
-                return {
-                    ...acc,
-                    [linkId]: {
-                        question: text,
-                        items: qrItems.map((qrItem) => {
-                            return mapResponseToFormRecursive(qrItem.item ?? [], question.item ?? []);
-                        }),
-                    },
-                };
+        if (isGroup(question)) {
+            if (qrItems.length) {
+                if (repeats) {
+                    return {
+                        ...acc,
+                        [linkId]: {
+                            question: text,
+                            items: qrItems.map((qrItem) => {
+                                return mapResponseToFormRecursive(qrItem.item ?? [], question.item ?? []);
+                            }),
+                        },
+                    };
+                } else {
+                    return {
+                        ...acc,
+                        [linkId]: {
+                            question: text,
+                            items: mapResponseToFormRecursive(qrItems[0]?.item ?? [], question.item ?? []),
+                        },
+                    };
+                }
             } else {
-                return {
-                    ...acc,
-                    [linkId]: {
-                        question: text,
-                        items: mapResponseToFormRecursive(qrItems[0]?.item ?? [], question.item ?? []),
-                    },
-                };
-            }
-        } else {
-            if (repeats && required) {
-                return {
-                    ...acc,
-                    [linkId]: {
-                        question: text,
-                        items: [populateItemKey({})],
-                    },
-                };
+                if (repeats && required) {
+                    return {
+                        ...acc,
+                        [linkId]: {
+                            question: text,
+                            items: [populateItemKey({})],
+                        },
+                    };
+                }
             }
         }
 
