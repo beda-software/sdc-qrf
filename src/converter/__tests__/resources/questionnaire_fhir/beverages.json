@@ -44,7 +44,7 @@
                     "valueString": "How many beverages you are consuming per day?"
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/slider-start-label",
+                    "url": "https://emr.beda.software/StructureDefinition/slider-stop-label",
                     "valueString": "20+"
                 }
             ],

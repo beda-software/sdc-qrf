@@ -41,7 +41,7 @@ export enum ExtensionIdentifier {
     SliderStart = 'https://emr.beda.software/StructureDefinition/slider-start',
     SliderStop = 'https://emr.beda.software/StructureDefinition/slider-stop',
     HelpText = 'https://emr.beda.software/StructureDefinition/help-text',
-    StopLabel = 'https://emr.beda.software/StructureDefinition/slider-start-label',
+    StopLabel = 'https://emr.beda.software/StructureDefinition/slider-stop-label',
     Macro = 'https://emr.beda.software/StructureDefinition/macro',
     RowsNumber = 'https://emr.beda.software/StructureDefinition/rows-number',
 }
