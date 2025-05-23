@@ -102,7 +102,7 @@
     "resourceType": "Questionnaire",
     "extension": [
         {
-            "url": "http://beda.software/fhir-extensions/questionnaire-mapper",
+            "url": "https://emr.beda.software/StructureDefinition/questionnaire-mapper",
             "valueReference": {
                 "reference": "Mapping/public-appointment-extract"
             }
