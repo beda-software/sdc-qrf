@@ -76,10 +76,7 @@ function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined
         return undefined;
     }
 
-    return mapperExtensions.map((mapperExtension: any) => ({
-        id: mapperExtension.valueReference?.reference?.split('/')[1],
-        resourceType: 'Mapping',
-    }));
+    return mapperExtensions.map((mapperExtension: any) => mapperExtension.valueReference);
 }
 
 function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {
@@ -88,9 +85,7 @@ function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {
             (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-sourceQueries',
         ) ?? [];
 
-    return extensions.map((ext) => ({
-        localRef: ext.valueReference?.reference?.substring(1) ?? '',
-    }));
+    return extensions.map((ext) => ext.valueReference);
 }
 
 function processTargetStructureMap(fhirQuestionnaire: FHIRQuestionnaire): string[] | undefined {

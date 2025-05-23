@@ -1,14 +1,8 @@
 {
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2023-04-25T06:51:01.969393Z",
-        "versionId": "268",
-        "extension": [
-            {
-                "url": "ex:createdAt",
-                "valueInstant": "2023-04-25T06:38:33.794441Z"
-            }
-        ]
+        "versionId": "268"
     },
     "name": "practitioner-create",
     "item": [

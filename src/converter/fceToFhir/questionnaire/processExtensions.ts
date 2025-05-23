@@ -42,7 +42,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
             mapping.map((m) => ({
                 url: 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
                 valueReference: {
-                    reference: `Mapping/${m.id}`,
+                    reference: m.reference,
                 },
             })),
         );

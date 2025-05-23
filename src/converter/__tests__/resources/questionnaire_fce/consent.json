@@ -1,9 +1,13 @@
 {
-    "subjectType": ["Encounter", "Patient"],
+    "subjectType": [
+        "Encounter",
+        "Patient"
+    ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-05-04T06:32:48.956795Z",
-        "createdAt": "2023-05-04T05:27:07.639041Z",
         "versionId": "1087"
     },
     "name": "Consent",
@@ -24,7 +28,9 @@
                 "language": "application/x-fhir-query",
                 "expression": "Practitioner"
             },
-            "referenceResource": ["Practitioner"]
+            "referenceResource": [
+                "Practitioner"
+            ]
         },
         {
             "text": "Service",
@@ -42,7 +48,9 @@
                 "language": "application/x-fhir-query",
                 "expression": "Endpoint?identifier=https://fhir.emr.beda.software/CodeSystem/consent-subject|&status=active"
             },
-            "referenceResource": ["Endpoint"]
+            "referenceResource": [
+                "Endpoint"
+            ]
         },
         {
             "text": "Provision",
@@ -52,21 +60,17 @@
             "required": true,
             "answerOption": [
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "deny",
-                            "system": "http://hl7.org/fhir/consent-provision-type",
-                            "display": "Deny"
-                        }
+                    "valueCoding": {
+                        "code": "deny",
+                        "system": "http://hl7.org/fhir/consent-provision-type",
+                        "display": "Deny"
                     }
                 },
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "permit",
-                            "system": "http://hl7.org/fhir/consent-provision-type",
-                            "display": "Permit"
-                        }
+                    "valueCoding": {
+                        "code": "permit",
+                        "system": "http://hl7.org/fhir/consent-provision-type",
+                        "display": "Permit"
                     }
                 }
             ]
@@ -74,8 +78,7 @@
     ],
     "mapping": [
         {
-            "id": "consent-extract",
-            "resourceType": "Mapping"
+            "reference": "Mapping/consent-extract"
         }
     ],
     "resourceType": "Questionnaire",
