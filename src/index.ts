@@ -1,6 +1,14 @@
 export * from './types';
-export * from './utils';
-export * from './hooks';
-export * from './components';
+export {
+    mapFormToResponse,
+    mapResponseToForm,
+    findAnswersForQuestionsRecursive,
+    removeDisabledAnswers,
+    getEnabledQuestions,
+    calcInitialContext,
+    parseFhirQueryExpression,
+} from './utils';
+export { useQuestionnaireResponseFormContext } from './hooks';
+export { QuestionItems, QuestionItem, QuestionnaireResponseFormProvider } from './components';
 export * from './converter';
 export type { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';

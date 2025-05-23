@@ -71,6 +71,7 @@ export type FHIRAnswerValue = Omit<
     Required<QuestionnaireResponseItemAnswer>,
     'item' | 'id' | '_id' | 'modifierExtension' | 'extension'
 >;
+// Internal Answer Value that is used in FormItems
 export type AnswerValue = { [x: string]: any };
 
 export interface RepeatableFormGroupItems {
@@ -85,8 +86,8 @@ interface NotRepeatableFormGroupItems {
 
 export type FormGroupItems = RepeatableFormGroupItems | NotRepeatableFormGroupItems;
 
-export interface FormAnswerItems<T = any> {
-    value: T | undefined;
+export interface FormAnswerItems {
+    value: AnswerValue | undefined;
     question?: string;
     items?: FormItems;
 }

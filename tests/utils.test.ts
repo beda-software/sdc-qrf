@@ -2,11 +2,14 @@ import { describe, expect, test } from 'vitest';
 
 import { allergiesQuestionnaire } from './resources/questionnaire';
 import {
+    getChoiceTypeValue,
     getEnabledQuestions,
     isValueEmpty,
     mapFormToResponse,
     mapResponseToForm,
     removeDisabledAnswers,
+    toAnswerValue,
+    toFHIRAnswerValue,
 } from '../src/utils';
 import { QuestionnaireResponse, QuestionnaireResponseItem } from 'fhir/r4b';
 import { FCEQuestionnaire, FCEQuestionnaireItem } from '../src/fce.types';
@@ -735,7 +738,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
     });
 });
 
-describe('isValueEmpty method test', () => {
+describe('isValueEmpty', () => {
     const valueTypeList = [
         { value: 1, expect: false },
         { value: 0, expect: false },
@@ -753,7 +756,45 @@ describe('isValueEmpty method test', () => {
         { value: NaN, expect: true },
     ];
 
-    test.each(valueTypeList)('isValueEmpty works correctly for type %s', async (valueType) => {
+    test.each(valueTypeList)('works correctly for type %s', async (valueType) => {
         expect(isValueEmpty(valueType.value)).toEqual(valueType.expect);
+    });
+});
+
+describe('toAnswerValue', () => {
+    const valueTypeList: { input: [any, string]; expect: any }[] = [
+        { input: [{ valueString: 'test' }, 'value'], expect: { string: 'test' } },
+        { input: [{ valueCoding: { code: 'code' } }, 'value'], expect: { Coding: { code: 'code' } } },
+        { input: [{ answerString: 'test' }, 'answer'], expect: { string: 'test' } },
+        { input: [{ answerCoding: { code: 'code' } }, 'answer'], expect: { Coding: { code: 'code' } } },
+    ];
+
+    test.each(valueTypeList)('works correctly for %s', async (valueType) => {
+        expect(toAnswerValue(...valueType.input)).toEqual(valueType.expect);
+    });
+});
+
+describe('toFHIRAnswerValue', () => {
+    const valueTypeList: { input: [any, string]; expect: any }[] = [
+        { input: [{ string: 'test' }, 'value'], expect: { valueString: 'test' } },
+        { input: [{ Coding: { code: 'code' } }, 'value'], expect: { valueCoding: { code: 'code' } } },
+        { input: [{ string: 'test' }, 'answer'], expect: { answerString: 'test' } },
+        { input: [{ Coding: { code: 'code' } }, 'answer'], expect: { answerCoding: { code: 'code' } } },
+    ];
+
+    test.each(valueTypeList)('works correctly for %s', async (valueType) => {
+        expect(toFHIRAnswerValue(...valueType.input)).toEqual(valueType.expect);
+    });
+});
+
+describe('getChoiceTypeValue', () => {
+    const valueTypeList: { input: [any, string]; expect: any }[] = [
+        { input: [{ valueString: 'test' }, 'value'], expect: 'test' },
+        { input: [{ valueCoding: { code: 'code' } }, 'value'], expect: { code: 'code' } },
+        { input: [{ answerString: 'test' }, 'answer'], expect: 'test' },
+        { input: [{ answerCoding: { code: 'code' } }, 'answer'], expect: { code: 'code' } },
+    ];
+    test.each(valueTypeList)('works correctly for %s', async (valueType) => {
+        expect(getChoiceTypeValue(...valueType.input)).toEqual(valueType.expect);
     });
 });

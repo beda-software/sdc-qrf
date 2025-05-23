@@ -11,7 +11,7 @@ import { QRFContext } from './context';
 import { FormAnswerItems, ItemContext, QRFContextData, QuestionItemProps, QuestionItemsProps } from './types';
 import { calcContext, getBranchItems, getEnabledQuestions, wrapAnswerValue } from './utils.js';
 
-export function usePreviousValue<T = any>(value: T) {
+function usePreviousValue<T = any>(value: T) {
     const prevValue = useRef<T | undefined>(value);
 
     useEffect(() => {
@@ -219,12 +219,7 @@ function isGroupItem(
     return questionItem.type === 'group';
 }
 
-export function evaluateQuestionItemExpression(
-    linkId: string,
-    path: string,
-    context: ItemContext,
-    expression?: Expression,
-) {
+function evaluateQuestionItemExpression(linkId: string, path: string, context: ItemContext, expression?: Expression) {
     if (!expression) {
         return [];
     }

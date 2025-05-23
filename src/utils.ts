@@ -234,7 +234,7 @@ function mapFormToResponseRecursive(
                     return [
                         ...answersAcc,
                         {
-                            ...toFHIRAnswerValue(answer.value),
+                            ...toFHIRAnswerValue(answer.value, 'value'),
                             ...(items.length ? { item: items } : {}),
                         },
                     ];
@@ -390,11 +390,7 @@ export function findAnswersForQuestionsRecursive(linkId: string, values?: FormIt
     );
 }
 
-export function findAnswersForQuestion<T = any>(
-    linkId: string,
-    parentPath: string[],
-    values: FormItems,
-): Array<FormAnswerItems<T>> {
+function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): Array<FormAnswerItems> {
     const p = _.cloneDeep(parentPath);
 
     // Go up
@@ -787,13 +783,13 @@ export function isValueEmpty(value: any) {
     return _.isFinite(value) || _.isBoolean(value) ? false : _.isEmpty(value);
 }
 
-function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefined {
-    const prefixKey = obj.keys().filter((key: string) => key.startsWith(prefix))[0];
+export function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefined {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
 
     return prefixKey ? obj[prefixKey] : undefined;
 }
 
-function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
+export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
     const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
 
     if (!prefixKey) {
@@ -807,10 +803,10 @@ function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | und
     };
 }
 
-function toFHIRAnswerValue(answerValue: AnswerValue): FHIRAnswerValue {
+export function toFHIRAnswerValue(answerValue: AnswerValue, prefix: string): FHIRAnswerValue {
     const key = Object.keys(answerValue)[0]!;
 
     return {
-        [`value${capitalize(key)}`]: answerValue[key],
+        [`${prefix}${capitalize(key)}`]: answerValue[key],
     } as FHIRAnswerValue;
 }
