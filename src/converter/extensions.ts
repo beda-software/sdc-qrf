@@ -25,7 +25,7 @@ export enum ExtensionIdentifier {
     BackgroundImage = 'http://aidbox.io/questionnaire-backgroundImage',
     Language = 'http://hl7.org/fhir/StructureDefinition/language',
     ChoiceOrientation = 'http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation',
-    InlineChoiceDirection = 'https://beda.software/fhir-emr-questionnaire/inline-choice-direction',
+    InlineChoiceDirection = 'https://emr.beda.software/StructureDefinition/inline-choice-direction',
     ChoiceColumns = 'http://aidbox.io/fhir/StructureDefinition/questionnaire-choiceColumns',
 
     ItemPopulationContext = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
@@ -37,13 +37,13 @@ export enum ExtensionIdentifier {
     AnswerExpression = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression',
     CqfExpression = 'http://hl7.org/fhir/StructureDefinition/cqf-expression',
 
-    AdjustLastToRight = 'https://beda.software/fhir-emr-questionnaire/adjust-last-to-right',
-    SliderStart = 'https://beda.software/fhir-emr-questionnaire/slider-start',
-    SliderStop = 'https://beda.software/fhir-emr-questionnaire/slider-stop',
-    HelpText = 'https://beda.software/fhir-emr-questionnaire/help-text',
-    StopLabel = 'https://beda.software/fhir-emr-questionnaire/slider-stop-label',
-    Macro = 'https://beda.software/fhir-emr-questionnaire/macro',
-    RowsNumber = 'https://beda.software/fhir-emr-questionnaire/rows-number',
+    AdjustLastToRight = 'https://emr.beda.software/StructureDefinition/adjust-last-to-right',
+    SliderStart = 'https://emr.beda.software/StructureDefinition/slider-start',
+    SliderStop = 'https://emr.beda.software/StructureDefinition/slider-stop',
+    HelpText = 'https://emr.beda.software/StructureDefinition/help-text',
+    StopLabel = 'https://emr.beda.software/StructureDefinition/slider-start-label',
+    Macro = 'https://emr.beda.software/StructureDefinition/macro',
+    RowsNumber = 'https://emr.beda.software/StructureDefinition/rows-number',
 }
 
 export type ExtensionTransformer = {
