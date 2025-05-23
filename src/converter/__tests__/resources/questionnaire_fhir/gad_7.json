@@ -472,7 +472,7 @@
             ]
         },
         {
-            "url": "http://beda.software/fhir-extensions/questionnaire-mapper",
+            "url": "https://emr.beda.software/StructureDefinition/questionnaire-mapper",
             "valueReference": {
                 "reference": "Mapping/gad-7-extract"
             }
