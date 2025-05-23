@@ -1,3 +1,4 @@
+import { QuestionnaireItem as FHIRQuestionnaireItem } from 'fhir/r4b';
 import cloneDeep from 'lodash/cloneDeep';
 
 function sortExtensionsRecursive(object: any) {
@@ -21,4 +22,8 @@ function sortExtensionsRecursive(object: any) {
 
 export function sortExtensionsList(object: any) {
     return sortExtensionsRecursive(cloneDeep(object));
+}
+
+export function filterExtensions(item: FHIRQuestionnaireItem, url: string) {
+    return item.extension?.filter((ext) => ext.url === url);
 }

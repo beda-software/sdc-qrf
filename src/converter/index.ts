@@ -1,24 +1,13 @@
-import {
-    Reference as FHIRReference,
-    Extension as FHIRExtension,
-    QuestionnaireItem as FHIRQuestionnaireItem,
-} from 'fhir/r4b';
-
-import {
-    Extension as FCEExtension,
-    QuestionnaireItem as FCEQuestionnaireItem,
-    InternalReference,
-} from '@beda.software/aidbox-types';
+import { Extension as FHIRExtension } from 'fhir/r4b';
 
 import { ExtensionIdentifier, extensionTransformers } from './extensions';
-import { fromFirstClassExtension, fromFirstClassExtensionV2 } from './fceToFhir';
-import { toFirstClassExtension, toFirstClassExtensionV2 } from './fhirToFce';
+import { fromFirstClassExtension } from './fceToFhir';
+import { toFirstClassExtension } from './fhirToFce';
 import { processLaunchContext as processLaunchContextToFce } from './fhirToFce/questionnaire/processExtensions';
+import { FCEQuestionnaireItem } from 'fce.types';
 export * from './utils';
 
-export function convertFromFHIRExtension(
-    extensions: FHIRExtension[],
-): Partial<FCEQuestionnaireItem> | undefined {
+export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<FCEQuestionnaireItem> | undefined {
     const identifier = extensions[0]!.url;
     const transformer = extensionTransformers[identifier as ExtensionIdentifier];
     if (transformer !== undefined) {
@@ -57,63 +46,4 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
     return extensions;
 }
 
-export function extractExtension(extension: FCEExtension[] | undefined, url: 'ex:createdAt') {
-    return extension?.find((e) => e.url === url)?.valueInstant;
-}
-
-export function filterExtensions(item: FHIRQuestionnaireItem, url: string) {
-    return item.extension?.filter((ext) => ext.url === url);
-}
-
-export function fromFHIRReference(r?: FHIRReference): InternalReference | undefined {
-    if (!r || !r.reference) {
-        return undefined;
-    }
-
-    // We remove original reference from r in this "strange" way
-    // TODO: re-write omitting
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { reference: literalReference, ...commonReferenceProperties } = r;
-    const isHistoryVersionLink = r.reference.split('/').slice(-2, -1)[0] === '_history';
-
-    if (isHistoryVersionLink) {
-        const [, , id, resourceType] = r.reference.split('/').reverse();
-
-        return {
-            ...commonReferenceProperties,
-            id: id!,
-            resourceType,
-        };
-    } else {
-        const [id, resourceType] = r.reference.split('/').reverse();
-
-        return {
-            ...commonReferenceProperties,
-            id: id!,
-            resourceType,
-        };
-    }
-}
-
-export function toFHIRReference(r?: InternalReference): FHIRReference | undefined {
-    if (!r) {
-        return undefined;
-    }
-
-    const { id, resourceType, ...commonReferenceProperties } = r;
-
-    delete commonReferenceProperties.resource;
-
-    return {
-        ...commonReferenceProperties,
-        reference: `${resourceType}/${id}`,
-    };
-}
-
-export {
-    toFirstClassExtension,
-    toFirstClassExtensionV2,
-    fromFirstClassExtension,
-    fromFirstClassExtensionV2,
-    processLaunchContextToFce,
-};
+export { toFirstClassExtension, fromFirstClassExtension, processLaunchContextToFce };
