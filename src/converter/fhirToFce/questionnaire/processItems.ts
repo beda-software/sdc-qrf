@@ -4,7 +4,7 @@ import {
     Element as FHIRElement,
 } from 'fhir/r4b';
 
-import { convertFromFHIRExtension, filterExtensions } from '../../../converter';
+import { convertFromFHIRExtension, filterExtensions } from '../..';
 import { ExtensionIdentifier } from '../../extensions';
 import { FCEQuestionnaireItem } from 'fce.types';
 

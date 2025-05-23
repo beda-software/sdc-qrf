@@ -1,22 +1,21 @@
 import fhirpath from 'fhirpath';
-import _ from 'lodash';
+import _, { capitalize, lowerFirst } from 'lodash';
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import queryString from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-    Extension,
     Questionnaire,
     QuestionnaireItem,
-    QuestionnaireItemInitial,
     QuestionnaireResponse,
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
-} from '@beda.software/aidbox-types';
+} from 'fhir/r4b';
 
 import {
     AnswerValue,
+    FHIRAnswerValue,
     FormAnswerItems,
     FormGroupItems,
     FormItems,
@@ -24,6 +23,7 @@ import {
     QuestionnaireResponseFormData,
     RepeatableFormGroupItems,
 } from './types';
+import { FCEQuestionnaireItem } from 'fce.types';
 
 export function wrapAnswerValue(type: QuestionnaireItem['type'], answer: any) {
     if (type === 'choice') {
@@ -79,6 +79,8 @@ export function getBranchItems(
                 qrItem.item?.filter((curItem: any) => curItem.linkId === fieldPath[i]) ?? [];
 
             if (qItem.repeats) {
+                // fieldPath contains path with indexes in array
+                // here we skip path with index by adding +2
                 if (i + 2 < fieldPath.length) {
                     // In the middle
                     qrItem = qrItems[parseInt(fieldPath[i + 2]!, 10)];
@@ -106,7 +108,7 @@ export function getBranchItems(
 
 export function calcContext(
     initialContext: ItemContext,
-    variables: QuestionnaireItem['variable'],
+    variables: FCEQuestionnaireItem['variable'],
     qItem: QuestionnaireItem,
     qrItem: QuestionnaireResponseItem,
 ): ItemContext {
@@ -126,32 +128,6 @@ export function calcContext(
     } catch (err: unknown) {
         throw Error(`FHIRPath expression evaluation failure for "variable" in ${qItem.linkId}: ${err}`);
     }
-}
-
-export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: AnswerValue) {
-    const firstValueType = _.keys(firstAnswerValue)[0] as keyof AnswerValue;
-    const secondValueType = _.keys(secondAnswerValue)[0] as keyof AnswerValue;
-    if (firstValueType !== secondValueType) {
-        throw new Error('Enable when must be used for the same type');
-    }
-    if (!_.includes(['string', 'date', 'dateTime', 'time', 'uri', 'boolean', 'integer', 'decimal'], firstValueType)) {
-        throw new Error('Impossible to compare non-primitive type');
-    }
-
-    if (firstValueType === 'Quantity') {
-        throw new Error('Quantity type is not supported yet');
-    }
-
-    const firstValue = firstAnswerValue[firstValueType];
-    const secondValue = secondAnswerValue[secondValueType];
-
-    if (firstValue! < secondValue!) {
-        return -1;
-    }
-    if (firstValue! > secondValue!) {
-        return 1;
-    }
-    return 0;
 }
 
 function isGroup(question: QuestionnaireItem) {
@@ -235,7 +211,7 @@ function mapFormToResponseRecursive(
                     return [
                         ...answersAcc,
                         {
-                            value: answer.value,
+                            ...toFHIRAnswerValue(answer.value),
                             ...(items.length ? { item: items } : {}),
                         },
                     ];
@@ -316,10 +292,13 @@ function mapResponseToFormRecursive(
                 }
             }
         }
-
-        const answers = qrItems?.[0]?.answer?.length
-            ? qrItems[0].answer
-            : initialToQuestionnaireResponseItemAnswer(initial);
+        const answers: Array<{ value: AnswerValue | undefined; subItems: QuestionnaireResponseItem[] }> = qrItems?.[0]
+            ?.answer?.length
+            ? qrItems[0].answer.map(({ item, ...answer }) => ({
+                  subItems: item ?? [],
+                  value: toAnswerValue(answer, 'value'),
+              }))
+            : (initial ?? []).map((answer) => ({ value: toAnswerValue(answer, 'value'), subItems: [] }));
 
         if (!answers.length) {
             return acc;
@@ -327,10 +306,10 @@ function mapResponseToFormRecursive(
 
         return {
             ...acc,
-            [linkId]: answers.map((answer) => ({
+            [linkId]: answers.map(({ value, subItems }) => ({
                 question: text,
-                value: answer.value,
-                items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
+                value,
+                items: mapResponseToFormRecursive(subItems, question.item ?? []),
             })),
         };
     }, populateItemKey({}));
@@ -338,10 +317,6 @@ function mapResponseToFormRecursive(
 
 export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire: Questionnaire) {
     return mapResponseToFormRecursive(resource.item ?? [], questionnaire.item ?? []);
-}
-
-function initialToQuestionnaireResponseItemAnswer(initial: QuestionnaireItemInitial[] | undefined) {
-    return (initial ?? []).map(({ value }) => ({ value }) as QuestionnaireResponseItemAnswer);
 }
 
 export function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
@@ -420,7 +395,33 @@ export function findAnswersForQuestion<T = any>(
     return answers ? answers : [];
 }
 
-export function isValueEqual(firstValue: AnswerValue, secondValue: AnswerValue) {
+export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: AnswerValue) {
+    const firstValueType = _.keys(firstAnswerValue)[0] as keyof AnswerValue;
+    const secondValueType = _.keys(secondAnswerValue)[0] as keyof AnswerValue;
+    if (firstValueType !== secondValueType) {
+        throw new Error('Enable when must be used for the same type');
+    }
+    if (!_.includes(['string', 'date', 'dateTime', 'time', 'uri', 'boolean', 'integer', 'decimal'], firstValueType)) {
+        throw new Error('Impossible to compare non-primitive type');
+    }
+
+    if (firstValueType === 'Quantity') {
+        throw new Error('Quantity type is not supported yet');
+    }
+
+    const firstValue = firstAnswerValue[firstValueType];
+    const secondValue = secondAnswerValue[secondValueType];
+
+    if (firstValue! < secondValue!) {
+        return -1;
+    }
+    if (firstValue! > secondValue!) {
+        return 1;
+    }
+    return 0;
+}
+
+function isValueEqual(firstValue: AnswerValue, secondValue: AnswerValue) {
     const firstValueType = _.keys(firstValue)[0];
     const secondValueType = _.keys(secondValue)[0];
 
@@ -496,7 +497,7 @@ export function getChecker(operator: string): (values: Array<{ value: any }>, an
 }
 
 interface IsQuestionEnabledArgs {
-    qItem: QuestionnaireItem;
+    qItem: FCEQuestionnaireItem;
     parentPath: string[];
     values: FormItems;
     context: ItemContext;
@@ -541,7 +542,8 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
 
     const iterFn = enableBehavior === 'any' ? _.some : _.every;
 
-    return iterFn(enableWhen, ({ question, answer, operator }) => {
+    return iterFn(enableWhen, ({ question, operator, ...enableWhenItem }) => {
+        const answer = toAnswerValue(enableWhenItem, 'answer');
         const check = getChecker(operator);
 
         if (_.includes(args.parentPath, question)) {
@@ -692,13 +694,14 @@ export function calcInitialContext(
     };
 
     return {
-        ...qrfDataContext.launchContextParameters.reduce(
-            (acc, { name, value, resource }) => ({
+        ...qrfDataContext.launchContextParameters.reduce((acc, { name, resource, ...param }) => {
+            const value = getChoiceTypeValue(param, 'value');
+
+            return {
                 ...acc,
-                [name]: value && isPlainObject(value) ? value[Object.keys(value)[0] as keyof AnswerValue] : resource,
-            }),
-            {},
-        ),
+                [name]: value ? (value as keyof AnswerValue) : resource,
+            };
+        }, {}),
 
         // Vars defined in IG
         questionnaire: qrfDataContext.questionnaire,
@@ -761,6 +764,53 @@ export function isValueEmpty(value: any) {
     return _.isFinite(value) || _.isBoolean(value) ? false : _.isEmpty(value);
 }
 
-export function findExtensionByUrl(url: string, extensionList?: Extension[]) {
-    return extensionList?.find((extension) => extension.url === url) || null;
+function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefined {
+    const prefixKey = obj.keys().filter((key: string) => key.startsWith(prefix))[0];
+
+    return prefixKey ? obj[prefixKey] : undefined;
+}
+
+const FHIRPrimitiveTypes = [
+    'base64Binary',
+    'boolean',
+    'canonical',
+    'code',
+    'date',
+    'dateTime',
+    'decimal',
+    'id',
+    'instant',
+    'integer',
+    'integer64',
+    'markdown',
+    'oid',
+    'positiveInt',
+    'string',
+    'time',
+    'unsignedInt',
+    'uri',
+    'url',
+    'uuid',
+];
+
+function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
+
+    if (!prefixKey) {
+        return undefined;
+    }
+    const key = lowerFirst(prefixKey.slice(prefix.length));
+    const answerKey = FHIRPrimitiveTypes.includes(key) ? key : capitalize(key);
+
+    return {
+        [answerKey]: obj[prefixKey],
+    };
+}
+
+function toFHIRAnswerValue(answerValue: AnswerValue): FHIRAnswerValue {
+    const key = Object.keys(answerValue)[0]!;
+
+    return {
+        [`value${capitalize(key)}`]: answerValue[key],
+    } as FHIRAnswerValue;
 }

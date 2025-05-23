@@ -4,7 +4,7 @@ import _ from 'lodash';
 import isEqual from 'lodash/isEqual';
 import React, { PropsWithChildren, useEffect, useContext, useMemo, useRef, useState } from 'react';
 
-import { QuestionnaireItem } from '@beda.software/aidbox-types';
+import { FCEQuestionnaireItem } from './fce.types';
 
 import { useQuestionnaireResponseFormContext } from '.';
 import { QRFContext } from './context';
@@ -42,14 +42,13 @@ export function QuestionItem(props: QuestionItemProps) {
     const { questionItem: initialQuestionItem, context: initialContext, parentPath } = props;
     const {
         questionItemComponents,
-        customWidgets,
         groupItemComponent,
         itemControlQuestionItemComponents,
         itemControlGroupItemComponents,
     } = useContext(QRFContext);
     const { formValues, setFormValues } = useQuestionnaireResponseFormContext();
     const [questionItem, setQuestionItem] = useState(initialQuestionItem);
-    const prevQuestionItem: QuestionnaireItem | undefined = usePreviousValue(questionItem);
+    const prevQuestionItem: FCEQuestionnaireItem | undefined = usePreviousValue(questionItem);
 
     const { type, linkId, calculatedExpression, variable, repeats, itemControl, _text, _readOnly, _required } =
         questionItem;
@@ -197,20 +196,6 @@ Please define 'itemControlWidgets' for '${itemControl.coding![0]!.code!}'`,
         return <Component context={context} parentPath={parentPath} questionItem={questionItem} />;
     }
 
-    // TODO: deprecate!
-    if (customWidgets && linkId && linkId in customWidgets) {
-        console.warn(`QRF: 'customWidgets' are deprecated, use 'Questionnaire.item.itemControl' instead`);
-
-        if (type === 'group') {
-            console.error(`QRF: Use 'itemControl' for group custom widgets`);
-            return null;
-        }
-
-        const Component = customWidgets[linkId]!;
-
-        return <Component context={context} parentPath={parentPath} questionItem={questionItem} />;
-    }
-
     if (type in questionItemComponents) {
         const Component = questionItemComponents[type]!;
 
@@ -227,7 +212,10 @@ export function QuestionnaireResponseFormProvider({ children, ...props }: PropsW
 }
 
 /* Helper that resolves right context type */
-function isGroupItem(questionItem: QuestionnaireItem, context: ItemContext | ItemContext[]): context is ItemContext[] {
+function isGroupItem(
+    questionItem: FCEQuestionnaireItem,
+    context: ItemContext | ItemContext[],
+): context is ItemContext[] {
     return questionItem.type === 'group';
 }
 

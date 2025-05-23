@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import { Questionnaire, QuestionnaireResponse } from '@beda.software/aidbox-types';
 
 import { allergiesQuestionnaire } from './resources/questionnaire';
 import {
@@ -8,10 +7,12 @@ import {
     mapFormToResponse,
     mapResponseToForm,
     removeDisabledAnswers,
-} from '../src';
+} from '../src/utils';
+import { QuestionnaireResponse, QuestionnaireResponseItem } from 'fhir/r4b';
+import { FCEQuestionnaire, FCEQuestionnaireItem } from '../src/fce.types';
 
 test('Transform nested repeatable-groups from new resource to new resource', () => {
-    const questionnaire: Questionnaire = {
+    const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
         status: 'active',
         item: [
@@ -61,8 +62,8 @@ test('Transform nested repeatable-groups from new resource to new resource', () 
                             {
                                 linkId: 'answer',
                                 answer: [
-                                    { value: { string: 'answer for the first group 1' } },
-                                    { value: { string: 'answer for the first group 2' } },
+                                    { valueString: 'answer for the first group 1' },
+                                    { valueString: 'answer for the first group 2' },
                                 ],
                             },
                             {
@@ -73,14 +74,10 @@ test('Transform nested repeatable-groups from new resource to new resource', () 
 
                                         answer: [
                                             {
-                                                value: {
-                                                    string: 'nested answer for the first group 1',
-                                                },
+                                                valueString: 'nested answer for the first group 1',
                                             },
                                             {
-                                                value: {
-                                                    string: 'nested answer for the first group 2',
-                                                },
+                                                valueString: 'nested answer for the first group 2',
                                             },
                                         ],
                                     },
@@ -94,8 +91,8 @@ test('Transform nested repeatable-groups from new resource to new resource', () 
                             {
                                 linkId: 'answer',
                                 answer: [
-                                    { value: { string: 'answer for the second group 1' } },
-                                    { value: { string: 'answer for the second group 2' } },
+                                    { valueString: 'answer for the second group 1' },
+                                    { valueString: 'answer for the second group 2' },
                                 ],
                             },
                             {
@@ -106,14 +103,10 @@ test('Transform nested repeatable-groups from new resource to new resource', () 
 
                                         answer: [
                                             {
-                                                value: {
-                                                    string: 'nested answer for the second group 1',
-                                                },
+                                                valueString: 'nested answer for the second group 1',
                                             },
                                             {
-                                                value: {
-                                                    string: 'nested answer for the second group 2',
-                                                },
+                                                valueString: 'nested answer for the second group 2',
                                             },
                                         ],
                                     },
@@ -132,7 +125,7 @@ test('Transform nested repeatable-groups from new resource to new resource', () 
 });
 
 test('Transform with initial values', () => {
-    const questionnaire: Questionnaire = {
+    const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
         status: 'active',
         item: [
@@ -148,7 +141,7 @@ test('Transform with initial values', () => {
                     {
                         linkId: 'answer-with-initial',
                         type: 'text',
-                        initial: [{ value: { string: 'initial' } }],
+                        initial: [{ valueString: 'initial' }],
                     },
                 ],
             },
@@ -170,9 +163,7 @@ test('Transform with initial values', () => {
         item: [
             {
                 linkId: 'root-group',
-                item: [
-                    { linkId: 'answer-with-initial', answer: [{ value: { string: 'initial' } }] },
-                ],
+                item: [{ linkId: 'answer-with-initial', answer: [{ valueString: 'initial' }] }],
             },
         ],
     };
@@ -183,7 +174,7 @@ test('Transform with initial values', () => {
 });
 
 test('enableWhen logic for non-repeatable groups', () => {
-    const questionnaire: Questionnaire = {
+    const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
         status: 'active',
         item: [
@@ -206,7 +197,7 @@ test('enableWhen logic for non-repeatable groups', () => {
                                     {
                                         question: 'condition',
                                         operator: '=',
-                                        answer: { boolean: true },
+                                        answerBoolean: true,
                                     },
                                 ],
                             },
@@ -218,7 +209,7 @@ test('enableWhen logic for non-repeatable groups', () => {
                                     {
                                         question: 'condition',
                                         operator: '=',
-                                        answer: { boolean: false },
+                                        answerBoolean: false,
                                     },
                                 ],
                             },
@@ -241,15 +232,15 @@ test('enableWhen logic for non-repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                             {
                                 linkId: 'question-for-no',
-                                answer: [{ value: { string: 'no' } }],
+                                answer: [{ valueString: 'no' }],
                             },
                         ],
                     },
@@ -269,11 +260,11 @@ test('enableWhen logic for non-repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                         ],
                     },
@@ -293,7 +284,7 @@ test('enableWhen logic for non-repeatable groups', () => {
 });
 
 test('enableWhen logic for repeatable groups', () => {
-    const questionnaire: Questionnaire = {
+    const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
         status: 'active',
         item: [
@@ -317,7 +308,7 @@ test('enableWhen logic for repeatable groups', () => {
                                     {
                                         question: 'condition',
                                         operator: '=',
-                                        answer: { boolean: true },
+                                        answerBoolean: true,
                                     },
                                 ],
                             },
@@ -329,7 +320,7 @@ test('enableWhen logic for repeatable groups', () => {
                                     {
                                         question: 'condition',
                                         operator: '=',
-                                        answer: { boolean: false },
+                                        answerBoolean: false,
                                     },
                                 ],
                             },
@@ -352,15 +343,15 @@ test('enableWhen logic for repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                             {
                                 linkId: 'question-for-no',
-                                answer: [{ value: { string: 'no' } }],
+                                answer: [{ valueString: 'no' }],
                             },
                         ],
                     },
@@ -369,15 +360,15 @@ test('enableWhen logic for repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: false } }],
+                                answer: [{ valueBoolean: false }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                             {
                                 linkId: 'question-for-no',
-                                answer: [{ value: { string: 'no' } }],
+                                answer: [{ valueString: 'no' }],
                             },
                         ],
                     },
@@ -397,11 +388,11 @@ test('enableWhen logic for repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                         ],
                     },
@@ -410,11 +401,11 @@ test('enableWhen logic for repeatable groups', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: false } }],
+                                answer: [{ valueBoolean: false }],
                             },
                             {
                                 linkId: 'question-for-no',
-                                answer: [{ value: { string: 'no' } }],
+                                answer: [{ valueString: 'no' }],
                             },
                         ],
                     },
@@ -434,7 +425,7 @@ test('enableWhen logic for repeatable groups', () => {
 });
 
 test('enableWhenExpression logic', () => {
-    const questionnaire: Questionnaire = {
+    const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
         status: 'active',
         item: [
@@ -456,7 +447,7 @@ test('enableWhenExpression logic', () => {
                                 enableWhenExpression: {
                                     language: 'text/fhirpath',
                                     expression:
-                                        "%resource.repeat(item).where(linkId = 'condition').answer.children().boolean = true",
+                                        "%resource.repeat(item).where(linkId = 'condition').answer.valueBoolean = true",
                                 },
                             },
                             {
@@ -466,7 +457,7 @@ test('enableWhenExpression logic', () => {
                                 enableWhenExpression: {
                                     language: 'text/fhirpath',
                                     expression:
-                                        "%resource.repeat(item).where(linkId = 'condition').answer.children().boolean = false",
+                                        "%resource.repeat(item).where(linkId = 'condition').answer.valueBoolean = false",
                                 },
                             },
                         ],
@@ -488,15 +479,15 @@ test('enableWhenExpression logic', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                             {
                                 linkId: 'question-for-no',
-                                answer: [{ value: { string: 'no' } }],
+                                answer: [{ valueString: 'no' }],
                             },
                         ],
                     },
@@ -516,11 +507,11 @@ test('enableWhenExpression logic', () => {
                         item: [
                             {
                                 linkId: 'condition',
-                                answer: [{ value: { boolean: true } }],
+                                answer: [{ valueBoolean: true }],
                             },
                             {
                                 linkId: 'question-for-yes',
-                                answer: [{ value: { string: 'yes' } }],
+                                answer: [{ valueString: 'yes' }],
                             },
                         ],
                     },
@@ -580,18 +571,18 @@ test('mapFormToResponse cut empty answers', () => {
 });
 
 describe('enableWhen exists logic for non-repeatable groups primitives', () => {
-    const testConfigs = [
+    const testConfigs: Array<{ name: string; q: FCEQuestionnaireItem; qr: QuestionnaireResponseItem[] }> = [
         {
             name: 'boolean exist',
             q: { linkId: 'condition', text: 'Condition', type: 'boolean' },
             qr: [
                 {
                     linkId: 'condition',
-                    answer: [{ value: { boolean: true } }],
+                    answer: [{ valueBoolean: true }],
                 },
                 {
                     linkId: 'question-for-yes',
-                    answer: [{ value: { string: 'yes' } }],
+                    answer: [{ valueString: 'yes' }],
                 },
             ],
         },
@@ -601,7 +592,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
             qr: [
                 {
                     linkId: 'question-for-no',
-                    answer: [{ value: { string: 'no' } }],
+                    answer: [{ valueString: 'no' }],
                 },
             ],
         },
@@ -611,11 +602,11 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
             qr: [
                 {
                     linkId: 'condition',
-                    answer: [{ value: { integer: 1 } }],
+                    answer: [{ valueInteger: 1 }],
                 },
                 {
                     linkId: 'question-for-yes',
-                    answer: [{ value: { string: 'yes' } }],
+                    answer: [{ valueString: 'yes' }],
                 },
             ],
         },
@@ -625,7 +616,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
             qr: [
                 {
                     linkId: 'question-for-no',
-                    answer: [{ value: { string: 'no' } }],
+                    answer: [{ valueString: 'no' }],
                 },
             ],
         },
@@ -635,11 +626,11 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
             qr: [
                 {
                     linkId: 'condition',
-                    answer: [{ value: { decimal: 1 } }],
+                    answer: [{ valueDecimal: 1 }],
                 },
                 {
                     linkId: 'question-for-yes',
-                    answer: [{ value: { string: 'yes' } }],
+                    answer: [{ valueString: 'yes' }],
                 },
             ],
         },
@@ -649,14 +640,14 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
             qr: [
                 {
                     linkId: 'question-for-no',
-                    answer: [{ value: { string: 'no' } }],
+                    answer: [{ valueString: 'no' }],
                 },
             ],
         },
     ];
 
     test.each(testConfigs)('enableWhen works correctly', async (testConfig) => {
-        const questionnaire: Questionnaire = {
+        const questionnaire: FCEQuestionnaire = {
             resourceType: 'Questionnaire',
             status: 'active',
             item: [
@@ -679,7 +670,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
                                         {
                                             question: 'condition',
                                             operator: 'exists',
-                                            answer: { boolean: true },
+                                            answerBoolean: true,
                                         },
                                     ],
                                 },
@@ -691,7 +682,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
                                         {
                                             question: 'condition',
                                             operator: 'exists',
-                                            answer: { boolean: false },
+                                            answerBoolean: false,
                                         },
                                     ],
                                 },
