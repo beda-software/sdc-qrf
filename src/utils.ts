@@ -25,6 +25,29 @@ import {
 } from './types';
 import { FCEQuestionnaireItem } from 'fce.types';
 
+const FHIRPrimitiveTypes = [
+    'base64Binary',
+    'boolean',
+    'canonical',
+    'code',
+    'date',
+    'dateTime',
+    'decimal',
+    'id',
+    'instant',
+    'integer',
+    'integer64',
+    'markdown',
+    'oid',
+    'positiveInt',
+    'string',
+    'time',
+    'unsignedInt',
+    'uri',
+    'url',
+    'uuid',
+];
+
 export function wrapAnswerValue(type: QuestionnaireItem['type'], answer: any) {
     if (type === 'choice') {
         if (isPlainObject(answer)) {
@@ -401,7 +424,7 @@ export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: A
     if (firstValueType !== secondValueType) {
         throw new Error('Enable when must be used for the same type');
     }
-    if (!_.includes(['string', 'date', 'dateTime', 'time', 'uri', 'boolean', 'integer', 'decimal'], firstValueType)) {
+    if (!_.includes(FHIRPrimitiveTypes, firstValueType)) {
         throw new Error('Impossible to compare non-primitive type');
     }
 
@@ -769,29 +792,6 @@ function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefi
 
     return prefixKey ? obj[prefixKey] : undefined;
 }
-
-const FHIRPrimitiveTypes = [
-    'base64Binary',
-    'boolean',
-    'canonical',
-    'code',
-    'date',
-    'dateTime',
-    'decimal',
-    'id',
-    'instant',
-    'integer',
-    'integer64',
-    'markdown',
-    'oid',
-    'positiveInt',
-    'string',
-    'time',
-    'unsignedInt',
-    'uri',
-    'url',
-    'uuid',
-];
 
 function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
     const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
