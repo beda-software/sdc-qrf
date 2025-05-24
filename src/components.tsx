@@ -1,5 +1,3 @@
-import { Expression } from 'fhir/r4b';
-import fhirpath from 'fhirpath';
 import _ from 'lodash';
 import isEqual from 'lodash/isEqual';
 import React, { PropsWithChildren, useEffect, useContext, useMemo, useRef, useState } from 'react';
@@ -9,7 +7,13 @@ import { FCEQuestionnaireItem } from './fce.types';
 import { useQuestionnaireResponseFormContext } from '.';
 import { QRFContext } from './context';
 import { FormAnswerItems, ItemContext, QRFContextData, QuestionItemProps, QuestionItemsProps } from './types';
-import { calcContext, getBranchItems, getEnabledQuestions, wrapAnswerValue } from './utils.js';
+import {
+    calcContext,
+    evaluateQuestionItemExpression,
+    getBranchItems,
+    getEnabledQuestions,
+    wrapAnswerValue,
+} from './utils.js';
 
 function usePreviousValue<T = any>(value: T) {
     const prevValue = useRef<T | undefined>(value);
@@ -61,7 +65,7 @@ export function QuestionItem(props: QuestionItemProps) {
             ? branchItems.qrItems.map((curQRItem) =>
                   calcContext(initialContext, variable, branchItems.qItem, curQRItem),
               )
-            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]!);
+            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]);
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));
 
     const itemContext = isGroupItem(questionItem, context) ? context[0] : context;
@@ -217,21 +221,4 @@ function isGroupItem(
     context: ItemContext | ItemContext[],
 ): context is ItemContext[] {
     return questionItem.type === 'group';
-}
-
-function evaluateQuestionItemExpression(linkId: string, path: string, context: ItemContext, expression?: Expression) {
-    if (!expression) {
-        return [];
-    }
-
-    if (expression.language !== 'text/fhirpath') {
-        console.error('Only fhirpath expression is supported');
-        return [];
-    }
-
-    try {
-        return fhirpath.evaluate(context.context ?? {}, expression.expression!, context, undefined, { async: false });
-    } catch (err: unknown) {
-        throw Error(`FHIRPath expression evaluation failure for ${linkId}.${path}: ${err}`);
-    }
 }
