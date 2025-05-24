@@ -1,5 +1,5 @@
 import fhirpath from 'fhirpath';
-import _, { capitalize, lowerFirst } from 'lodash';
+import _, { lowerFirst, upperFirst } from 'lodash';
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import queryString from 'query-string';
@@ -832,7 +832,7 @@ export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValu
         return undefined;
     }
     const key = lowerFirst(prefixKey.slice(prefix.length));
-    const answerKey = FHIRPrimitiveTypes.includes(key) ? key : capitalize(key);
+    const answerKey = FHIRPrimitiveTypes.includes(key) ? key : upperFirst(key);
 
     return {
         [answerKey]: obj[prefixKey],
@@ -843,7 +843,7 @@ export function toFHIRAnswerValue(answerValue: AnswerValue, prefix: string): FHI
     const key = Object.keys(answerValue)[0]! as keyof AnswerValue;
 
     return {
-        [`${prefix}${capitalize(key)}`]: answerValue[key],
+        [`${prefix}${upperFirst(key)}`]: answerValue[key],
     } as FHIRAnswerValue;
 }
 

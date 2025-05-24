@@ -1687,6 +1687,7 @@ describe('toAnswerValue', () => {
         { input: [{}, 'value'], expect: undefined },
         { input: [{ valueCoding: { code: 'code' } }, 'value'], expect: { Coding: { code: 'code' } } },
         { input: [{ answerString: 'test' }, 'answer'], expect: { string: 'test' } },
+        { input: [{ answerDateTime: '2025-01-01T10:00:00Z' }, 'answer'], expect: { dateTime: '2025-01-01T10:00:00Z' } },
         { input: [{ answerCoding: { code: 'code' } }, 'answer'], expect: { Coding: { code: 'code' } } },
     ];
 
@@ -1700,6 +1701,7 @@ describe('toFHIRAnswerValue', () => {
         { input: [{ string: 'test' }, 'value'], expect: { valueString: 'test' } },
         { input: [{ Coding: { code: 'code' } }, 'value'], expect: { valueCoding: { code: 'code' } } },
         { input: [{ string: 'test' }, 'answer'], expect: { answerString: 'test' } },
+        { input: [{ dateTime: '2025-01-01T10:00:00Z' }, 'answer'], expect: { answerDateTime: '2025-01-01T10:00:00Z' } },
         { input: [{ Coding: { code: 'code' } }, 'answer'], expect: { answerCoding: { code: 'code' } } },
     ];
 
