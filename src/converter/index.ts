@@ -4,7 +4,7 @@ import { ExtensionIdentifier, extensionTransformers } from './extensions';
 import { fromFirstClassExtension } from './fceToFhir';
 import { toFirstClassExtension } from './fhirToFce';
 import { processLaunchContext as processLaunchContextToFce } from './fhirToFce/questionnaire/processExtensions';
-import { FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaireItem } from '../fce.types';
 export * from './utils';
 
 export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<FCEQuestionnaireItem> | undefined {

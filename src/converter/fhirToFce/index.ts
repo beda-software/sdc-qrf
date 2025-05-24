@@ -1,5 +1,5 @@
 import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
-import { FCEQuestionnaire } from 'fce.types';
+import { FCEQuestionnaire } from '../../fce.types';
 
 import { convertQuestionnaire } from './questionnaire';
 

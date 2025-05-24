@@ -1,4 +1,4 @@
-import { FCEQuestionnaire } from 'fce.types';
+import { FCEQuestionnaire } from '../../../fce.types';
 import { Extension as FHIRExtension, Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
 
 export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {

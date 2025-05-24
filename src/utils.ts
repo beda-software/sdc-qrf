@@ -26,7 +26,7 @@ import {
     QuestionnaireResponseFormData,
     RepeatableFormGroupItems,
 } from './types';
-import { FCEQuestionnaire, FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
 
 const FHIRPrimitiveTypes = [
     'base64Binary',

@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { processExtensions } from './processExtensions';
 import { processItems } from './processItems';
 import { checkFhirQuestionnaireProfile, trimUndefined } from '../utils';
-import { FCEQuestionnaire } from 'fce.types';
+import { FCEQuestionnaire } from '../../../fce.types';
 
 export function convertQuestionnaire(fhirQuestionnaire: FHIRQuestionnaire): FCEQuestionnaire {
     checkFhirQuestionnaireProfile(fhirQuestionnaire);

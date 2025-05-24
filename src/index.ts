@@ -7,8 +7,13 @@ export {
     getEnabledQuestions,
     calcInitialContext,
     parseFhirQueryExpression,
+    getChecker,
+    toAnswerValue,
+    populateItemKey,
+    removeItemKey,
+    getItemKey,
 } from './utils';
 export { useQuestionnaireResponseFormContext } from './hooks';
 export { QuestionItems, QuestionItem, QuestionnaireResponseFormProvider } from './components';
 export * from './converter';
-export type { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
+export type * from './fce.types';

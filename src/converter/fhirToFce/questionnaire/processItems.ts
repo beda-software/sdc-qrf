@@ -4,9 +4,9 @@ import {
     Element as FHIRElement,
 } from 'fhir/r4b';
 
-import { convertFromFHIRExtension, filterExtensions } from '../..';
+import { convertFromFHIRExtension, filterQuestionnaireItemExtensions } from '../..';
 import { ExtensionIdentifier } from '../../extensions';
-import { FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaireItem } from '../../../fce.types';
 
 export function processItems(fhirQuestionnaire: FHIRQuestionnaire) {
     return fhirQuestionnaire.item?.map((item) => convertItemProperties(item));
@@ -44,7 +44,7 @@ function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
             }
         }
 
-        const extensions = filterExtensions(item, identifier);
+        const extensions = filterQuestionnaireItemExtensions(item, identifier);
         if (extensions?.length) {
             updatedProperties = {
                 ...updatedProperties,

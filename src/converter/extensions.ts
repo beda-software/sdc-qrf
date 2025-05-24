@@ -1,4 +1,4 @@
-import { FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaireItem } from '../fce.types';
 import { Extension as FHIRExtension } from 'fhir/r4b';
 
 export enum ExtensionIdentifier {

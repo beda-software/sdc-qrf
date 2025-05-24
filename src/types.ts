@@ -8,7 +8,7 @@ import {
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
 } from 'fhir/r4b';
-import { FCEQuestionnaire, FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
 
 export type GroupItemComponent = ComponentType<GroupItemProps>;
 export type QuestionItemComponent = ComponentType<QuestionItemProps>;

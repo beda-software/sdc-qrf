@@ -2,7 +2,7 @@ import { QuestionnaireItem as FHIRQuestionnaireItem } from 'fhir/r4b';
 import _ from 'lodash';
 
 import { convertFromFHIRExtension, convertToFHIRExtension } from '../..';
-import { FCEQuestionnaireItem } from 'fce.types';
+import { FCEQuestionnaireItem } from '../../../fce.types';
 
 export function processItems(items: FCEQuestionnaireItem[]): FHIRQuestionnaireItem[] {
     return items.map((item) => {

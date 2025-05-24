@@ -24,7 +24,7 @@ export interface FCEQuestionnaire extends Questionnaire {
     /** Specifies a query that identifies the resource (or set of resources for a repeating item) that should be used to populate this Questionnaire or Questionnaire.item on initial population. */
     itemPopulationContext?: Expression;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext */
-    launchContext?: QuestionnaireLaunchContext[];
+    launchContext?: FCEQuestionnaireLaunchContext[];
     /** NOTE: from extension https://emr.beda.software/StructureDefinition/questionnaire-mapper */
     /** List of mapping resources that must be executed on extract */
     mapping?: Array<Reference>;
@@ -55,10 +55,10 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     calculatedExpression?: Expression;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-choiceColumn */
     /** Guide for rendering multi-column choices */
-    choiceColumn?: QuestionnaireItemChoiceColumn[];
+    choiceColumn?: FCEQuestionnaireItemChoiceColumn[];
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-constraint */
     /** An invariant that must be satisfied before responses to the questionnaire can be considered "complete". */
-    itemConstraint?: QuestionnaireItemConstraint[];
+    itemConstraint?: FCEQuestionnaireItemConstraint[];
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression */
     /** An expression that returns a boolean value for whether to enable the item. */
     enableWhenExpression?: Expression;
@@ -80,14 +80,14 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     itemPopulationContext?: Expression;
     /** NOTE: from extension https://emr.beda.software/StructureDefinition/macro */
     macro?: string;
-    _readOnly?: QuestionnaireItemReadOnly;
+    _readOnly?: FCEQuestionnaireItemReadOnly;
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-referenceResource */
     /** Where the type for a question is Reference, indicates a type of resource that is permitted. */
     referenceResource?: string[];
-    _required?: QuestionnaireItemRequired;
+    _required?: FCEQuestionnaireItemRequired;
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#subQuestionnaire */
     subQuestionnaire?: string;
-    _text?: QuestionnaireItemText;
+    _text?: FCEQuestionnaireItemText;
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#subQuestionnaire */
     /** Additional instructions for the user to guide their input (i.e. a human readable version of a regular expression like “nnn-nnn-nnn”). In most UIs this is the placeholder (or ‘ghost’) text placed directly inside the edit controls and that disappear when the control gets the focus. */
     entryFormat?: string;
@@ -123,44 +123,22 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     ordinalValue?: number;
 }
 
-export interface QuestionnaireItemText {
+export interface FCEQuestionnaireItemText {
     cqfExpression?: Expression;
     extension?: Extension[];
 }
 
-export interface QuestionnaireItemReadOnly {
+export interface FCEQuestionnaireItemReadOnly {
     cqfExpression?: Expression;
     extension?: Extension[];
 }
 
-export interface QuestionnaireItemRequired {
+export interface FCEQuestionnaireItemRequired {
     cqfExpression?: Expression;
     extension?: Extension[];
 }
 
-export interface QuestionnaireItemAnswerOption {
-    /** Additional content defined by implementations */
-    extension?: Extension[];
-    /** Unique id for inter-element referencing */
-    id?: string;
-    /** Whether option is selected by default */
-    initialSelected?: boolean;
-    /** Extensions that cannot be ignored even if unrecognized */
-    modifierExtension?: Extension[];
-    /** Answer value */
-    value?: QuestionnaireItemAnswerOptionValue;
-}
-
-export interface QuestionnaireItemAnswerOptionValue {
-    Coding?: Coding;
-    date?: string;
-    integer?: number;
-    Reference?: Reference;
-    string?: string;
-    time?: string;
-}
-
-export interface QuestionnaireItemChoiceColumn {
+export interface FCEQuestionnaireItemChoiceColumn {
     /** NOTE: from extension forDisplay */
     /** Use for display ? */
     forDisplay?: boolean;
@@ -175,7 +153,7 @@ export interface QuestionnaireItemChoiceColumn {
     width?: Quantity;
 }
 
-export interface QuestionnaireItemConstraint {
+export interface FCEQuestionnaireItemConstraint {
     /** NOTE: from extension expression */
     expression: string;
     /** NOTE: from extension human */
@@ -191,61 +169,7 @@ export interface QuestionnaireItemConstraint {
     severity: string;
 }
 
-export interface QuestionnaireItemEnableWhen {
-    /** Value for question comparison based on operator */
-    answer?: QuestionnaireItemEnableWhenAnswer;
-    /** Additional content defined by implementations */
-    extension?: Extension[];
-    /** Unique id for inter-element referencing */
-    id?: string;
-    /** Extensions that cannot be ignored even if unrecognized */
-    modifierExtension?: Extension[];
-    /** exists | = | != | > | < | >= | <= */
-    operator: string;
-    /** Question that determines whether item is enabled */
-    question: string;
-}
-
-export interface QuestionnaireItemEnableWhenAnswer {
-    boolean?: boolean;
-    Coding?: Coding;
-    date?: string;
-    dateTime?: string;
-    decimal?: number;
-    integer?: number;
-    Quantity?: Quantity;
-    Reference?: Reference;
-    string?: string;
-    time?: string;
-}
-
-export interface QuestionnaireItemInitial {
-    /** Additional content defined by implementations */
-    extension?: Extension[];
-    /** Unique id for inter-element referencing */
-    id?: string;
-    /** Extensions that cannot be ignored even if unrecognized */
-    modifierExtension?: Extension[];
-    /** Actual value for initializing the question */
-    value?: QuestionnaireItemInitialValue;
-}
-
-export interface QuestionnaireItemInitialValue {
-    Attachment?: Attachment;
-    boolean?: boolean;
-    Coding?: Coding;
-    date?: string;
-    dateTime?: string;
-    decimal?: number;
-    integer?: number;
-    Quantity?: Quantity;
-    Reference?: Reference;
-    string?: string;
-    time?: string;
-    uri?: string;
-}
-
-export interface QuestionnaireLaunchContext {
+export interface FCEQuestionnaireLaunchContext {
     /** NOTE: from extension description */
     description?: string;
     /** NOTE: from extension name */
