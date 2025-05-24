@@ -1,12 +1,16 @@
 import { ComponentType } from 'react';
 
 import {
+    Attachment,
+    Coding,
     ParametersParameter,
+    Quantity,
     Questionnaire,
     QuestionnaireItem,
     QuestionnaireResponse,
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
+    Reference,
 } from 'fhir/r4b';
 import { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
 
@@ -72,7 +76,20 @@ export type FHIRAnswerValue = Omit<
     'item' | 'id' | '_id' | 'modifierExtension' | 'extension'
 >;
 // Internal Answer Value that is used in FormItems
-export type AnswerValue = { [x: string]: any };
+export type AnswerValue = {
+    Attachment?: Attachment;
+    boolean?: boolean;
+    Coding?: Coding;
+    date?: string;
+    dateTime?: string;
+    decimal?: number;
+    integer?: number;
+    Quantity?: Quantity;
+    Reference?: Reference;
+    string?: string;
+    time?: string;
+    uri?: string;
+};
 
 export interface RepeatableFormGroupItems {
     question?: string;

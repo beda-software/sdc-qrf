@@ -824,7 +824,7 @@ export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValu
 }
 
 export function toFHIRAnswerValue(answerValue: AnswerValue, prefix: string): FHIRAnswerValue {
-    const key = Object.keys(answerValue)[0]!;
+    const key = Object.keys(answerValue)[0]! as keyof AnswerValue;
 
     return {
         [`${prefix}${capitalize(key)}`]: answerValue[key],
