@@ -45,12 +45,10 @@
             "linkId": "service-type",
             "initial": [
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "consultation",
-                            "system": "http://fhir.org/guides/argonaut-scheduling/CodeSystem/visit-type",
-                            "display": "The first appointment"
-                        }
+                    "valueCoding": {
+                        "code": "consultation",
+                        "system": "http://fhir.org/guides/argonaut-scheduling/CodeSystem/visit-type",
+                        "display": "The first appointment"
                     }
                 }
             ],
@@ -71,17 +69,17 @@
         }
     ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
-        "createdAt": "2023-04-05T05:22:35.752466Z",
         "versionId": "694"
     },
     "name": "Appointment",
     "status": "active",
     "mapping": [
         {
-            "id": "public-appointment-extract",
-            "resourceType": "Mapping"
+            "reference": "Mapping/public-appointment-extract"
         }
     ],
     "assembledFrom": "public-appointment",

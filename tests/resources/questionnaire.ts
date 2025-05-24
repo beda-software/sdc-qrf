@@ -1,6 +1,6 @@
-import { Questionnaire } from '@beda.software/aidbox-types';
+import { FCEQuestionnaire } from '../../src/fce.types';
 
-export const allergiesQuestionnaire: Questionnaire = {
+export const allergiesQuestionnaire: FCEQuestionnaire = {
     id: 'allergies',
     resourceType: 'Questionnaire',
     name: 'Allergies',
@@ -20,30 +20,24 @@ export const allergiesQuestionnaire: Questionnaire = {
             },
             answerOption: [
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '418634005',
-                            display: 'Drug',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '418634005',
+                        display: 'Drug',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '414285001',
-                            display: 'Food',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '414285001',
+                        display: 'Food',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '426232007',
-                            display: 'Environmental',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '426232007',
+                        display: 'Environmental',
                     },
                 },
             ],
@@ -62,57 +56,45 @@ export const allergiesQuestionnaire: Questionnaire = {
             },
             answerOption: [
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '39579001',
-                            display: 'Anaphylaxis',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '39579001',
+                        display: 'Anaphylaxis',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '25064002',
-                            display: 'Headache',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '25064002',
+                        display: 'Headache',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '247472004',
-                            display: 'Hives (Wheal)',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '247472004',
+                        display: 'Hives (Wheal)',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '422587007',
-                            display: 'Nausea',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '422587007',
+                        display: 'Nausea',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '422400008',
-                            display: 'Vomiting',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '422400008',
+                        display: 'Vomiting',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '782197009',
-                            display: 'Other',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '782197009',
+                        display: 'Other',
                     },
                 },
             ],
@@ -132,58 +114,46 @@ export const allergiesQuestionnaire: Questionnaire = {
                 {
                     question: 'type',
                     operator: '=',
-                    answer: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '418634005',
-                        },
+                    answerCoding: {
+                        system: 'http://snomed.ct',
+                        code: '418634005',
                     },
                 },
             ],
             answerOption: [
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://loinc.org',
-                            code: 'LA26702-3',
-                            display: 'Aspirin',
-                        },
+                    valueCoding: {
+                        system: 'http://loinc.org',
+                        code: 'LA26702-3',
+                        display: 'Aspirin',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://loinc.org',
-                            code: '\tLA30119-4',
-                            display: 'Iodine',
-                        },
+                    valueCoding: {
+                        system: 'http://loinc.org',
+                        code: '\tLA30119-4',
+                        display: 'Iodine',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://loinc.org',
-                            code: 'LA14348-9',
-                            display: 'Naproxen, ketoprofen or other non-steroidal',
-                        },
+                    valueCoding: {
+                        system: 'http://loinc.org',
+                        code: 'LA14348-9',
+                        display: 'Naproxen, ketoprofen or other non-steroidal',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://loinc.org',
-                            code: 'LA28487-9',
-                            display: 'Penicillin',
-                        },
+                    valueCoding: {
+                        system: 'http://loinc.org',
+                        code: 'LA28487-9',
+                        display: 'Penicillin',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://loinc.org',
-                            code: 'LA30118-6',
-                            display: 'Sulfa drugs',
-                        },
+                    valueCoding: {
+                        system: 'http://loinc.org',
+                        code: 'LA30118-6',
+                        display: 'Sulfa drugs',
                     },
                 },
             ],
@@ -203,67 +173,53 @@ export const allergiesQuestionnaire: Questionnaire = {
                 {
                     question: 'type',
                     operator: '=',
-                    answer: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '414285001',
-                        },
+                    answerCoding: {
+                        system: 'http://snomed.ct',
+                        code: '414285001',
                     },
                 },
             ],
             answerOption: [
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102259006',
-                            display: 'Citrus fruit',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102259006',
+                        display: 'Citrus fruit',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102260001',
-                            display: 'Peanut butter',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102260001',
+                        display: 'Peanut butter',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102261002',
-                            display: 'Strawberry',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102261002',
+                        display: 'Strawberry',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102262009',
-                            display: 'Chocolate',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102262009',
+                        display: 'Chocolate',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102263004',
-                            display: 'Eggs',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102263004',
+                        display: 'Eggs',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '102264005',
-                            display: 'Cheese',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '102264005',
+                        display: 'Cheese',
                     },
                 },
             ],
@@ -283,49 +239,39 @@ export const allergiesQuestionnaire: Questionnaire = {
                 {
                     question: 'type',
                     operator: '=',
-                    answer: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '426232007',
-                        },
+                    answerCoding: {
+                        system: 'http://snomed.ct',
+                        code: '426232007',
                     },
                 },
             ],
             answerOption: [
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '111088007',
-                            display: 'Latex',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '111088007',
+                        display: 'Latex',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '256259004',
-                            display: 'Pollen',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '256259004',
+                        display: 'Pollen',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '256277009',
-                            display: 'Grass pollen',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '256277009',
+                        display: 'Grass pollen',
                     },
                 },
                 {
-                    value: {
-                        Coding: {
-                            system: 'http://snomed.ct',
-                            code: '256417003',
-                            display: 'Horse dander',
-                        },
+                    valueCoding: {
+                        system: 'http://snomed.ct',
+                        code: '256417003',
+                        display: 'Horse dander',
                     },
                 },
             ],

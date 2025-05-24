@@ -1,8 +1,9 @@
 {
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
-        "createdAt": "2023-04-05T05:22:35.752466Z",
         "versionId": "694"
     },
     "launchContext": [
@@ -11,14 +12,18 @@
                 "code": "Practitioner",
                 "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"
             },
-            "type": ["Practitioner"]
+            "type": [
+                "Practitioner"
+            ]
         },
         {
             "name": {
                 "code": "PractitionerRole",
                 "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"
             },
-            "type": ["PractitionerRole"]
+            "type": [
+                "PractitionerRole"
+            ]
         }
     ],
     "name": "practitioner edit",
@@ -79,48 +84,38 @@
             "linkId": "specialty",
             "answerOption": [
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "394577000",
-                            "system": "http://snomed.info/sct",
-                            "display": "Anesthetics"
-                        }
+                    "valueCoding": {
+                        "code": "394577000",
+                        "system": "http://snomed.info/sct",
+                        "display": "Anesthetics"
                     }
                 },
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "394579002",
-                            "system": "http://snomed.info/sct",
-                            "display": "Cardiology"
-                        }
+                    "valueCoding": {
+                        "code": "394579002",
+                        "system": "http://snomed.info/sct",
+                        "display": "Cardiology"
                     }
                 },
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "394582007",
-                            "system": "http://snomed.info/sct",
-                            "display": "Dermatology"
-                        }
+                    "valueCoding": {
+                        "code": "394582007",
+                        "system": "http://snomed.info/sct",
+                        "display": "Dermatology"
                     }
                 },
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "394583002",
-                            "system": "http://snomed.info/sct",
-                            "display": "Endocrinology"
-                        }
+                    "valueCoding": {
+                        "code": "394583002",
+                        "system": "http://snomed.info/sct",
+                        "display": "Endocrinology"
                     }
                 },
                 {
-                    "value": {
-                        "Coding": {
-                            "code": "419772000",
-                            "system": "http://snomed.info/sct",
-                            "display": "Family practice"
-                        }
+                    "valueCoding": {
+                        "code": "419772000",
+                        "system": "http://snomed.info/sct",
+                        "display": "Family practice"
                     }
                 }
             ],
@@ -132,8 +127,7 @@
     ],
     "mapping": [
         {
-            "id": "practitioner-edit",
-            "resourceType": "Mapping"
+            "reference": "Mapping/practitioner-edit"
         }
     ],
     "resourceType": "Questionnaire",

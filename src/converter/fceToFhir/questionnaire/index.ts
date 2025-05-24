@@ -1,22 +1,12 @@
 import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Questionnaire as FCEQuestionnaire } from '@beda.software/aidbox-types';
-
 import { processExtensions } from './processExtensions';
 import { processItems } from './processItems';
-import { processMeta } from './processMeta';
+import { FCEQuestionnaire } from '../../../fce.types';
 
-export function convertQuestionnaire(
-    questionnaire: FCEQuestionnaire,
-    onlyExtensions = false,
-): FHIRQuestionnaire {
+export function convertQuestionnaire(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
     questionnaire = cloneDeep(questionnaire);
-    if (!onlyExtensions) {
-        questionnaire.meta = questionnaire.meta
-            ? processMeta(questionnaire.meta)
-            : questionnaire.meta;
-    }
-    questionnaire.item = processItems(questionnaire.item ?? [], onlyExtensions);
-    return processExtensions(questionnaire) as FHIRQuestionnaire;
+    questionnaire.item = processItems(questionnaire.item ?? []);
+    return processExtensions(questionnaire);
 }

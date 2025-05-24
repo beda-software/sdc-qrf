@@ -1,9 +1,13 @@
 {
-    "subjectType": ["Encounter", "Patient"],
+    "subjectType": [
+        "Encounter",
+        "Patient"
+    ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
-        "createdAt": "2023-04-05T05:22:35.752466Z",
         "versionId": "694"
     },
     "launchContext": [
@@ -12,14 +16,18 @@
                 "code": "Patient",
                 "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"
             },
-            "type": ["Patient"]
+            "type": [
+                "Patient"
+            ]
         },
         {
             "name": {
                 "code": "Author",
                 "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"
             },
-            "type": ["Resource"]
+            "type": [
+                "Resource"
+            ]
         }
     ],
     "name": "PHQ-2/PHQ-9 Depression Screening",
@@ -70,39 +78,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -121,39 +121,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -172,39 +164,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -223,39 +207,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -274,39 +250,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -325,39 +293,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -376,39 +336,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -427,39 +379,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -478,39 +422,31 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6568-5",
-                                    "system": "http://loinc.org",
-                                    "display": "Not at all"
-                                }
+                            "valueCoding": {
+                                "code": "LA6568-5",
+                                "system": "http://loinc.org",
+                                "display": "Not at all"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6569-3",
-                                    "system": "http://loinc.org",
-                                    "display": "Several days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6569-3",
+                                "system": "http://loinc.org",
+                                "display": "Several days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6570-1",
-                                    "system": "http://loinc.org",
-                                    "display": "More than half the days"
-                                }
+                            "valueCoding": {
+                                "code": "LA6570-1",
+                                "system": "http://loinc.org",
+                                "display": "More than half the days"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "LA6571-9",
-                                    "system": "http://loinc.org",
-                                    "display": "Nearly every day"
-                                }
+                            "valueCoding": {
+                                "code": "LA6571-9",
+                                "system": "http://loinc.org",
+                                "display": "Nearly every day"
                             }
                         }
                     ]
@@ -541,8 +477,7 @@
     ],
     "mapping": [
         {
-            "id": "phq2phq9-extract",
-            "resourceType": "Mapping"
+            "reference": "Mapping/phq2phq9-extract"
         }
     ],
     "resourceType": "Questionnaire",

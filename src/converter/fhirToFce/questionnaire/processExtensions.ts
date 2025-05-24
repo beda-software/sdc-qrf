@@ -1,4 +1,3 @@
-import { canonical } from '@beda.software/aidbox-types';
 import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
 
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
@@ -70,19 +69,14 @@ export function processLaunchContext(fhirQuestionnaire: FHIRQuestionnaire): any[
 
 function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined {
     const mapperExtensions = fhirQuestionnaire.extension?.filter(
-        (ext: any) =>
-            ext.url === 'https://emr.beda.software/StructureDefinition/questionnaire-mapper' ||
-            ext.url === 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
+        (ext: any) => ext.url === 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
     );
 
     if (!mapperExtensions) {
         return undefined;
     }
 
-    return mapperExtensions.map((mapperExtension: any) => ({
-        id: mapperExtension.valueReference?.reference?.split('/')[1],
-        resourceType: 'Mapping',
-    }));
+    return mapperExtensions.map((mapperExtension: any) => mapperExtension.valueReference);
 }
 
 function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {
@@ -91,9 +85,7 @@ function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {
             (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-sourceQueries',
         ) ?? [];
 
-    return extensions.map((ext) => ({
-        localRef: ext.valueReference?.reference?.substring(1) ?? '',
-    }));
+    return extensions.map((ext) => ext.valueReference);
 }
 
 function processTargetStructureMap(fhirQuestionnaire: FHIRQuestionnaire): string[] | undefined {
@@ -108,7 +100,7 @@ function processTargetStructureMap(fhirQuestionnaire: FHIRQuestionnaire): string
     return extensions.map((extension) => extension.valueCanonical!);
 }
 
-function processAssembledFrom(fhirQuestionnaire: FHIRQuestionnaire): canonical | undefined {
+function processAssembledFrom(fhirQuestionnaire: FHIRQuestionnaire): string | undefined {
     const extension = fhirQuestionnaire.extension?.find(
         (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom',
     );

@@ -1,6 +1,5 @@
+import { FCEQuestionnaireItem } from '../fce.types';
 import { Extension as FHIRExtension } from 'fhir/r4b';
-
-import { QuestionnaireItem as FCEQuestionnaireItem } from '@beda.software/aidbox-types';
 
 export enum ExtensionIdentifier {
     Hidden = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
