@@ -1801,6 +1801,15 @@ describe('getBranchItems', () => {
                     { linkId: 'dosage', type: 'string' },
                 ],
             },
+
+            {
+                linkId: 'medications-group-required',
+                type: 'group',
+                repeats: true,
+                required: true,
+                item: [{ linkId: 'medication-name-2', type: 'string' }],
+            },
+
             {
                 linkId: 'conditions-group',
                 type: 'group',
@@ -1844,6 +1853,11 @@ describe('getBranchItems', () => {
                         { linkId: 'dosage', answer: [{ valueString: '50mg' }] },
                     ],
                 },
+                {
+                    linkId: 'medications-group-required',
+                    item: [{ linkId: 'medication-name-2', answer: [{ valueString: 'Paracetamol' }] }],
+                },
+
                 {
                     linkId: 'known-allergies',
                     answer: [{ valueString: 'Peanuts' }, { valueString: 'Latex' }],
@@ -1910,6 +1924,24 @@ describe('getBranchItems', () => {
                 ],
             },
             {
+                name: 'repeating required group (leaf = group instance)',
+                path: ['medications-group-required'],
+                expectedQItem: {
+                    linkId: 'medications-group-required',
+                    type: 'group',
+                    repeats: true,
+                    required: true,
+                    item: [{ linkId: 'medication-name-2', type: 'string' }],
+                },
+                expectedQRItems: [
+                    {
+                        linkId: 'medications-group-required',
+                        item: [{ linkId: 'medication-name-2', answer: [{ valueString: 'Paracetamol' }] }],
+                    },
+                ],
+            },
+
+            {
                 name: 'repeating group → indexed instance → child question',
                 path: ['medications-group', 'items', '1', 'medication-name'],
                 expectedQItem: { linkId: 'medication-name', type: 'string' },
@@ -1959,13 +1991,13 @@ describe('getBranchItems', () => {
                 name: 'non-repeating group → leaf question',
                 path: ['demographics-group', 'items', 'full-name'],
                 expectedQItem: { linkId: 'full-name', type: 'string' },
-                expectedQRItems: [],
+                expectedQRItems: [{ linkId: 'full-name' }],
             },
             {
                 name: 'non-repeating group → nested group → leaf question',
                 path: ['demographics-group', 'items', 'address-group', 'items', 'city'],
                 expectedQItem: { linkId: 'city', type: 'string' },
-                expectedQRItems: [],
+                expectedQRItems: [{ linkId: 'city' }],
             },
 
             {
@@ -1983,10 +2015,26 @@ describe('getBranchItems', () => {
                 expectedQRItems: [],
             },
             {
+                name: 'repeating required group (leaf = group instance)',
+                path: ['medications-group-required'],
+                expectedQItem: {
+                    linkId: 'medications-group-required',
+                    type: 'group',
+                    repeats: true,
+                    required: true,
+                    item: [{ linkId: 'medication-name-2', type: 'string' }],
+                },
+                expectedQRItems: [
+                    {
+                        linkId: 'medications-group-required',
+                    },
+                ],
+            },
+            {
                 name: 'repeating group → indexed instance → child question',
                 path: ['medications-group', 'items', '0', 'medication-name'],
                 expectedQItem: { linkId: 'medication-name', type: 'string' },
-                expectedQRItems: [],
+                expectedQRItems: [{ linkId: 'medication-name' }],
             },
             {
                 name: 'stand-alone repeating question',
@@ -1996,7 +2044,7 @@ describe('getBranchItems', () => {
                     type: 'string',
                     repeats: true,
                 },
-                expectedQRItems: [],
+                expectedQRItems: [{ linkId: 'known-allergies' }],
             },
         ];
 
@@ -2065,16 +2113,6 @@ describe('calcContext', () => {
     ];
     const qItem = questionnaire.item![0]!;
     const qrItem = questionnaireResponse.item![0]!;
-    test('without specified qr item', () => {
-        expect(calcContext(initialContext, variables, qItem, undefined)).toStrictEqual({
-            resource: questionnaireResponse,
-            questionnaire,
-            context: { linkId: qItem.linkId },
-            qitem: qItem,
-            Name: ['Alice'],
-            City: [],
-        });
-    });
 
     test('with specified qr item', () => {
         expect(calcContext(initialContext, variables, qItem, qrItem)).toStrictEqual({

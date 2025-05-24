@@ -88,6 +88,10 @@ export function wrapAnswerValue(type: QuestionnaireItem['type'], value: any): An
     return { [type]: value };
 }
 
+function buildEmptyQuestionnaireResponseItem(qItem: QuestionnaireItem): QuestionnaireResponseItem {
+    return { linkId: qItem.linkId, ...(qItem.text ? { text: qItem.text } : {}) };
+}
+
 export function getBranchItems(
     fieldPath: string[],
     questionnaire: Questionnaire,
@@ -116,7 +120,17 @@ export function getBranchItems(
                 const index = i + 2 < fieldPath.length ? parseInt(fieldPath[i + 2]!, 10) : NaN;
                 if (isNaN(index)) {
                     // Leaf, return all items for repeatable item
-                    return { qItem, qrItems };
+
+                    return {
+                        qItem,
+                        qrItems: qrItems.length
+                            ? qrItems
+                            : // Repeatable required group always have at least one visible group
+                              // And any other repeatable item is visible
+                              qItem.required || qItem.type !== 'group'
+                              ? [buildEmptyQuestionnaireResponseItem(qItem)]
+                              : [],
+                    };
                 }
 
                 // Not leaf, move next moving down from the specified repeatable item
@@ -140,7 +154,10 @@ export function getBranchItems(
         }
     }
 
-    return { qItem, qrItems: qrItem ? [qrItem] : [] } as {
+    return {
+        qItem,
+        qrItems: qrItem ? [qrItem] : [buildEmptyQuestionnaireResponseItem(qItem as QuestionnaireItem)],
+    } as {
         qItem: QuestionnaireItem;
         qrItems: QuestionnaireResponseItem[];
     };
@@ -150,10 +167,9 @@ export function calcContext(
     initialContext: ItemContext,
     variables: FCEQuestionnaireItem['variable'],
     qItem: QuestionnaireItem,
-    qrItem: QuestionnaireResponseItem | undefined,
+    qrItem: QuestionnaireResponseItem,
 ): ItemContext {
     // TODO: add root variable support
-    qrItem = qrItem ?? { linkId: qItem.linkId };
     try {
         return {
             ...(variables || []).reduce(

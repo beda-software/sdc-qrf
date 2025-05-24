@@ -65,7 +65,7 @@ export function QuestionItem(props: QuestionItemProps) {
             ? branchItems.qrItems.map((curQRItem) =>
                   calcContext(initialContext, variable, branchItems.qItem, curQRItem),
               )
-            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]);
+            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]!);
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));
 
     const itemContext = isGroupItem(questionItem, context) ? context[0] : context;
