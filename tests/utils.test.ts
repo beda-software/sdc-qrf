@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 
 import { allergiesQuestionnaire } from './resources/questionnaire';
 import {
@@ -32,6 +32,299 @@ import {
 } from 'fhir/r4b';
 import { FCEQuestionnaire, FCEQuestionnaireItem } from '../src/fce.types';
 import { AnswerValue, FormAnswerItems, FormItems, ItemContext, QuestionnaireResponseFormData } from '../src/types';
+
+vi.mock('uuid', () => ({
+    v4: () => 'itemkey',
+}));
+
+describe('mapResponseToForm ', () => {
+    const questionnaire: FCEQuestionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        item: [
+            {
+                linkId: 'required-repeatable-group',
+                type: 'group',
+                repeats: true,
+                required: true,
+                item: [
+                    {
+                        linkId: 'required-question-1',
+                        type: 'text',
+                        required: true,
+                    },
+                    {
+                        linkId: 'non-required-question-1',
+                        type: 'text',
+                        required: true,
+                    },
+                ],
+            },
+            {
+                linkId: 'required-non-repeatable-group',
+                type: 'group',
+                required: true,
+                item: [
+                    {
+                        linkId: 'required-question-2',
+                        type: 'text',
+                        required: true,
+                    },
+                    {
+                        linkId: 'non-required-question-2',
+                        type: 'text',
+                        required: true,
+                    },
+                ],
+            },
+            {
+                linkId: 'non-required-repeatable-group',
+                type: 'group',
+                repeats: true,
+                item: [
+                    {
+                        linkId: 'required-question-3',
+                        type: 'text',
+                        required: true,
+                    },
+                    {
+                        linkId: 'non-required-question-3',
+                        type: 'text',
+                        required: true,
+                    },
+                ],
+            },
+            {
+                linkId: 'non-required-non-repeatable-group',
+                type: 'group',
+                item: [
+                    {
+                        linkId: 'required-question-4',
+                        type: 'text',
+                        required: true,
+                    },
+                    {
+                        linkId: 'non-required-question-4',
+                        type: 'text',
+                        required: true,
+                    },
+                ],
+            },
+
+            {
+                linkId: 'required-question-5',
+                type: 'text',
+                required: true,
+            },
+            {
+                linkId: 'non-required-question-5',
+                type: 'text',
+                required: true,
+            },
+        ],
+    };
+
+    test('works correctly for empty QR', () => {
+        const initialQR: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'completed',
+        };
+        const formItems = mapResponseToForm(initialQR, questionnaire);
+        expect(formItems).toStrictEqual({
+            _itemKey: 'itemkey',
+            'required-repeatable-group': {
+                items: [
+                    {
+                        _itemKey: 'itemkey',
+                    },
+                ],
+                question: undefined,
+            },
+        });
+    });
+    test('works correctly for filled QR', () => {
+        const initialQR: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'completed',
+            item: [
+                {
+                    linkId: 'required-repeatable-group',
+                    item: [
+                        {
+                            linkId: 'required-question-1',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'non-required-question-1',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                    ],
+                },
+                {
+                    linkId: 'required-non-repeatable-group',
+
+                    item: [
+                        {
+                            linkId: 'required-question-2',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'non-required-question-2',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                    ],
+                },
+                {
+                    linkId: 'non-required-repeatable-group',
+
+                    item: [
+                        {
+                            linkId: 'required-question-3',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'non-required-question-3',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                    ],
+                },
+                {
+                    linkId: 'non-required-non-repeatable-group',
+                    item: [
+                        {
+                            linkId: 'required-question-4',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'non-required-question-4',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                    ],
+                },
+                {
+                    linkId: 'required-question-5',
+                    answer: [{ valueString: 'ok' }],
+                },
+                {
+                    linkId: 'non-required-question-5',
+                    answer: [{ valueString: 'ok' }],
+                },
+            ],
+        };
+        const formItems = mapResponseToForm(initialQR, questionnaire);
+        expect(formItems).toStrictEqual({
+            _itemKey: 'itemkey',
+            'required-repeatable-group': {
+                items: [
+                    {
+                        _itemKey: 'itemkey',
+                        'non-required-question-1': [
+                            {
+                                question: undefined,
+                                value: {
+                                    string: 'ok',
+                                },
+                            },
+                        ],
+                        'required-question-1': [
+                            {
+                                question: undefined,
+                                value: {
+                                    string: 'ok',
+                                },
+                            },
+                        ],
+                    },
+                ],
+                question: undefined,
+            },
+            'required-non-repeatable-group': {
+                items: {
+                    _itemKey: 'itemkey',
+                    'non-required-question-2': [
+                        {
+                            question: undefined,
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'required-question-2': [
+                        {
+                            question: undefined,
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                },
+                question: undefined,
+            },
+            'non-required-repeatable-group': {
+                items: [
+                    {
+                        _itemKey: 'itemkey',
+                        'non-required-question-3': [
+                            {
+                                question: undefined,
+                                value: {
+                                    string: 'ok',
+                                },
+                            },
+                        ],
+                        'required-question-3': [
+                            {
+                                question: undefined,
+                                value: {
+                                    string: 'ok',
+                                },
+                            },
+                        ],
+                    },
+                ],
+                question: undefined,
+            },
+            'non-required-non-repeatable-group': {
+                items: {
+                    _itemKey: 'itemkey',
+                    'non-required-question-4': [
+                        {
+                            question: undefined,
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'required-question-4': [
+                        {
+                            question: undefined,
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                },
+                question: undefined,
+            },
+            'non-required-question-5': [
+                {
+                    question: undefined,
+                    value: {
+                        string: 'ok',
+                    },
+                },
+            ],
+            'required-question-5': [
+                {
+                    question: undefined,
+                    value: {
+                        string: 'ok',
+                    },
+                },
+            ],
+        });
+    });
+});
 
 test('Transform required repeatable groups with/without answers', () => {
     const questionnaire: FCEQuestionnaire = {
@@ -206,7 +499,6 @@ test('Transform nested repeatable-groups', () => {
                                 item: [
                                     {
                                         linkId: 'nested-answer',
-
                                         answer: [
                                             {
                                                 valueString: 'nested answer for the first group 1',
@@ -379,7 +671,6 @@ test('Transform removes missing answers', () => {
             items: {
                 'question-1': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },
@@ -387,7 +678,6 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-2': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },
@@ -395,7 +685,6 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-3': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },
@@ -403,7 +692,6 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-4': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },
@@ -411,7 +699,6 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-5': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },

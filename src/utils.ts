@@ -370,7 +370,7 @@ function mapResponseToFormRecursive(
             [linkId]: answers.map(({ value, subItems }) => ({
                 question: text,
                 value,
-                items: mapResponseToFormRecursive(subItems, question.item ?? []),
+                ...(question.item?.length ? { items: mapResponseToFormRecursive(subItems, question.item ?? []) } : {}),
             })),
         };
     }, populateItemKey({}));
