@@ -1,22 +1,24 @@
 import fhirpath from 'fhirpath';
-import _ from 'lodash';
+import _, { lowerFirst, upperFirst } from 'lodash';
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import queryString from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
+import fhirpathR4BModel from 'fhirpath/fhir-context/r4';
 
 import {
-    Extension,
+    Expression,
     Questionnaire,
     QuestionnaireItem,
-    QuestionnaireItemInitial,
+    QuestionnaireItemEnableWhen,
     QuestionnaireResponse,
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
-} from '@beda.software/aidbox-types';
+} from 'fhir/r4b';
 
 import {
     AnswerValue,
+    FHIRAnswerValue,
     FormAnswerItems,
     FormGroupItems,
     FormItems,
@@ -24,41 +26,70 @@ import {
     QuestionnaireResponseFormData,
     RepeatableFormGroupItems,
 } from './types';
+import { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
 
-export function wrapAnswerValue(type: QuestionnaireItem['type'], answer: any) {
+const FHIRPrimitiveTypes = [
+    'base64Binary',
+    'boolean',
+    'canonical',
+    'code',
+    'date',
+    'dateTime',
+    'decimal',
+    'id',
+    'instant',
+    'integer',
+    'integer64',
+    'markdown',
+    'oid',
+    'positiveInt',
+    'string',
+    'time',
+    'unsignedInt',
+    'uri',
+    'url',
+    'uuid',
+];
+
+export function wrapAnswerValue(type: QuestionnaireItem['type'], value: any): AnswerValue {
+    // The returned value in internal answer format
     if (type === 'choice') {
-        if (isPlainObject(answer)) {
-            return { Coding: answer };
+        if (isPlainObject(value)) {
+            return { Coding: value };
         } else {
-            return { string: answer };
+            return { string: value };
         }
     }
 
     if (type === 'open-choice') {
-        if (isPlainObject(answer)) {
-            return { Coding: answer };
+        if (isPlainObject(value)) {
+            return { Coding: value };
         } else {
-            return { string: answer };
+            return { string: value };
         }
     }
 
     if (type === 'text') {
-        return { string: answer };
+        return { string: value };
     }
 
     if (type === 'attachment') {
-        return { Attachment: answer };
+        return { Attachment: value };
     }
 
     if (type === 'reference') {
-        return { Reference: answer };
+        return { Reference: value };
     }
 
     if (type === 'quantity') {
-        return { Quantity: answer };
+        return { Quantity: value };
     }
 
-    return { [type]: answer };
+    return { [type]: value };
+}
+
+function buildEmptyQuestionnaireResponseItem(qItem: QuestionnaireItem): QuestionnaireResponseItem {
+    return { linkId: qItem.linkId, ...(qItem.text ? { text: qItem.text } : {}) };
 }
 
 export function getBranchItems(
@@ -66,39 +97,67 @@ export function getBranchItems(
     questionnaire: Questionnaire,
     questionnaireResponse: QuestionnaireResponse,
 ): { qItem: QuestionnaireItem; qrItems: QuestionnaireResponseItem[] } {
+    // The purpose of this function is to extract qItem and qrItem
+    // from original questionnaire and questionnaire response
+    // that are located for fieldPath in FormItems internal structure
+    // NOTE: fieldPath is always not empty because it's called on item level, not root
     let qrItem: QuestionnaireResponseItem | QuestionnaireResponse | undefined = questionnaireResponse;
     let qItem: QuestionnaireItem | Questionnaire = questionnaire;
 
+    let i = 0;
     // TODO: check for question with sub items
-    // TODO: check for root
-    for (let i = 0; i < fieldPath.length; i++) {
-        qItem = qItem.item!.find((curItem: any) => curItem.linkId === fieldPath[i])!;
-
+    while (i < fieldPath.length) {
+        const linkId = fieldPath[i];
+        qItem = qItem.item!.find((curItem) => curItem.linkId === linkId)!;
         if (qrItem) {
             const qrItems: QuestionnaireResponseItem[] =
-                qrItem.item?.filter((curItem: any) => curItem.linkId === fieldPath[i]) ?? [];
+                qrItem.item?.filter((curItem) => curItem.linkId === linkId) ?? [];
 
             if (qItem.repeats) {
-                if (i + 2 < fieldPath.length) {
-                    // In the middle
-                    qrItem = qrItems[parseInt(fieldPath[i + 2]!, 10)];
-                } else {
-                    // Leaf
-                    return { qItem, qrItems };
+                // Index is located after 'items' in path
+                // e.g. [firstLinkId, items, 1]
+                // +2 from firstLinkId
+                const index = i + 2 < fieldPath.length ? parseInt(fieldPath[i + 2]!, 10) : NaN;
+                if (isNaN(index)) {
+                    // Leaf, return all items for repeatable item
+
+                    return {
+                        qItem,
+                        qrItems: qrItems.length
+                            ? qrItems
+                            : // Repeatable required group always have at least one visible group
+                              // And any other repeatable item is visible
+                              qItem.required || qItem.type !== 'group'
+                              ? [buildEmptyQuestionnaireResponseItem(qItem)]
+                              : [],
+                    };
                 }
+
+                // Not leaf, move next moving down from the specified repeatable item
+                qrItem = qrItems[index];
             } else {
+                // For non-repeatable items, there's a single QR item
                 qrItem = qrItems[0];
             }
         }
 
         if (qItem.repeats || qItem.type !== 'group') {
-            i += 2;
+            // In repeating items we have index
+            // e.g. [firstLinkId, items, 0, secondLinkId]
+            // here we jump by 3 from firstLinkId to secondLinkId
+            i += 3;
         } else {
-            i++;
+            // In non-repeating groups we don't have index
+            // e.g. [firstLinkId, items, secondLinkId]
+            // here we jump by 2 from firstLinkId to secondLinkId
+            i += 2;
         }
     }
 
-    return { qItem, qrItems: [qrItem] } as {
+    return {
+        qItem,
+        qrItems: qrItem ? [qrItem] : [buildEmptyQuestionnaireResponseItem(qItem as QuestionnaireItem)],
+    } as {
         qItem: QuestionnaireItem;
         qrItems: QuestionnaireResponseItem[];
     };
@@ -106,7 +165,7 @@ export function getBranchItems(
 
 export function calcContext(
     initialContext: ItemContext,
-    variables: QuestionnaireItem['variable'],
+    variables: FCEQuestionnaireItem['variable'],
     qItem: QuestionnaireItem,
     qrItem: QuestionnaireResponseItem,
 ): ItemContext {
@@ -116,7 +175,7 @@ export function calcContext(
             ...(variables || []).reduce(
                 (acc, curVariable) => ({
                     ...acc,
-                    [curVariable.name!]: fhirpath.evaluate(qrItem || {}, curVariable.expression!, acc, undefined, {
+                    [curVariable.name!]: fhirpath.evaluate(qrItem, curVariable.expression!, acc, fhirpathR4BModel, {
                         async: false,
                     }),
                 }),
@@ -126,32 +185,6 @@ export function calcContext(
     } catch (err: unknown) {
         throw Error(`FHIRPath expression evaluation failure for "variable" in ${qItem.linkId}: ${err}`);
     }
-}
-
-export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: AnswerValue) {
-    const firstValueType = _.keys(firstAnswerValue)[0] as keyof AnswerValue;
-    const secondValueType = _.keys(secondAnswerValue)[0] as keyof AnswerValue;
-    if (firstValueType !== secondValueType) {
-        throw new Error('Enable when must be used for the same type');
-    }
-    if (!_.includes(['string', 'date', 'dateTime', 'time', 'uri', 'boolean', 'integer', 'decimal'], firstValueType)) {
-        throw new Error('Impossible to compare non-primitive type');
-    }
-
-    if (firstValueType === 'Quantity') {
-        throw new Error('Quantity type is not supported yet');
-    }
-
-    const firstValue = firstAnswerValue[firstValueType];
-    const secondValue = secondAnswerValue[secondValueType];
-
-    if (firstValue! < secondValue!) {
-        return -1;
-    }
-    if (firstValue! > secondValue!) {
-        return 1;
-    }
-    return 0;
 }
 
 function isGroup(question: QuestionnaireItem) {
@@ -173,7 +206,7 @@ function isRepeatableFormGroupItems(
 }
 
 function hasSubAnswerItems(items?: FormItems): items is FormItems {
-    return !!items && _.some(items, (x) => !_.some(x, _.isEmpty));
+    return !!items && _.some(removeItemKey(items), (x) => !_.some(x, _.isEmpty));
 }
 
 function mapFormToResponseRecursive(
@@ -182,6 +215,7 @@ function mapFormToResponseRecursive(
 ): QuestionnaireResponseItem[] {
     return Object.entries(answersItems).reduce((acc, [linkId, answers]) => {
         if (!linkId) {
+            /* c8 ignore next 3 */
             console.warn('The answer item has no linkId');
             return acc;
         }
@@ -219,27 +253,21 @@ function mapFormToResponseRecursive(
             ...acc,
             {
                 linkId,
-                answer: answers.reduce((answersAcc, answer) => {
-                    if (typeof answer === 'undefined') {
-                        return answersAcc;
-                    }
+                answer: answers
+                    .filter((answer) => !isAnswerValueEmpty(answer.value))
+                    .reduce((answersAcc, answer) => {
+                        const items = hasSubAnswerItems(answer.items)
+                            ? mapFormToResponseRecursive(answer.items, question.item ?? [])
+                            : [];
 
-                    if (!answer.value) {
-                        return answersAcc;
-                    }
-
-                    const items = hasSubAnswerItems(answer.items)
-                        ? mapFormToResponseRecursive(answer.items, question.item ?? [])
-                        : [];
-
-                    return [
-                        ...answersAcc,
-                        {
-                            value: answer.value,
-                            ...(items.length ? { item: items } : {}),
-                        },
-                    ];
-                }, [] as QuestionnaireResponseItemAnswer[]),
+                        return [
+                            ...answersAcc,
+                            {
+                                ...toFHIRAnswerValue(answer.value!, 'value'),
+                                ...(items.length ? { item: items } : {}),
+                            },
+                        ];
+                    }, [] as QuestionnaireResponseItemAnswer[]),
             },
         ];
     }, [] as QuestionnaireResponseItem[]);
@@ -258,6 +286,14 @@ const ITEM_KEY = '_itemKey';
 export function getItemKey(items: FormGroupItems | FormAnswerItems) {
     return (items as any)[ITEM_KEY];
 }
+
+export function removeItemKey<T extends FormGroupItems | FormAnswerItems>(items: T): T {
+    const newItems = _.cloneDeep(items);
+    delete (newItems as any)[ITEM_KEY];
+
+    return newItems;
+}
+
 export function populateItemKey(items: FormGroupItems | FormAnswerItems) {
     if ((items as any)[ITEM_KEY]) {
         return items;
@@ -277,6 +313,7 @@ function mapResponseToFormRecursive(
         const { linkId, initial, repeats, text, required } = question;
 
         if (!linkId) {
+            /* c8 ignore next 3 */
             console.warn('The question has no linkId');
             return acc;
         }
@@ -316,10 +353,13 @@ function mapResponseToFormRecursive(
                 }
             }
         }
-
-        const answers = qrItems?.[0]?.answer?.length
-            ? qrItems[0].answer
-            : initialToQuestionnaireResponseItemAnswer(initial);
+        const answers: Array<{ value: AnswerValue | undefined; subItems: QuestionnaireResponseItem[] }> = qrItems?.[0]
+            ?.answer?.length
+            ? qrItems[0].answer.map(({ item, ...answer }) => ({
+                  subItems: item ?? [],
+                  value: toAnswerValue(answer, 'value'),
+              }))
+            : (initial ?? []).map((answer) => ({ value: toAnswerValue(answer, 'value'), subItems: [] }));
 
         if (!answers.length) {
             return acc;
@@ -327,10 +367,10 @@ function mapResponseToFormRecursive(
 
         return {
             ...acc,
-            [linkId]: answers.map((answer) => ({
+            [linkId]: answers.map(({ value, subItems }) => ({
                 question: text,
-                value: answer.value,
-                items: mapResponseToFormRecursive(answer.item ?? [], question.item ?? []),
+                value,
+                ...(question.item?.length ? { items: mapResponseToFormRecursive(subItems, question.item ?? []) } : {}),
             })),
         };
     }, populateItemKey({}));
@@ -338,10 +378,6 @@ function mapResponseToFormRecursive(
 
 export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire: Questionnaire) {
     return mapResponseToFormRecursive(resource.item ?? [], questionnaire.item ?? []);
-}
-
-function initialToQuestionnaireResponseItemAnswer(initial: QuestionnaireItemInitial[] | undefined) {
-    return (initial ?? []).map(({ value }) => ({ value }) as QuestionnaireResponseItemAnswer);
 }
 
 export function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
@@ -392,11 +428,7 @@ export function findAnswersForQuestionsRecursive(linkId: string, values?: FormIt
     );
 }
 
-export function findAnswersForQuestion<T = any>(
-    linkId: string,
-    parentPath: string[],
-    values: FormItems,
-): Array<FormAnswerItems<T>> {
+function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): Array<FormAnswerItems> {
     const p = _.cloneDeep(parentPath);
 
     // Go up
@@ -420,9 +452,34 @@ export function findAnswersForQuestion<T = any>(
     return answers ? answers : [];
 }
 
+export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: AnswerValue) {
+    const firstValueType = getAnswerValueType(firstAnswerValue);
+    const secondValueType = getAnswerValueType(secondAnswerValue);
+
+    if (firstValueType !== secondValueType) {
+        throw new Error('Enable when must be used for the same type');
+    }
+    if (!_.includes(FHIRPrimitiveTypes, firstValueType)) {
+        throw new Error('Impossible to compare non-primitive type');
+    }
+
+    const firstValue = firstAnswerValue[firstValueType];
+    const secondValue = secondAnswerValue[secondValueType];
+
+    if (firstValue! < secondValue!) {
+        return -1;
+    }
+
+    if (firstValue! > secondValue!) {
+        return 1;
+    }
+
+    return 0;
+}
+
 export function isValueEqual(firstValue: AnswerValue, secondValue: AnswerValue) {
-    const firstValueType = _.keys(firstValue)[0];
-    const secondValueType = _.keys(secondValue)[0];
+    const firstValueType = getAnswerValueType(firstValue);
+    const secondValueType = getAnswerValueType(secondValue);
 
     if (firstValueType !== secondValueType) {
         console.error('Enable when must be used for the same type');
@@ -432,71 +489,54 @@ export function isValueEqual(firstValue: AnswerValue, secondValue: AnswerValue) 
 
     if (firstValueType === 'Coding') {
         // NOTE: what if undefined === undefined
+        // TODO: here should be system comparison, but it will be a big breaking change
         return firstValue.Coding?.code === secondValue.Coding?.code;
     }
 
     return _.isEqual(firstValue, secondValue);
 }
 
-export function getChecker(operator: string): (values: Array<{ value: any }>, answerValue: any) => boolean {
+export function getChecker(
+    operator: QuestionnaireItemEnableWhen['operator'],
+): (values: AnswerValue[], answerValue: AnswerValue) => boolean {
     if (operator === '=') {
-        return (values, answerValue) => _.findIndex(values, ({ value }) => isValueEqual(value, answerValue)) !== -1;
+        return (values, answerValue) => _.findIndex(values, (value) => isValueEqual(value, answerValue)) !== -1;
     }
 
     if (operator === '!=') {
-        return (values, answerValue) => _.findIndex(values, ({ value }) => isValueEqual(value, answerValue)) === -1;
+        return (values, answerValue) => _.findIndex(values, (value) => isValueEqual(value, answerValue)) === -1;
     }
 
     if (operator === 'exists') {
         return (values, answerValue) => {
-            const answersLength = _.reject(
-                values,
-                (value) => isValueEmpty(value.value) || _.every(_.mapValues(value.value, isValueEmpty)),
-            ).length;
-            const answer = answerValue?.boolean ?? true;
-            return answersLength > 0 === answer;
+            const answer = answerValue.boolean;
+            return values.length > 0 === answer;
         };
     }
 
     if (operator === '>=') {
-        return (values, answerValue) =>
-            _.findIndex(
-                _.reject(values, (value) => _.isEmpty(value.value)),
-                ({ value }) => compareValue(value, answerValue) >= 0,
-            ) !== -1;
+        return (values, answerValue) => _.findIndex(values, (value) => compareValue(value, answerValue) >= 0) !== -1;
     }
 
     if (operator === '>') {
-        return (values, answerValue) =>
-            _.findIndex(
-                _.reject(values, (value) => _.isEmpty(value.value)),
-                ({ value }) => compareValue(value, answerValue) > 0,
-            ) !== -1;
+        return (values, answerValue) => _.findIndex(values, (value) => compareValue(value, answerValue) > 0) !== -1;
     }
 
     if (operator === '<=') {
-        return (values, answerValue) =>
-            _.findIndex(
-                _.reject(values, (value) => _.isEmpty(value.value)),
-                ({ value }) => compareValue(value, answerValue) <= 0,
-            ) !== -1;
+        return (values, answerValue) => _.findIndex(values, (value) => compareValue(value, answerValue) <= 0) !== -1;
     }
 
     if (operator === '<') {
-        return (values, answerValue) =>
-            _.findIndex(
-                _.reject(values, (value) => _.isEmpty(value.value)),
-                ({ value }) => compareValue(value, answerValue) < 0,
-            ) !== -1;
+        return (values, answerValue) => _.findIndex(values, (value) => compareValue(value, answerValue) < 0) !== -1;
     }
 
+    /* c8 ignore next 2 */
     console.error(`Unsupported enableWhen.operator ${operator}`);
-
     return _.constant(true);
 }
 
 interface IsQuestionEnabledArgs {
-    qItem: QuestionnaireItem;
+    qItem: FCEQuestionnaireItem;
     parentPath: string[];
     values: FormItems;
     context: ItemContext;
@@ -523,7 +563,7 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
                 args.context.resource,
                 enableWhenExpression.expression!,
                 args.context ?? {},
-                undefined,
+                fhirpathR4BModel,
                 { async: false },
             )[0];
 
@@ -541,24 +581,30 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
 
     const iterFn = enableBehavior === 'any' ? _.some : _.every;
 
-    return iterFn(enableWhen, ({ question, answer, operator }) => {
+    return iterFn(enableWhen, ({ question, operator, ...enableWhenItem }) => {
+        // answer is required field in enableWhen
+        const answer = toAnswerValue(enableWhenItem, 'answer')!;
         const check = getChecker(operator);
 
         if (_.includes(args.parentPath, question)) {
+            // This block is about sub questions inside questions (answers that have nested items)
+            // It's currently not used in any of our questionnaires
             // TODO: handle double-nested values
             const parentAnswerPath = _.slice(args.parentPath, 0, args.parentPath.length - 1);
             const parentAnswer = _.get(args.values, parentAnswerPath);
+            const answerValues = getAnswerValues(parentAnswer ? [parentAnswer] : []);
 
-            return check(parentAnswer ? [parentAnswer] : [], answer);
+            return check(answerValues, answer);
         }
         const answers = findAnswersForQuestion(question, args.parentPath, args.values);
+        const answerValues = getAnswerValues(answers);
 
-        return check(_.compact(answers), answer);
+        return check(answerValues, answer);
     });
 }
 
 export function removeDisabledAnswers(
-    questionnaire: Questionnaire,
+    questionnaire: FCEQuestionnaire,
     values: FormItems,
     context: ItemContext,
 ): FormItems {
@@ -572,7 +618,7 @@ export function removeDisabledAnswers(
 }
 
 interface RemoveDisabledAnswersRecursiveArgs {
-    questionnaireItems: QuestionnaireItem[];
+    questionnaireItems: FCEQuestionnaireItem[];
     parentPath: string[];
     answersItems: FormItems;
     initialValues: FormItems;
@@ -640,33 +686,27 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
 
         return {
             ...acc,
-            [linkId!]: answers.reduce((answersAcc, answer, index) => {
-                if (typeof answer === 'undefined') {
-                    return answersAcc;
-                }
+            [linkId!]: answers
+                .filter((answer) => !isAnswerValueEmpty(answer.value))
+                .reduce((answersAcc, answer, index) => {
+                    const items = hasSubAnswerItems(answer.items)
+                        ? removeDisabledAnswersRecursive({
+                              questionnaireItems: questionnaireItem.item ?? [],
+                              parentPath: [...args.parentPath, linkId!, index.toString(), 'items'],
+                              answersItems: answer.items,
+                              initialValues: { ...values, [linkId!]: [...answersAcc, { ...answer, items: [] }] },
+                              context: args.context,
+                          })
+                        : {};
 
-                if (!answer.value) {
-                    return answersAcc;
-                }
-
-                const items = hasSubAnswerItems(answer.items)
-                    ? removeDisabledAnswersRecursive({
-                          questionnaireItems: questionnaireItem.item ?? [],
-                          parentPath: [...args.parentPath, linkId!, index.toString(), 'items'],
-                          answersItems: answer.items,
-                          initialValues: values,
-                          context: args.context,
-                      })
-                    : {};
-
-                return [...answersAcc, { ...answer, items }];
-            }, [] as any),
+                    return [...answersAcc, { ...answer, items }];
+                }, [] as any),
         };
     }, {} as any);
 }
 
 export function getEnabledQuestions(
-    questionnaireItems: QuestionnaireItem[],
+    questionnaireItems: FCEQuestionnaireItem[],
     parentPath: string[],
     values: FormItems,
     context: ItemContext,
@@ -675,6 +715,7 @@ export function getEnabledQuestions(
         const { linkId } = qItem;
 
         if (!linkId) {
+            /* c8 ignore next 2 */
             return false;
         }
 
@@ -692,13 +733,14 @@ export function calcInitialContext(
     };
 
     return {
-        ...qrfDataContext.launchContextParameters.reduce(
-            (acc, { name, value, resource }) => ({
+        ...qrfDataContext.launchContextParameters.reduce((acc, { name, resource, ...param }) => {
+            const value = getChoiceTypeValue(param, 'value');
+
+            return {
                 ...acc,
-                [name]: value && isPlainObject(value) ? value[Object.keys(value)[0] as keyof AnswerValue] : resource,
-            }),
-            {},
-        ),
+                [name]: value ? (value as keyof AnswerValue) : resource,
+            };
+        }, {}),
 
         // Vars defined in IG
         questionnaire: qrfDataContext.questionnaire,
@@ -718,7 +760,9 @@ function resolveTemplateExpr(str: string, context: ItemContext) {
         return matches.reduce((result, match) => {
             const expr = match.replace(/[{}]/g, '');
 
-            const resolvedVar = fhirpath.evaluate(context.context || {}, expr, context, undefined, { async: false });
+            const resolvedVar = fhirpath.evaluate(context.context || {}, expr, context, fhirpathR4BModel, {
+                async: false,
+            });
 
             if (resolvedVar?.length) {
                 return result.replace(match, resolvedVar.join(','));
@@ -751,6 +795,72 @@ export function parseFhirQueryExpression(expression: string, context: ItemContex
     return [resourceType, searchParams];
 }
 
+export function evaluateQuestionItemExpression(
+    linkId: string,
+    path: string,
+    context: ItemContext,
+    expression?: Expression,
+) {
+    if (!expression) {
+        return [];
+    }
+
+    if (expression.language !== 'text/fhirpath') {
+        console.error('Only fhirpath expression is supported');
+        return [];
+    }
+
+    try {
+        return fhirpath.evaluate(context.context ?? {}, expression.expression!, context, fhirpathR4BModel, {
+            async: false,
+        });
+    } catch (err: unknown) {
+        throw Error(`FHIRPath expression evaluation failure for ${linkId}.${path}: ${err}`);
+    }
+}
+
+export function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefined {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
+
+    return prefixKey ? obj[prefixKey] : undefined;
+}
+
+export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
+
+    if (!prefixKey) {
+        return undefined;
+    }
+    const key = lowerFirst(prefixKey.slice(prefix.length));
+    const answerKey = FHIRPrimitiveTypes.includes(key) ? key : upperFirst(key);
+
+    return {
+        [answerKey]: obj[prefixKey],
+    };
+}
+
+export function toFHIRAnswerValue(answerValue: AnswerValue, prefix: string): FHIRAnswerValue {
+    const key = Object.keys(answerValue)[0]! as keyof AnswerValue;
+
+    return {
+        [`${prefix}${upperFirst(key)}`]: answerValue[key],
+    } as FHIRAnswerValue;
+}
+
+export function getAnswerValueType(v: AnswerValue): keyof AnswerValue {
+    const keys = _.keys(v);
+
+    return keys[0] as keyof AnswerValue;
+}
+
+export function getAnswerValues(answers: FormAnswerItems[]) {
+    return _.reject(answers, ({ value }) => isAnswerValueEmpty(value)).map(({ value }) => value!);
+}
+
+export function isAnswerValueEmpty(value: { [x: string]: any } | undefined | null) {
+    return isValueEmpty(value) || _.every(_.mapValues(value, isValueEmpty));
+}
+
 export function isValueEmpty(value: any) {
     if (_.isNaN(value)) {
         console.warn(
@@ -759,8 +869,4 @@ export function isValueEmpty(value: any) {
     }
 
     return _.isFinite(value) || _.isBoolean(value) ? false : _.isEmpty(value);
-}
-
-export function findExtensionByUrl(url: string, extensionList?: Extension[]) {
-    return extensionList?.find((extension) => extension.url === url) || null;
 }

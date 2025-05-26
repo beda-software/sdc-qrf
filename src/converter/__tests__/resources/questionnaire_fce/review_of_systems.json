@@ -14,9 +14,7 @@
             "linkId": "provider-viewed-confirmation",
             "initial": [
                 {
-                    "value": {
-                        "boolean": false
-                    }
+                    "valueBoolean": false
                 }
             ]
         },
@@ -46,9 +44,7 @@
                     "linkId": "general-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "general"
                         }
@@ -78,9 +74,7 @@
                     "linkId": "heent-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "heent"
                         }
@@ -110,9 +104,7 @@
                     "linkId": "cardiovascular-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "cardiovascular"
                         }
@@ -142,9 +134,7 @@
                     "linkId": "respiratory-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "respiratory"
                         }
@@ -174,9 +164,7 @@
                     "linkId": "gastrointestinal-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "gastrointestinal"
                         }
@@ -206,9 +194,7 @@
                     "linkId": "genitourinary-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "genitourinary"
                         }
@@ -238,9 +224,7 @@
                     "linkId": "musculoskeletal-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "musculoskeletal"
                         }
@@ -270,9 +254,7 @@
                     "linkId": "neurologic-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "neurologic"
                         }
@@ -302,9 +284,7 @@
                     "linkId": "psychiatric-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "psychiatric"
                         }
@@ -334,9 +314,7 @@
                     "linkId": "skin-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "skin"
                         }
@@ -352,9 +330,7 @@
                     "linkId": "other-comment",
                     "enableWhen": [
                         {
-                            "answer": {
-                                "boolean": true
-                            },
+                            "answerBoolean": true,
                             "operator": "=",
                             "question": "other"
                         }
@@ -366,9 +342,7 @@
             "linkId": "abnormal-systems-group",
             "enableWhen": [
                 {
-                    "answer": {
-                        "boolean": true
-                    },
+                    "answerBoolean": true,
                     "operator": "=",
                     "question": "provider-viewed-confirmation"
                 }
@@ -376,14 +350,17 @@
         }
     ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
-        "createdAt": "2023-04-05T05:22:35.752466Z",
         "versionId": "694"
     },
     "name": "Review of Systems",
     "status": "active",
-    "subjectType": ["Encounter"],
+    "subjectType": [
+        "Encounter"
+    ],
     "assembledFrom": "review-of-systems",
     "id": "review-of-systems",
     "resourceType": "Questionnaire"

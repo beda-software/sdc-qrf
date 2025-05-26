@@ -1,9 +1,13 @@
 {
-    "subjectType": ["Encounter", "Patient"],
+    "subjectType": [
+        "Encounter",
+        "Patient"
+    ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": [
+            "https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ],
         "lastUpdated": "2023-05-04T01:00:51.328418Z",
-        "createdAt": "2023-05-04T01:00:51.328418Z",
         "versionId": "2"
     },
     "launchContext": [
@@ -11,7 +15,9 @@
             "name": {
                 "code": "Patient"
             },
-            "type": ["Patient"]
+            "type": [
+                "Patient"
+            ]
         }
     ],
     "name": "Vitals",
@@ -144,27 +150,21 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "sitting",
-                                    "display": "Sitting"
-                                }
+                            "valueCoding": {
+                                "code": "sitting",
+                                "display": "Sitting"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "lying",
-                                    "display": "Lying"
-                                }
+                            "valueCoding": {
+                                "code": "lying",
+                                "display": "Lying"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "standing",
-                                    "display": "Standing"
-                                }
+                            "valueCoding": {
+                                "code": "standing",
+                                "display": "Standing"
                             }
                         }
                     ]
@@ -182,19 +182,15 @@
                     },
                     "answerOption": [
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "biceps-left",
-                                    "display": "Biceps left"
-                                }
+                            "valueCoding": {
+                                "code": "biceps-left",
+                                "display": "Biceps left"
                             }
                         },
                         {
-                            "value": {
-                                "Coding": {
-                                    "code": "biceps-right",
-                                    "display": "Biceps right"
-                                }
+                            "valueCoding": {
+                                "code": "biceps-right",
+                                "display": "Biceps right"
                             }
                         }
                     ]
@@ -223,8 +219,7 @@
     ],
     "mapping": [
         {
-            "id": "vitals",
-            "resourceType": "Mapping"
+            "reference": "Mapping/vitals"
         }
     ],
     "resourceType": "Questionnaire",

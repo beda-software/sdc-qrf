@@ -32,7 +32,7 @@
         }
     ],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"]
+        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"]
     },
     "extension": [
         {
