@@ -1,15 +1,9 @@
 {
     "subjectType": ["Patient"],
     "meta": {
-        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
-        "versionId": "694",
-        "extension": [
-            {
-                "url": "ex:createdAt",
-                "valueInstant": "2023-04-05T05:22:35.752466Z"
-            }
-        ]
+        "versionId": "694"
     },
     "name": "Beverages",
     "item": [
@@ -32,19 +26,19 @@
                     "valueInteger": 2
                 },
                 {
-                    "url": "https://beda.software/fhir-emr-questionnaire/slider-start",
+                    "url": "https://emr.beda.software/StructureDefinition/slider-start",
                     "valueInteger": 1
                 },
                 {
-                    "url": "https://beda.software/fhir-emr-questionnaire/slider-stop",
+                    "url": "https://emr.beda.software/StructureDefinition/slider-stop",
                     "valueInteger": 20
                 },
                 {
-                    "url": "https://beda.software/fhir-emr-questionnaire/help-text",
+                    "url": "https://emr.beda.software/StructureDefinition/help-text",
                     "valueString": "How many beverages you are consuming per day?"
                 },
                 {
-                    "url": "https://beda.software/fhir-emr-questionnaire/slider-stop-label",
+                    "url": "https://emr.beda.software/StructureDefinition/slider-stop-label",
                     "valueString": "20+"
                 }
             ],
@@ -66,7 +60,7 @@
                     }
                 },
                 {
-                    "url": "https://beda.software/fhir-emr-questionnaire/adjust-last-to-right",
+                    "url": "https://emr.beda.software/StructureDefinition/adjust-last-to-right",
                     "valueBoolean": true
                 }
             ],

@@ -1,6 +1,5 @@
+import { FCEQuestionnaire } from '../../../fce.types';
 import { Extension as FHIRExtension, Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
-
-import { Questionnaire as FCEQuestionnaire } from '@beda.software/aidbox-types';
 
 export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
     const { launchContext, mapping, sourceQueries, targetStructureMap, assembledFrom, ...fhirQuestionnaire } =
@@ -41,10 +40,9 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
     if (mapping) {
         extensions = extensions.concat(
             mapping.map((m) => ({
-                // url: 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
-                url: 'http://beda.software/fhir-extensions/questionnaire-mapper',
+                url: 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
                 valueReference: {
-                    reference: `Mapping/${m.id}`,
+                    reference: m.reference,
                 },
             })),
         );
@@ -54,7 +52,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
         extensions = extensions.concat(
             sourceQueries.map((item) => ({
                 url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-sourceQueries',
-                valueReference: { reference: `#${item.localRef}` },
+                valueReference: { reference: item.reference },
             })),
         );
     }
@@ -79,5 +77,5 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
         fhirQuestionnaire.extension = (fhirQuestionnaire.extension ?? []).concat(extensions);
     }
 
-    return fhirQuestionnaire as FHIRQuestionnaire;
+    return fhirQuestionnaire;
 }
