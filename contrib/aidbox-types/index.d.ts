@@ -14070,7 +14070,7 @@ export interface Questionnaire {
     lastReviewDate?: date;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext */
     launchContext?: QuestionnaireLaunchContext[];
-    /** NOTE: from extension https://emr.beda.software/StructureDefinition/questionnaire-mapper */
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/questionnaire-mapper */
     /** List of mapping resources that must be executed on extract */
     mapping?: Array<InternalReference<Mapping>>;
     /** Extensions that cannot be ignored */
@@ -14167,7 +14167,7 @@ export interface QuestionnaireItem {
     itemPopulationContext?: Expression;
     /** Unique id for item in questionnaire */
     linkId: string;
-    /** NOTE: from extension https://emr.beda.software/StructureDefinition/macro */
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/macro */
     macro?: string;
     /** No more than this many characters */
     maxLength?: integer;

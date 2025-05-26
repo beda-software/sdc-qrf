@@ -6,6 +6,7 @@ import { toFirstClassExtension } from './fhirToFce';
 import { processLaunchContext as processLaunchContextToFce } from './fhirToFce/questionnaire/processExtensions';
 import { FCEQuestionnaireItem } from '../fce.types';
 export * from './utils';
+export * from './reference';
 
 export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<FCEQuestionnaireItem> | undefined {
     const identifier = extensions[0]!.url;

@@ -40,7 +40,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
     if (mapping) {
         extensions = extensions.concat(
             mapping.map((m) => ({
-                url: 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
+                url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
                 valueReference: {
                     reference: m.reference,
                 },

@@ -1,7 +1,7 @@
 {
     "subjectType": ["Patient"],
     "meta": {
-        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
         "versionId": "694"
     },
@@ -26,19 +26,19 @@
                     "valueInteger": 2
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/slider-start",
+                    "url": "https://emr-core.beda.software/StructureDefinition/slider-start",
                     "valueInteger": 1
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/slider-stop",
+                    "url": "https://emr-core.beda.software/StructureDefinition/slider-stop",
                     "valueInteger": 20
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/help-text",
+                    "url": "https://emr-core.beda.software/StructureDefinition/help-text",
                     "valueString": "How many beverages you are consuming per day?"
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/slider-stop-label",
+                    "url": "https://emr-core.beda.software/StructureDefinition/slider-stop-label",
                     "valueString": "20+"
                 }
             ],
@@ -60,7 +60,7 @@
                     }
                 },
                 {
-                    "url": "https://emr.beda.software/StructureDefinition/adjust-last-to-right",
+                    "url": "https://emr-core.beda.software/StructureDefinition/adjust-last-to-right",
                     "valueBoolean": true
                 }
             ],

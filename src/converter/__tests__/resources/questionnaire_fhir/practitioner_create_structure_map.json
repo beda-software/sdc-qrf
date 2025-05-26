@@ -1,6 +1,6 @@
 {
     "meta": {
-        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2023-04-25T06:51:01.969393Z",
         "versionId": "268"
     },
@@ -69,7 +69,7 @@
     "title": "Practitioner create",
     "extension": [
         {
-            "url": "https://emr.beda.software/StructureDefinition/questionnaire-mapper",
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
             "valueReference": {
                 "reference": "Mapping/practitioner-create"
             }

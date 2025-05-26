@@ -69,7 +69,7 @@ export function processLaunchContext(fhirQuestionnaire: FHIRQuestionnaire): any[
 
 function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined {
     const mapperExtensions = fhirQuestionnaire.extension?.filter(
-        (ext: any) => ext.url === 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
+        (ext: any) => ext.url === 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
     );
 
     if (!mapperExtensions) {

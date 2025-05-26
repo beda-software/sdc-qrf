@@ -24,7 +24,7 @@ export enum ExtensionIdentifier {
     BackgroundImage = 'http://aidbox.io/questionnaire-backgroundImage',
     Language = 'http://hl7.org/fhir/StructureDefinition/language',
     ChoiceOrientation = 'http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation',
-    InlineChoiceDirection = 'https://emr.beda.software/StructureDefinition/inline-choice-direction',
+    InlineChoiceDirection = 'https://emr-core.beda.software/StructureDefinition/inline-choice-direction',
     ChoiceColumns = 'http://aidbox.io/fhir/StructureDefinition/questionnaire-choiceColumns',
 
     ItemPopulationContext = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
@@ -36,13 +36,13 @@ export enum ExtensionIdentifier {
     AnswerExpression = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression',
     CqfExpression = 'http://hl7.org/fhir/StructureDefinition/cqf-expression',
 
-    AdjustLastToRight = 'https://emr.beda.software/StructureDefinition/adjust-last-to-right',
-    SliderStart = 'https://emr.beda.software/StructureDefinition/slider-start',
-    SliderStop = 'https://emr.beda.software/StructureDefinition/slider-stop',
-    HelpText = 'https://emr.beda.software/StructureDefinition/help-text',
-    StopLabel = 'https://emr.beda.software/StructureDefinition/slider-stop-label',
-    Macro = 'https://emr.beda.software/StructureDefinition/macro',
-    RowsNumber = 'https://emr.beda.software/StructureDefinition/rows-number',
+    AdjustLastToRight = 'https://emr-core.beda.software/StructureDefinition/adjust-last-to-right',
+    SliderStart = 'https://emr-core.beda.software/StructureDefinition/slider-start',
+    SliderStop = 'https://emr-core.beda.software/StructureDefinition/slider-stop',
+    HelpText = 'https://emr-core.beda.software/StructureDefinition/help-text',
+    StopLabel = 'https://emr-core.beda.software/StructureDefinition/slider-stop-label',
+    Macro = 'https://emr-core.beda.software/StructureDefinition/macro',
+    RowsNumber = 'https://emr-core.beda.software/StructureDefinition/rows-number',
 }
 
 export type ExtensionTransformer = {

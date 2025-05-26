@@ -1,7 +1,7 @@
 {
     "subjectType": ["Encounter", "Patient"],
     "meta": {
-        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2024-11-18T13:35:34.455065Z",
         "versionId": "11968"
     },

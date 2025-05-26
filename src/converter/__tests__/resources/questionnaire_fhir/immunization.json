@@ -1,7 +1,7 @@
 {
     "subjectType": ["Encounter", "Patient"],
     "meta": {
-        "profile": ["https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
         "lastUpdated": "2023-04-10T03:43:34.792167Z",
         "versionId": "694"
     },
@@ -192,7 +192,7 @@
             ]
         },
         {
-            "url": "https://emr.beda.software/StructureDefinition/questionnaire-mapper",
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
             "valueReference": {
                 "reference": "Mapping/immunization-extract"
             }

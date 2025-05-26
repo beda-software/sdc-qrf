@@ -3,3 +3,5 @@ yarn.lock
 .history/
 *.code-workspace
 dist
+.DS_Store
+coverage/

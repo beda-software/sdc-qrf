@@ -5,7 +5,7 @@ export function checkFhirQuestionnaireProfile(fhirQuestionnaire: FHIRQuestionnai
         !(
             (fhirQuestionnaire.meta?.profile?.length ?? 0) === 1 &&
             fhirQuestionnaire.meta?.profile?.[0] ===
-                'https://emr.beda.software/StructureDefinition/fhir-emr-questionnaire'
+                'https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire'
         )
     ) {
         throw new Error('Only beda emr questionanire supported');

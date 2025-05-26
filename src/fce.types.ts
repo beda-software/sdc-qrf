@@ -25,7 +25,7 @@ export interface FCEQuestionnaire extends Questionnaire {
     itemPopulationContext?: Expression;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext */
     launchContext?: FCEQuestionnaireLaunchContext[];
-    /** NOTE: from extension https://emr.beda.software/StructureDefinition/questionnaire-mapper */
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/questionnaire-mapper */
     /** List of mapping resources that must be executed on extract */
     mapping?: Array<Reference>;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-sourceQueries */
@@ -78,7 +78,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext */
     /** Specifies a query that identifies the resource (or set of resources for a repeating item) that should be used to populate this Questionnaire or Questionnaire.item on initial population. */
     itemPopulationContext?: Expression;
-    /** NOTE: from extension https://emr.beda.software/StructureDefinition/macro */
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/macro */
     macro?: string;
     _readOnly?: FCEQuestionnaireItemReadOnly;
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-referenceResource */
