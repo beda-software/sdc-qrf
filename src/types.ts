@@ -104,7 +104,7 @@ interface NotRepeatableFormGroupItems {
 export type FormGroupItems = RepeatableFormGroupItems | NotRepeatableFormGroupItems;
 
 export interface FormAnswerItems {
-    value?: { [x: string]: any };
+    value?: AnswerValue;
     question?: string;
     items?: FormItems;
 }
