@@ -27,6 +27,7 @@ import fce_review_of_systems from './resources/questionnaire_fce/review_of_syste
 import fce_source_queries from './resources/questionnaire_fce/source_queries.json';
 import fce_unit_option from './resources/questionnaire_fce/unit-option.json';
 import fce_vitals from './resources/questionnaire_fce/vitals.json';
+import fce_variable from './resources/questionnaire_fce/variable.json';
 // fhir questionnaire
 import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
@@ -53,6 +54,7 @@ import fhir_review_of_systems from './resources/questionnaire_fhir/review_of_sys
 import fhir_source_queries from './resources/questionnaire_fhir/source_queries.json';
 import fhir_unit_option from './resources/questionnaire_fhir/unit-option.json';
 import fhir_vitals from './resources/questionnaire_fhir/vitals.json';
+import fhir_variable from './resources/questionnaire_fhir/variable.json';
 import { FCEQuestionnaire } from '../../fce.types';
 
 import { toFirstClassExtension, fromFirstClassExtension } from '../../converter';
@@ -85,6 +87,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         [fhir_cqf_examples, fce_cqf_examples],
         [fhir_constraint, fce_constraint],
         [fhir_unit_option, fce_unit_option],
+        [fhir_variable, fce_variable],
     ])('Each FHIR Questionnaire should convert to FCE', async (fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -115,6 +118,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         [fce_cqf_examples, fhir_cqf_examples],
         [fce_constraint, fhir_constraint],
         [fce_unit_option, fhir_unit_option],
+        [fce_variable, fhir_variable],
     ])('Each FCE Questionnaire should convert to FHIR', async (fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
