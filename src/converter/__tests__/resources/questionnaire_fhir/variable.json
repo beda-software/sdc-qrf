@@ -1,0 +1,38 @@
+{
+    "item": [
+        {
+            "type": "string",
+            "linkId": "test",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+                    "valueExpression": {
+                        "name": "First",
+                        "language": "text/fhirpath",
+                        "expression": "'First'"
+                    }
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+                    "valueExpression": {
+                        "name": "Second",
+                        "language": "text/fhirpath",
+                        "expression": "'Second'"
+                    }
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "variable"
+        }
+    ],
+    "status": "active",
+    "id": "variable",
+    "resourceType": "Questionnaire"
+}
