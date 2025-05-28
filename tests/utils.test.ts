@@ -713,7 +713,6 @@ test('Transform removes missing answers', () => {
             items: {
                 'question-1': [
                     {
-                        items: {},
                         value: {
                             string: undefined,
                         },
@@ -721,19 +720,13 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-2': [
                     {
-                        items: {},
                         value: undefined,
                     },
                 ],
-                'question-3': [
-                    {
-                        items: {},
-                    },
-                ],
+                'question-3': [{}],
                 'question-4': [],
                 'question-5': [
                     {
-                        items: {},
                         value: {
                             string: 'ok',
                         },
@@ -752,19 +745,15 @@ test('Transform removes missing answers', () => {
                 linkId: 'root-group',
                 item: [
                     {
-                        answer: [],
                         linkId: 'question-1',
                     },
                     {
-                        answer: [],
                         linkId: 'question-2',
                     },
                     {
-                        answer: [],
                         linkId: 'question-3',
                     },
                     {
-                        answer: [],
                         linkId: 'question-4',
                     },
                     {

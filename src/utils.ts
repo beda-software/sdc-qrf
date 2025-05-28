@@ -249,25 +249,27 @@ function mapFormToResponseRecursive(
             }, acc);
         }
 
+        const qrItemAnswers = answers
+            .filter((answer) => !isAnswerValueEmpty(answer.value))
+            .reduce((answersAcc, answer) => {
+                const items = hasSubAnswerItems(answer.items)
+                    ? mapFormToResponseRecursive(answer.items, question.item ?? [])
+                    : [];
+
+                return [
+                    ...answersAcc,
+                    {
+                        ...toFHIRAnswerValue(answer.value!, 'value'),
+                        ...(items.length ? { item: items } : {}),
+                    },
+                ];
+            }, [] as QuestionnaireResponseItemAnswer[]);
+
         return [
             ...acc,
             {
                 linkId,
-                answer: answers
-                    .filter((answer) => !isAnswerValueEmpty(answer.value))
-                    .reduce((answersAcc, answer) => {
-                        const items = hasSubAnswerItems(answer.items)
-                            ? mapFormToResponseRecursive(answer.items, question.item ?? [])
-                            : [];
-
-                        return [
-                            ...answersAcc,
-                            {
-                                ...toFHIRAnswerValue(answer.value!, 'value'),
-                                ...(items.length ? { item: items } : {}),
-                            },
-                        ];
-                    }, [] as QuestionnaireResponseItemAnswer[]),
+                ...(qrItemAnswers.length ? { answer: qrItemAnswers } : {}),
             },
         ];
     }, [] as QuestionnaireResponseItem[]);
