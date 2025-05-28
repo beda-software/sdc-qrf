@@ -2,12 +2,12 @@ export * from './types';
 export {
     mapFormToResponse,
     mapResponseToForm,
-    findAnswersForQuestionsRecursive,
     removeDisabledAnswers,
     getEnabledQuestions,
     calcInitialContext,
     parseFhirQueryExpression,
     getChecker,
+    cleanFormAnswerItems,
     toAnswerValue,
     getAnswerValues,
     getAnswerValueType,

@@ -193,7 +193,7 @@ function isGroup(question: QuestionnaireItem) {
 
 function isFormGroupItems(
     question: QuestionnaireItem,
-    answers: FormGroupItems | FormAnswerItems[],
+    answers: FormGroupItems | (FormAnswerItems | undefined)[],
 ): answers is FormGroupItems {
     return isGroup(question) && _.isPlainObject(answers);
 }
@@ -249,21 +249,19 @@ function mapFormToResponseRecursive(
             }, acc);
         }
 
-        const qrItemAnswers = answers
-            .filter((answer) => !isAnswerValueEmpty(answer.value))
-            .reduce((answersAcc, answer) => {
-                const items = hasSubAnswerItems(answer.items)
-                    ? mapFormToResponseRecursive(answer.items, question.item ?? [])
-                    : [];
+        const qrItemAnswers = cleanFormAnswerItems(answers).reduce((answersAcc, answer) => {
+            const items = hasSubAnswerItems(answer.items)
+                ? mapFormToResponseRecursive(answer.items, question.item ?? [])
+                : [];
 
-                return [
-                    ...answersAcc,
-                    {
-                        ...toFHIRAnswerValue(answer.value!, 'value'),
-                        ...(items.length ? { item: items } : {}),
-                    },
-                ];
-            }, [] as QuestionnaireResponseItemAnswer[]);
+            return [
+                ...answersAcc,
+                {
+                    ...toFHIRAnswerValue(answer.value!, 'value'),
+                    ...(items.length ? { item: items } : {}),
+                },
+            ];
+        }, [] as QuestionnaireResponseItemAnswer[]);
 
         if (!qrItemAnswers.length) {
             return acc;
@@ -386,7 +384,7 @@ export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire
     return mapResponseToFormRecursive(resource.item ?? [], questionnaire.item ?? []);
 }
 
-export function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
+function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
     if (values && _.has(values, linkId)) {
         return values[linkId];
     }
@@ -410,7 +408,7 @@ export function findAnswersForQuestionsRecursive(linkId: string, values?: FormIt
                             return acc2;
                         }
 
-                        return findAnswersForQuestionsRecursive(linkId, v2.items);
+                        return findAnswersForQuestionsRecursive(linkId, v2?.items);
                     },
                     null,
                 );
@@ -434,7 +432,7 @@ export function findAnswersForQuestionsRecursive(linkId: string, values?: FormIt
     );
 }
 
-function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): Array<FormAnswerItems> {
+export function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): FormAnswerItems[] {
     const p = _.cloneDeep(parentPath);
 
     // Go up
@@ -447,7 +445,7 @@ function findAnswersForQuestion(linkId: string, parentPath: string[], values: Fo
             const parentGroup = _.get(values, [...p, part]);
 
             if (typeof parentGroup === 'object' && linkId in parentGroup) {
-                return parentGroup[linkId];
+                return cleanFormAnswerItems(parentGroup[linkId]);
             }
         }
     }
@@ -455,7 +453,7 @@ function findAnswersForQuestion(linkId: string, parentPath: string[], values: Fo
     // Go down
     const answers = findAnswersForQuestionsRecursive(linkId, values);
 
-    return answers ? answers : [];
+    return answers ? cleanFormAnswerItems(answers) : [];
 }
 
 export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: AnswerValue) {
@@ -696,21 +694,19 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
 
         return {
             ...acc,
-            [linkId!]: answers
-                .filter((answer) => !isAnswerValueEmpty(answer.value))
-                .reduce((answersAcc, answer, index) => {
-                    const items = hasSubAnswerItems(answer.items)
-                        ? removeDisabledAnswersRecursive({
-                              questionnaireItems: questionnaireItem.item ?? [],
-                              parentPath: [...args.parentPath, linkId!, index.toString(), 'items'],
-                              answersItems: answer.items,
-                              initialValues: { ...values, [linkId!]: [...answersAcc, { ...answer, items: [] }] },
-                              context: args.context,
-                          })
-                        : {};
+            [linkId!]: cleanFormAnswerItems(answers).reduce((answersAcc, answer, index) => {
+                const items = hasSubAnswerItems(answer.items)
+                    ? removeDisabledAnswersRecursive({
+                          questionnaireItems: questionnaireItem.item ?? [],
+                          parentPath: [...args.parentPath, linkId!, index.toString(), 'items'],
+                          answersItems: answer.items,
+                          initialValues: { ...values, [linkId!]: [...answersAcc, { ...answer, items: [] }] },
+                          context: args.context,
+                      })
+                    : {};
 
-                    return [...answersAcc, { ...answer, items }];
-                }, [] as any),
+                return [...answersAcc, { ...answer, items }];
+            }, [] as any),
         };
     }, {} as any);
 }
@@ -869,6 +865,10 @@ export function getAnswerValues(answers: FormAnswerItems[]) {
 
 export function isAnswerValueEmpty(value: AnswerValue | undefined | null) {
     return isValueEmpty(value) || _.every(_.mapValues(value, isValueEmpty));
+}
+
+export function cleanFormAnswerItems(answerItems: (FormAnswerItems | undefined)[]): FormAnswerItems[] {
+    return answerItems.filter((answer) => !!answer).filter((answer) => !isAnswerValueEmpty(answer.value));
 }
 
 export function isValueEmpty(value: any) {

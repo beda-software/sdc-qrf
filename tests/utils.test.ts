@@ -19,6 +19,7 @@ import {
     toFHIRAnswerValue,
     wrapAnswerValue,
     evaluateQuestionItemExpression,
+    findAnswersForQuestion,
 } from '../src/utils';
 import {
     ParametersParameter,
@@ -1518,7 +1519,7 @@ describe('enableWhen exists logic for non-repeatable groups primitives', () => {
         },
     ];
 
-    test.each(testConfigs)('enableWhen works correctly', async (testConfig) => {
+    test.each(testConfigs)('works correctly', async (testConfig) => {
         const questionnaire: FCEQuestionnaire = {
             resourceType: 'Questionnaire',
             status: 'active',
@@ -1793,6 +1794,349 @@ describe('enableWhen comparators logic for non-repeatable groups primitives', ()
             expect(actualQR).toEqual(expectedQR);
         },
     );
+});
+
+describe('enableWhen for missing answers', () => {
+    test('works correctly', async () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'root-group',
+                    type: 'group',
+                    text: 'Root group',
+                    item: [
+                        {
+                            linkId: 'question-1',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'question-2',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'question-3',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'question-4',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'question-5',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'question-6',
+                            type: 'text',
+                        },
+                        {
+                            linkId: 'condition-question-1',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-1', operator: 'exists', answerBoolean: true }],
+                        },
+                        {
+                            linkId: 'condition-question-2',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-2', operator: 'exists', answerBoolean: true }],
+                        },
+                        {
+                            linkId: 'condition-question-3',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-3', operator: 'exists', answerBoolean: true }],
+                        },
+                        {
+                            linkId: 'condition-question-4',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-4', operator: 'exists', answerBoolean: true }],
+                        },
+                        {
+                            linkId: 'condition-question-5',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-5', operator: 'exists', answerBoolean: true }],
+                        },
+                        {
+                            linkId: 'condition-question-6',
+                            type: 'text',
+                            enableWhen: [{ question: 'question-6', operator: 'exists', answerBoolean: true }],
+                        },
+                    ],
+                },
+            ],
+        };
+        const initialQR: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'completed',
+            item: [
+                {
+                    linkId: 'root-group',
+                    item: [
+                        {
+                            linkId: 'question-1',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'question-2',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'question-3',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'question-4',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'question-5',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                        {
+                            linkId: 'question-6',
+                            answer: [{ valueString: 'ok' }],
+                        },
+                    ],
+                },
+            ],
+        };
+        const formItems = mapResponseToForm(initialQR, questionnaire);
+        expect(formItems).toMatchObject({
+            'root-group': {
+                items: {
+                    'question-1': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'question-2': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'question-3': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'question-4': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'question-5': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'question-6': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                },
+                question: 'Root group',
+            },
+        });
+        const updatedFormItems: FormItems = {
+            'root-group': {
+                items: {
+                    'question-1': [
+                        {
+                            value: {
+                                string: undefined,
+                            },
+                        },
+                    ],
+                    'question-2': [
+                        {
+                            value: undefined,
+                        },
+                    ],
+                    'question-3': [{}],
+                    'question-4': [],
+                    'question-5': [undefined],
+                    'question-6': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-1': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-2': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-3': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-4': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-5': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                    'condition-question-6': [
+                        {
+                            value: {
+                                string: 'ok',
+                            },
+                        },
+                    ],
+                },
+                question: 'Root group',
+            },
+        };
+
+        const expectedActualQR: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'completed',
+            item: [
+                {
+                    linkId: 'root-group',
+                    item: [
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'question-6',
+                        },
+
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-1',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-2',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-3',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-4',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-5',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-6',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedCompletedQR: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'completed',
+            item: [
+                {
+                    linkId: 'root-group',
+                    item: [
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'question-6',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-6',
+                        },
+                    ],
+                },
+            ],
+        };
+        const actualQR = {
+            ...initialQR,
+            ...mapFormToResponse(updatedFormItems, questionnaire),
+        };
+        const actualCompletedQR = {
+            ...initialQR,
+            ...mapFormToResponse(
+                removeDisabledAnswers(questionnaire, updatedFormItems, {
+                    questionnaire,
+                    resource: actualQR,
+                    context: actualQR,
+                }),
+                questionnaire,
+            ),
+        };
+
+        expect(actualQR).toEqual(expectedActualQR);
+        expect(actualCompletedQR).toEqual(expectedCompletedQR);
+    });
 });
 
 describe('isValueEmpty', () => {
@@ -2520,5 +2864,93 @@ describe('evaluateQuestionItemExpression', () => {
                 expression: '%P',
             }),
         ).toThrow();
+    });
+});
+
+describe('findAnswersForQuestion', () => {
+    const formItems: FormItems = {
+        'root-group': {
+            items: {
+                'question-1': [
+                    {
+                        value: {
+                            string: undefined,
+                        },
+                    },
+                ],
+                'question-2': [
+                    {
+                        value: undefined,
+                    },
+                ],
+                'question-3': [{}],
+                'question-4': [],
+                'question-5': [undefined],
+                'question-6': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-1': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-2': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-3': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-4': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-5': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+                'condition-question-6': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
+            },
+            question: 'Root group',
+        },
+    };
+    test('works correctly with missing answers', () => {
+        expect(findAnswersForQuestion('question-1', [], formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion('question-2', [], formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion('question-3', [], formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion('question-4', [], formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion('question-5', [], formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion('question-6', [], formItems)).toStrictEqual([
+            {
+                value: {
+                    string: 'ok',
+                },
+            },
+        ]);
     });
 });

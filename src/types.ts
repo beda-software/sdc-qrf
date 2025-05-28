@@ -109,7 +109,8 @@ export interface FormAnswerItems {
     items?: FormItems;
 }
 
-export type FormItems = Record<string, FormGroupItems | FormAnswerItems[] | undefined>;
+// Form renderers might insert undefined for missing field values even into array
+export type FormItems = Record<string, FormGroupItems | (FormAnswerItems | undefined)[] | undefined>;
 
 export interface QuestionnaireResponseFormData {
     formValues: FormItems;
