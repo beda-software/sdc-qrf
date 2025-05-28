@@ -265,11 +265,15 @@ function mapFormToResponseRecursive(
                 ];
             }, [] as QuestionnaireResponseItemAnswer[]);
 
+        if (!qrItemAnswers.length) {
+            return acc;
+        }
+
         return [
             ...acc,
             {
                 linkId,
-                ...(qrItemAnswers.length ? { answer: qrItemAnswers } : {}),
+                answer: qrItemAnswers,
             },
         ];
     }, [] as QuestionnaireResponseItem[]);

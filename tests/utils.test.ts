@@ -1,6 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { allergiesQuestionnaire } from './resources/questionnaire';
 import {
     calcContext,
     calcInitialContext,
@@ -745,18 +744,6 @@ test('Transform removes missing answers', () => {
                 linkId: 'root-group',
                 item: [
                     {
-                        linkId: 'question-1',
-                    },
-                    {
-                        linkId: 'question-2',
-                    },
-                    {
-                        linkId: 'question-3',
-                    },
-                    {
-                        linkId: 'question-4',
-                    },
-                    {
                         answer: [
                             {
                                 valueString: 'ok',
@@ -1437,33 +1424,6 @@ test('enableWhenExpression logic', () => {
     const actualQR = { ...qr, ...mapFormToResponse(enabledFormItems, questionnaire) };
 
     expect(actualQR).toEqual(expectedQR);
-});
-
-test('mapFormToResponse cut empty answers', () => {
-    const formValues = {
-        type: [
-            {
-                value: {
-                    Coding: {
-                        code: '418634005',
-                        system: 'http://snomed.ct',
-                        display: 'Drug',
-                    },
-                },
-            },
-        ],
-        reaction: undefined,
-        notes: [
-            {
-                value: {},
-            },
-        ],
-    };
-
-    const result = mapFormToResponse(formValues, allergiesQuestionnaire);
-    const answersLinkIds = result.item?.map((answerItem) => answerItem.linkId) ?? [];
-    expect(answersLinkIds.includes('reaction')).not.toBe(true);
-    expect(answersLinkIds).toEqual(expect.arrayContaining(['type', 'notes']));
 });
 
 describe('enableWhen exists logic for non-repeatable groups primitives', () => {

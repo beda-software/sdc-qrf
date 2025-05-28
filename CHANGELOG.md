@@ -1,3 +1,7 @@
+## 1.0.0-beta.4
+
+- Clean up empty questionnaire response items
+
 ## 1.0.0-beta.3
 
 - Clean up empty answers key from questionnaire response item
