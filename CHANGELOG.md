@@ -1,3 +1,7 @@
+## 1.0.0-beta.9
+
+- Export findAnswerForQuestion
+
 ## 1.0.0-beta.8
 
 - Update FormItems type to consider edge cases with missing answer items

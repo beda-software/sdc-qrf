@@ -6,6 +6,7 @@ export {
     getEnabledQuestions,
     calcInitialContext,
     parseFhirQueryExpression,
+    findAnswersForQuestion,
     getChecker,
     cleanFormAnswerItems,
     toAnswerValue,
