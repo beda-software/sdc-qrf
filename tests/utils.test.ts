@@ -629,6 +629,10 @@ test('Transform removes missing answers', () => {
                         linkId: 'question-5',
                         type: 'text',
                     },
+                    {
+                        linkId: 'question-6',
+                        type: 'text',
+                    },
                 ],
             },
         ],
@@ -658,6 +662,10 @@ test('Transform removes missing answers', () => {
                     },
                     {
                         linkId: 'question-5',
+                        answer: [{ valueString: 'ok' }],
+                    },
+                    {
+                        linkId: 'question-6',
                         answer: [{ valueString: 'ok' }],
                     },
                 ],
@@ -703,6 +711,13 @@ test('Transform removes missing answers', () => {
                         },
                     },
                 ],
+                'question-6': [
+                    {
+                        value: {
+                            string: 'ok',
+                        },
+                    },
+                ],
             },
             question: 'Root group',
         },
@@ -724,7 +739,8 @@ test('Transform removes missing answers', () => {
                 ],
                 'question-3': [{}],
                 'question-4': [],
-                'question-5': [
+                'question-5': [undefined],
+                'question-6': [
                     {
                         value: {
                             string: 'ok',
@@ -749,7 +765,7 @@ test('Transform removes missing answers', () => {
                                 valueString: 'ok',
                             },
                         ],
-                        linkId: 'question-5',
+                        linkId: 'question-6',
                     },
                 ],
             },
