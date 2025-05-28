@@ -1,0 +1,35 @@
+## 1.0.0-beta.3
+
+- Clean up empty answers key from questionnaire response item
+
+## 1.0.0-beta.2
+
+- Add support for variable extension in converter
+
+## 1.0.0-beta.1
+
+- Drop support for Aidbox format, only FCE format is used for Questionnaire
+- Drop support for customWidgets
+- Drop support for QR converter
+- Cover utils with unit tests
+- Fix bug with subquestions of answers
+
+## 0.3.24
+
+- Add support for variable extension in converter
+
+## 0.3.23
+
+- Add support for another Questionnaire profile
+
+## 0.3.22
+
+- Added uuidv4 \_itemKey to form items to use it as unique keys
+
+## 0.3.18
+
+- Added assembledFrom extension parsing for questionnaire converters
+
+## 0.3.17
+
+- The package is released as a separate package with own repository
