@@ -1,3 +1,7 @@
+## 1.0.0-beta-7
+
+- Export additional utils
+
 ## 1.0.0-beta.4
 
 - Clean up empty questionnaire response items

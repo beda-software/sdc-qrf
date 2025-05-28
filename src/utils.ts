@@ -463,7 +463,9 @@ export function compareValue(firstAnswerValue: AnswerValue, secondAnswerValue: A
     const secondValueType = getAnswerValueType(secondAnswerValue);
 
     if (firstValueType !== secondValueType) {
-        throw new Error('Enable when must be used for the same type');
+        throw new Error(
+            `Enable when must be used for the same type, first type is ${firstValueType}, second type is ${secondValueType}`,
+        );
     }
     if (!_.includes(FHIRPrimitiveTypes, firstValueType)) {
         throw new Error('Impossible to compare non-primitive type');
@@ -488,7 +490,9 @@ export function isValueEqual(firstValue: AnswerValue, secondValue: AnswerValue) 
     const secondValueType = getAnswerValueType(secondValue);
 
     if (firstValueType !== secondValueType) {
-        console.error('Enable when must be used for the same type');
+        console.error(
+            `Enable when must be used for the same type, first type is ${firstValueType}, second type is ${secondValueType}`,
+        );
 
         return false;
     }
@@ -863,7 +867,7 @@ export function getAnswerValues(answers: FormAnswerItems[]) {
     return _.reject(answers, ({ value }) => isAnswerValueEmpty(value)).map(({ value }) => value!);
 }
 
-export function isAnswerValueEmpty(value: { [x: string]: any } | undefined | null) {
+export function isAnswerValueEmpty(value: AnswerValue | undefined | null) {
     return isValueEmpty(value) || _.every(_.mapValues(value, isValueEmpty));
 }
 
