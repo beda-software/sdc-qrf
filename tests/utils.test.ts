@@ -20,6 +20,7 @@ import {
     wrapAnswerValue,
     evaluateQuestionItemExpression,
     findAnswersForQuestion,
+    ITEM_KEY,
 } from '../src/utils';
 import {
     ParametersParameter,
@@ -2936,10 +2937,13 @@ describe('findAnswersForQuestion', () => {
                     },
                 ],
             },
+            // @ts-expect-error it's internal value
+            [ITEM_KEY]: 'itemkey',
             question: 'Root group',
         },
     };
     test('works correctly with missing answers', () => {
+        expect(findAnswersForQuestion(ITEM_KEY, [], formItems)).toStrictEqual([]);
         expect(findAnswersForQuestion('question-1', [], formItems)).toStrictEqual([]);
         expect(findAnswersForQuestion('question-2', [], formItems)).toStrictEqual([]);
         expect(findAnswersForQuestion('question-3', [], formItems)).toStrictEqual([]);

@@ -286,7 +286,7 @@ export function mapFormToResponse(
     };
 }
 
-const ITEM_KEY = '_itemKey';
+export const ITEM_KEY = '_itemKey';
 export function getItemKey(items: FormGroupItems | FormAnswerItems) {
     return (items as any)[ITEM_KEY];
 }
@@ -433,6 +433,10 @@ function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): a
 }
 
 export function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): FormAnswerItems[] {
+    if (linkId === ITEM_KEY) {
+        return [];
+    }
+
     const p = _.cloneDeep(parentPath);
 
     // Go up

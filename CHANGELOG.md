@@ -1,3 +1,7 @@
+## 1.0.0-beta.10
+
+- Handle internal item key
+
 ## 1.0.0-beta.9
 
 - Export findAnswerForQuestion
