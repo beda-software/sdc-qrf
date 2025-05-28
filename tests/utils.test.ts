@@ -2177,7 +2177,7 @@ describe('isAnswerValueEmpty', () => {
     ];
 
     test.each(valueList)('works correctly for %s', async (valueType) => {
-        expect(isAnswerValueEmpty(valueType.value)).toEqual(valueType.expect);
+        expect(isAnswerValueEmpty(valueType.value as any)).toEqual(valueType.expect);
     });
 });
 
@@ -2278,11 +2278,20 @@ describe('compareValue', () => {
     });
 });
 
-describe('toAnswerValue', () => {
-    const valueTypeList: { input: [any, string]; expect: any }[] = [
+describe('toAnswerValue for value', () => {
+    const valueTypeList: { input: [any, 'value']; expect: any }[] = [
         { input: [{ valueString: 'test' }, 'value'], expect: { string: 'test' } },
         { input: [{}, 'value'], expect: undefined },
         { input: [{ valueCoding: { code: 'code' } }, 'value'], expect: { Coding: { code: 'code' } } },
+    ];
+
+    test.each(valueTypeList)('works correctly for %s', async (valueType) => {
+        expect(toAnswerValue(...valueType.input)).toEqual(valueType.expect);
+    });
+});
+
+describe('toAnswerValue for answer', () => {
+    const valueTypeList: { input: [any, 'answer']; expect: any }[] = [
         { input: [{ answerString: 'test' }, 'answer'], expect: { string: 'test' } },
         { input: [{ answerDateTime: '2025-01-01T10:00:00Z' }, 'answer'], expect: { dateTime: '2025-01-01T10:00:00Z' } },
         { input: [{ answerCoding: { code: 'code' } }, 'answer'], expect: { Coding: { code: 'code' } } },

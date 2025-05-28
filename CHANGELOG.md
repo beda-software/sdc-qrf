@@ -1,3 +1,7 @@
+## 1.0.0-beta.11
+
+- Add strict type for toAnswerValue
+
 ## 1.0.0-beta.10
 
 - Handle internal item key

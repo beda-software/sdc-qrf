@@ -10,7 +10,9 @@ import {
     Expression,
     Questionnaire,
     QuestionnaireItem,
+    QuestionnaireItemAnswerOption,
     QuestionnaireItemEnableWhen,
+    QuestionnaireItemInitial,
     QuestionnaireResponse,
     QuestionnaireResponseItem,
     QuestionnaireResponseItemAnswer,
@@ -835,9 +837,21 @@ export function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any |
     return prefixKey ? obj[prefixKey] : undefined;
 }
 
-export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValue | undefined {
-    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
+type ExtractAnswerProps<T> = {
+    [K in keyof T as K extends `answer${string}` ? K : never]: T[K];
+};
+type ExtractValueProps<T> = {
+    [K in keyof T as K extends `value${string}` ? K : never]: T[K];
+};
+type GenericValue = ExtractValueProps<
+    QuestionnaireResponseItemAnswer | QuestionnaireItemInitial | QuestionnaireItemAnswerOption
+>;
+type GenericAnswer = ExtractAnswerProps<QuestionnaireItemEnableWhen>;
+export function toAnswerValue(obj: GenericValue, prefix: 'value'): AnswerValue | undefined;
 
+export function toAnswerValue(obj: GenericAnswer, prefix: 'answer'): AnswerValue | undefined;
+export function toAnswerValue(obj: GenericAnswer | GenericValue, prefix: 'value' | 'answer'): AnswerValue | undefined {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
     if (!prefixKey) {
         return undefined;
     }
@@ -845,7 +859,7 @@ export function toAnswerValue(obj: Record<any, any>, prefix: string): AnswerValu
     const answerKey = FHIRPrimitiveTypes.includes(key) ? key : upperFirst(key);
 
     return {
-        [answerKey]: obj[prefixKey],
+        [answerKey]: (obj as any)[prefixKey],
     };
 }
 
