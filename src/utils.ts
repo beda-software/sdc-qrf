@@ -888,7 +888,9 @@ export function isAnswerValueEmpty(value: AnswerValue | undefined | null) {
 }
 
 export function cleanFormAnswerItems(answerItems: (FormAnswerItems | undefined)[] | undefined): FormAnswerItems[] {
-    return (answerItems ?? []).filter((answer) => !!answer).filter((answer) => !isAnswerValueEmpty(answer.value));
+    // TODO: answerItems might be any here, we use _.filter because it handles object and nulls.
+    // TODO: get rid of it, once we have right types for all other functions
+    return _.filter(answerItems, (answer) => !!answer).filter((answer) => !isAnswerValueEmpty(answer.value));
 }
 
 export function isValueEmpty(value: any) {

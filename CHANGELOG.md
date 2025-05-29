@@ -1,4 +1,4 @@
-## 1.0.0-beta.12
+## 1.0.0-beta.13
 
 - Fix critical bug with undefined answers
 
