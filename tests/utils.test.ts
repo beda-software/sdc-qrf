@@ -2692,7 +2692,7 @@ describe('evaluateQuestionItemExpression', () => {
     });
 });
 
-describe.only('findAnswersForQuestion', () => {
+describe('findAnswersForQuestion', () => {
     const formItems: FormItems = {
         'root-group': {
             items: {
