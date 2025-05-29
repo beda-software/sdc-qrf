@@ -1,3 +1,7 @@
+## 1.0.0-beta.12
+
+- Fix critical bug with undefined answers
+
 ## 1.0.0-beta.11
 
 - Add strict type for toAnswerValue
