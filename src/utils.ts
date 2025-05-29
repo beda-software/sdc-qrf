@@ -388,6 +388,7 @@ export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire
 
 function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
     // TODO: specify types for returning value
+    // TODO: pass Questionnaire structure to make code robust
     if (values && _.has(values, linkId)) {
         return values[linkId];
     }
@@ -435,6 +436,8 @@ function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): a
     );
 }
 
+// TODO: deprecate usage of this function because it relies on internals
+// TODO: pass Questionnaire structure to make code robust, currently it uses isNaN that might work falsy when linkId is number
 export function findAnswersForQuestion(linkId: string, parentPath: string[], values: FormItems): FormAnswerItems[] {
     if (linkId === ITEM_KEY) {
         return [];
@@ -448,11 +451,12 @@ export function findAnswersForQuestion(linkId: string, parentPath: string[], val
 
         // Find answers in parent groups (including repeatable)
         // They might have either 'items' of the group or number of the repeatable group in path
+        // TODO: using isNaN might return invalid value for linkId like '0'
         if (part === 'items' || !isNaN(part as any)) {
+            // TODO: specify type FormItems, and handle group's linkId
             const parentGroup = _.get(values, [...p, part]);
 
             if (typeof parentGroup === 'object' && linkId in parentGroup) {
-                // TODO: specify type
                 return cleanFormAnswerItems(parentGroup[linkId]);
             }
         }

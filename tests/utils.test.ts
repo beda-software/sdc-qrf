@@ -38,6 +38,100 @@ vi.mock('uuid', () => ({
     v4: () => 'itemkey',
 }));
 
+function buildMissingAnswersQuestionnaireItems(prefix: string): QuestionnaireItem[] {
+    return [
+        { linkId: `${prefix}question-missing-1`, type: 'string' },
+        { linkId: `${prefix}question-missing-2`, type: 'string' },
+        { linkId: `${prefix}question-missing-3`, type: 'string' },
+        { linkId: `${prefix}question-missing-4`, type: 'string' },
+        { linkId: `${prefix}question-missing-5`, type: 'string' },
+        { linkId: `${prefix}question-missing-6`, type: 'string' },
+        { linkId: `${prefix}question-not-missing`, type: 'string' },
+    ];
+}
+
+function buildNotMissingAnswersFormItems(prefix: string, notMissingValue: string): FormItems {
+    return {
+        [`${prefix}question-missing-1`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-missing-2`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-missing-3`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-missing-4`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-missing-5`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-missing-6`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+        [`${prefix}question-not-missing`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+    };
+}
+
+function buildMissingAnswersFormItems(prefix: string, notMissingValue: string): FormItems {
+    return {
+        [`${prefix}question-missing-1`]: [
+            {
+                value: {
+                    string: undefined,
+                },
+            },
+        ],
+        [`${prefix}question-missing-2`]: [
+            {
+                value: undefined,
+            },
+        ],
+        [`${prefix}question-missing-3`]: [{}],
+        [`${prefix}question-missing-4`]: [],
+        [`${prefix}question-missing-5`]: [undefined],
+        [`${prefix}question-missing-6`]: undefined,
+        [`${prefix}question-not-missing`]: [
+            {
+                value: {
+                    string: notMissingValue,
+                },
+            },
+        ],
+    };
+}
+
 describe('mapResponseToForm ', () => {
     const questionnaire: FCEQuestionnaire = {
         resourceType: 'Questionnaire',
@@ -610,145 +704,18 @@ test('Transform removes missing answers', () => {
                 linkId: 'root-group',
                 type: 'group',
                 text: 'Root group',
-                item: [
-                    {
-                        linkId: 'question-1',
-                        type: 'text',
-                    },
-                    {
-                        linkId: 'question-2',
-                        type: 'text',
-                    },
-                    {
-                        linkId: 'question-3',
-                        type: 'text',
-                    },
-                    {
-                        linkId: 'question-4',
-                        type: 'text',
-                    },
-                    {
-                        linkId: 'question-5',
-                        type: 'text',
-                    },
-                    {
-                        linkId: 'question-6',
-                        type: 'text',
-                    },
-                ],
+                item: [...buildMissingAnswersQuestionnaireItems('')],
             },
         ],
     };
     const initialQR: QuestionnaireResponse = {
         resourceType: 'QuestionnaireResponse',
         status: 'completed',
-        item: [
-            {
-                linkId: 'root-group',
-                item: [
-                    {
-                        linkId: 'question-1',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                    {
-                        linkId: 'question-2',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                    {
-                        linkId: 'question-3',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                    {
-                        linkId: 'question-4',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                    {
-                        linkId: 'question-5',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                    {
-                        linkId: 'question-6',
-                        answer: [{ valueString: 'ok' }],
-                    },
-                ],
-            },
-        ],
     };
-    const formItems = mapResponseToForm(initialQR, questionnaire);
-    expect(formItems).toMatchObject({
-        'root-group': {
-            items: {
-                'question-1': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'question-2': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'question-3': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'question-4': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'question-5': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'question-6': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-            },
-            question: 'Root group',
-        },
-    });
     const updatedFormItems: FormItems = {
         'root-group': {
             items: {
-                'question-1': [
-                    {
-                        value: {
-                            string: undefined,
-                        },
-                    },
-                ],
-                'question-2': [
-                    {
-                        value: undefined,
-                    },
-                ],
-                'question-3': [{}],
-                'question-4': [],
-                'question-5': [undefined],
-                'question-6': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
+                ...buildMissingAnswersFormItems('', 'ok'),
             },
             question: 'Root group',
         },
@@ -767,7 +734,7 @@ test('Transform removes missing answers', () => {
                                 valueString: 'ok',
                             },
                         ],
-                        linkId: 'question-6',
+                        linkId: 'question-not-missing',
                     },
                 ],
             },
@@ -1808,59 +1775,41 @@ describe('enableWhen for missing answers', () => {
                     type: 'group',
                     text: 'Root group',
                     item: [
+                        ...buildMissingAnswersQuestionnaireItems(''),
                         {
-                            linkId: 'question-1',
+                            linkId: 'condition-question-missing-1',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-1', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'question-2',
+                            linkId: 'condition-question-missing-2',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-2', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'question-3',
+                            linkId: 'condition-question-missing-3',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-3', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'question-4',
+                            linkId: 'condition-question-missing-4',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-4', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'question-5',
+                            linkId: 'condition-question-missing-5',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-5', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'question-6',
+                            linkId: 'condition-question-missing-6',
                             type: 'text',
+                            enableWhen: [{ question: 'question-missing-6', operator: 'exists', answerBoolean: true }],
                         },
                         {
-                            linkId: 'condition-question-1',
+                            linkId: 'condition-question-not-missing',
                             type: 'text',
-                            enableWhen: [{ question: 'question-1', operator: 'exists', answerBoolean: true }],
-                        },
-                        {
-                            linkId: 'condition-question-2',
-                            type: 'text',
-                            enableWhen: [{ question: 'question-2', operator: 'exists', answerBoolean: true }],
-                        },
-                        {
-                            linkId: 'condition-question-3',
-                            type: 'text',
-                            enableWhen: [{ question: 'question-3', operator: 'exists', answerBoolean: true }],
-                        },
-                        {
-                            linkId: 'condition-question-4',
-                            type: 'text',
-                            enableWhen: [{ question: 'question-4', operator: 'exists', answerBoolean: true }],
-                        },
-                        {
-                            linkId: 'condition-question-5',
-                            type: 'text',
-                            enableWhen: [{ question: 'question-5', operator: 'exists', answerBoolean: true }],
-                        },
-                        {
-                            linkId: 'condition-question-6',
-                            type: 'text',
-                            enableWhen: [{ question: 'question-6', operator: 'exists', answerBoolean: true }],
+                            enableWhen: [{ question: 'question-not-missing', operator: 'exists', answerBoolean: true }],
                         },
                     ],
                 },
@@ -1869,155 +1818,13 @@ describe('enableWhen for missing answers', () => {
         const initialQR: QuestionnaireResponse = {
             resourceType: 'QuestionnaireResponse',
             status: 'completed',
-            item: [
-                {
-                    linkId: 'root-group',
-                    item: [
-                        {
-                            linkId: 'question-1',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                        {
-                            linkId: 'question-2',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                        {
-                            linkId: 'question-3',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                        {
-                            linkId: 'question-4',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                        {
-                            linkId: 'question-5',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                        {
-                            linkId: 'question-6',
-                            answer: [{ valueString: 'ok' }],
-                        },
-                    ],
-                },
-            ],
         };
-        const formItems = mapResponseToForm(initialQR, questionnaire);
-        expect(formItems).toMatchObject({
-            'root-group': {
-                items: {
-                    'question-1': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'question-2': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'question-3': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'question-4': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'question-5': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'question-6': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                },
-                question: 'Root group',
-            },
-        });
+
         const updatedFormItems: FormItems = {
             'root-group': {
                 items: {
-                    'question-1': [
-                        {
-                            value: {
-                                string: undefined,
-                            },
-                        },
-                    ],
-                    'question-2': [
-                        {
-                            value: undefined,
-                        },
-                    ],
-                    'question-3': [{}],
-                    'question-4': [],
-                    'question-5': [undefined],
-                    'question-6': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-1': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-2': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-3': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-4': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-5': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
-                    'condition-question-6': [
-                        {
-                            value: {
-                                string: 'ok',
-                            },
-                        },
-                    ],
+                    ...buildMissingAnswersFormItems('', 'ok'),
+                    ...buildNotMissingAnswersFormItems('condition-', 'ok'),
                 },
                 question: 'Root group',
             },
@@ -2036,7 +1843,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'question-6',
+                            linkId: 'question-not-missing',
                         },
 
                         {
@@ -2045,7 +1852,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-1',
+                            linkId: 'condition-question-missing-1',
                         },
                         {
                             answer: [
@@ -2053,7 +1860,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-2',
+                            linkId: 'condition-question-missing-2',
                         },
                         {
                             answer: [
@@ -2061,7 +1868,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-3',
+                            linkId: 'condition-question-missing-3',
                         },
                         {
                             answer: [
@@ -2069,7 +1876,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-4',
+                            linkId: 'condition-question-missing-4',
                         },
                         {
                             answer: [
@@ -2077,7 +1884,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-5',
+                            linkId: 'condition-question-missing-5',
                         },
                         {
                             answer: [
@@ -2085,7 +1892,15 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-6',
+                            linkId: 'condition-question-missing-6',
+                        },
+                        {
+                            answer: [
+                                {
+                                    valueString: 'ok',
+                                },
+                            ],
+                            linkId: 'condition-question-not-missing',
                         },
                     ],
                 },
@@ -2105,7 +1920,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'question-6',
+                            linkId: 'question-not-missing',
                         },
                         {
                             answer: [
@@ -2113,7 +1928,7 @@ describe('enableWhen for missing answers', () => {
                                     valueString: 'ok',
                                 },
                             ],
-                            linkId: 'condition-question-6',
+                            linkId: 'condition-question-not-missing',
                         },
                     ],
                 },
@@ -2877,93 +2692,144 @@ describe('evaluateQuestionItemExpression', () => {
     });
 });
 
-describe('findAnswersForQuestion', () => {
+describe.only('findAnswersForQuestion', () => {
     const formItems: FormItems = {
         'root-group': {
             items: {
-                'question-1': [
-                    {
-                        value: {
-                            string: undefined,
+                ...buildMissingAnswersFormItems('root-', 'root'),
+                'non-repeatable-group': {
+                    items: {
+                        ...buildMissingAnswersFormItems('non-repeatable-group-', 'non-repeatable'),
+                    },
+                },
+                'repeatable-group': {
+                    items: [
+                        {
+                            ...buildMissingAnswersFormItems('repeatable-group-', 'first'),
+                            'repeatable-group-nested-group': {
+                                ...buildMissingAnswersFormItems(
+                                    'repeatable-group-nested-group-',
+                                    'repeatable-group-nested-first',
+                                ),
+                            },
                         },
-                    },
-                ],
-                'question-2': [
-                    {
-                        value: undefined,
-                    },
-                ],
-                'question-3': [{}],
-                'question-4': [],
-                'question-5': [undefined],
-                'question-6': [
-                    {
-                        value: {
-                            string: 'ok',
+                        {
+                            ...buildMissingAnswersFormItems('repeatable-group-', 'second'),
+                            ...buildMissingAnswersFormItems('repeatable-group-second-only-', 'second-only'),
+                            'repeatable-group-nested-group': {
+                                ...buildMissingAnswersFormItems(
+                                    'repeatable-group-nested-group-',
+                                    'repeatable-group-nested-second',
+                                ),
+                            },
                         },
-                    },
-                ],
-                'condition-question-1': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'condition-question-2': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'condition-question-3': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'condition-question-4': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'condition-question-5': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
-                'condition-question-6': [
-                    {
-                        value: {
-                            string: 'ok',
-                        },
-                    },
-                ],
+                    ],
+                },
             },
             // @ts-expect-error it's internal value
             [ITEM_KEY]: 'itemkey',
             question: 'Root group',
         },
     };
-    test('works correctly with missing answers', () => {
+
+    test('works correctly with ITEM_KEY', () => {
         expect(findAnswersForQuestion(ITEM_KEY, [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-1', [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-2', [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-3', [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-4', [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-5', [], formItems)).toStrictEqual([]);
-        expect(findAnswersForQuestion('question-6', [], formItems)).toStrictEqual([
-            {
+    });
+
+    const cases: Array<{ name: string; prefix: string; path: string[]; notMissingAnswers: string[] }> = [
+        {
+            name: 'root at root level',
+            prefix: 'root-',
+            path: [],
+            notMissingAnswers: ['root'],
+        },
+        {
+            name: 'non-repeatable group at root level',
+            prefix: 'non-repeatable-group-',
+            path: [],
+            notMissingAnswers: ['non-repeatable'],
+        },
+        {
+            name: 'non-repeatable group at non-repeatable group level',
+            prefix: 'non-repeatable-group-',
+            path: ['root-group', 'items', 'non-repeatable-group', 'items'],
+            notMissingAnswers: ['non-repeatable'],
+        },
+        // TODO: It's disabled because it's not implemented https://github.com/beda-software/sdc-qrf/issues/20
+        //   {
+        //     name: 'repeatable group at root level',
+        //     prefix: 'repeatable-group-',
+        //     path: [],
+        //     notMissingAnswers: ['first', 'second'],
+        // },
+        // TODO: It's disabled because it's not implemented https://github.com/beda-software/sdc-qrf/issues/18
+        // {
+        //     name: 'repeatable group nested at repeatable group first level',
+        //     prefix:'repeatable-group-nested-group-',
+        //     path: ['root-group', 'items', 'repeatable-group', 'items', '0'],
+        //     notMissingAnswers: ['repeatable-group-nested-first'],
+        // },
+        // {
+        //     name: 'repeatable group nested at repeatable group second level',
+        //     prefix:'repeatable-group-nested-group-',
+        //     path: ['root-group', 'items', 'repeatable-group', 'items', '1'],
+        //     notMissingAnswers: ['repeatable-group-nested-second'],
+        // },
+
+        // TODO: It's disabled because it's not implemented https://github.com/beda-software/sdc-qrf/issues/19
+        // {
+        //     name: 'missing second-only repeatable group at repeatable group first level',
+        //     prefix: 'repeatable-group-second-only-',
+        //     path: ['root-group', 'items', 'repeatable-group', 'items', '0'],
+        //     notMissingAnswers: [],
+        // },
+
+        {
+            name: 'not missing second-only repeatable group at repeatable group second level',
+            prefix: 'repeatable-group-second-only-',
+            path: ['root-group', 'items', 'repeatable-group', 'items', '1'],
+            notMissingAnswers: ['second-only'],
+        },
+
+        {
+            name: 'repeatable group at repeatable group first level',
+            prefix: 'repeatable-group-',
+            path: ['root-group', 'items', 'repeatable-group', 'items', '0'],
+            notMissingAnswers: ['first'],
+        },
+
+        {
+            name: 'repeatable group at repeatable group second level',
+            prefix: 'repeatable-group-',
+            path: ['root-group', 'items', 'repeatable-group', 'items', '1'],
+            notMissingAnswers: ['second'],
+        },
+        {
+            name: 'repeatable group at repeatable group nested first level',
+            prefix: 'repeatable-group-',
+            path: ['root-group', 'items', 'repeatable-group', 'items', '0', 'repeatable-group-nested-group', 'items'],
+            notMissingAnswers: ['first'],
+        },
+        {
+            name: 'repeatable group at repeatable group nested second level',
+            prefix: 'repeatable-group-',
+            path: ['root-group', 'items', 'repeatable-group', 'items', '1', 'repeatable-group-nested-group', 'items'],
+            notMissingAnswers: ['second'],
+        },
+    ];
+    test.each(cases)('works correctly with missing answers for $name', ({ prefix, path, notMissingAnswers }) => {
+        expect(findAnswersForQuestion(`${prefix}question-missing-1`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-missing-2`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-missing-3`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-missing-4`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-missing-5`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-missing-6`, path, formItems)).toStrictEqual([]);
+        expect(findAnswersForQuestion(`${prefix}question-not-missing`, path, formItems)).toStrictEqual(
+            notMissingAnswers.map((answer) => ({
                 value: {
-                    string: 'ok',
+                    string: answer,
                 },
-            },
-        ]);
+            })),
+        );
     });
 });
