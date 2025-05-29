@@ -387,6 +387,7 @@ export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire
 }
 
 function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
+    // TODO: specify types for returning value
     if (values && _.has(values, linkId)) {
         return values[linkId];
     }
@@ -451,6 +452,7 @@ export function findAnswersForQuestion(linkId: string, parentPath: string[], val
             const parentGroup = _.get(values, [...p, part]);
 
             if (typeof parentGroup === 'object' && linkId in parentGroup) {
+                // TODO: specify type
                 return cleanFormAnswerItems(parentGroup[linkId]);
             }
         }
@@ -885,8 +887,8 @@ export function isAnswerValueEmpty(value: AnswerValue | undefined | null) {
     return isValueEmpty(value) || _.every(_.mapValues(value, isValueEmpty));
 }
 
-export function cleanFormAnswerItems(answerItems: (FormAnswerItems | undefined)[]): FormAnswerItems[] {
-    return answerItems.filter((answer) => !!answer).filter((answer) => !isAnswerValueEmpty(answer.value));
+export function cleanFormAnswerItems(answerItems: (FormAnswerItems | undefined)[] | undefined): FormAnswerItems[] {
+    return (answerItems ?? []).filter((answer) => !!answer).filter((answer) => !isAnswerValueEmpty(answer.value));
 }
 
 export function isValueEmpty(value: any) {
