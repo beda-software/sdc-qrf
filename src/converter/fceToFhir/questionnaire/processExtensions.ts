@@ -1,6 +1,7 @@
 import { Extension as FHIRExtension, Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
 
 import { Questionnaire as FCEQuestionnaire } from '@beda.software/aidbox-types';
+import { legacyMappingExtensionUrl, legacyQuestionnaireProfileUrl, mappingExtensionUrl } from '../../constants';
 
 export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
     const { launchContext, mapping, sourceQueries, targetStructureMap, assembledFrom, ...fhirQuestionnaire } =
@@ -39,10 +40,13 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
     }
 
     if (mapping) {
+        const extensionUrl =
+            questionnaire.meta?.profile?.[0] === legacyQuestionnaireProfileUrl
+                ? legacyMappingExtensionUrl
+                : mappingExtensionUrl;
         extensions = extensions.concat(
             mapping.map((m) => ({
-                // url: 'https://emr.beda.software/StructureDefinition/questionnaire-mapper',
-                url: 'http://beda.software/fhir-extensions/questionnaire-mapper',
+                url: extensionUrl,
                 valueReference: {
                     reference: `Mapping/${m.id}`,
                 },
