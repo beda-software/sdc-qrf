@@ -1,3 +1,11 @@
+## 1.0.0-beta.16
+
+- Add subQuestionnaire item extension
+- 
+## 1.0.0-beta.15
+
+- Add colsNumber item extension
+
 ## 1.0.0-beta.13
 
 - Fix critical bug with undefined answers
