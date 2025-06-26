@@ -90,6 +90,9 @@ export const extensionTransformers: ExtensionTransformer = {
     [ExtensionIdentifier.ColsNumber]: {
         path: { extension: 'valueInteger', questionnaire: 'colsNumber' },
     },
+    [ExtensionIdentifier.SubQuestionnaire]: {
+        path: { extension: 'valueCanonical', questionnaire: 'subQuestionnaire' },
+    },
     [ExtensionIdentifier.ReferenceResource]: {
         transform: {
             fromExtensions: (extensions) => {
@@ -304,27 +307,5 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.Macro]: {
         path: { extension: 'valueString', questionnaire: 'macro' },
-    },
-    [ExtensionIdentifier.SubQuestionnaire]: {
-        transform: {
-            fromExtensions: (extensions) => ({ subQuestionnaire: extensions[0]!.valueCanonical }),
-            toExtensions: (item) => {
-                if (item.subQuestionnaire) {
-                    return [
-                        {
-                            url: ExtensionIdentifier.SubQuestionnaire,
-                            extension: [
-                                {
-                                    url: ExtensionIdentifier.SubQuestionnaire,
-                                    valueCanonical: item.subQuestionnaire,
-                                },
-                            ],
-                        },
-                    ];
-                }
-
-                return [];
-            },
-        },
     },
 };
