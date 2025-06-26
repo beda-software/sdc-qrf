@@ -103,6 +103,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     helpText?: string;
     stopLabel?: string;
     rowsNumber?: number;
+    colsNumber?: number;
     unitOption?: Coding[];
     columnSize?: number;
     itemMedia?: Attachment;

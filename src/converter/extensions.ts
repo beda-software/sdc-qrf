@@ -44,6 +44,7 @@ export enum ExtensionIdentifier {
     StopLabel = 'https://emr-core.beda.software/StructureDefinition/slider-stop-label',
     Macro = 'https://emr-core.beda.software/StructureDefinition/macro',
     RowsNumber = 'https://emr-core.beda.software/StructureDefinition/rows-number',
+    ColsNumber = 'https://emr-core.beda.software/StructureDefinition/cols-number',
 }
 
 export type ExtensionTransformer = {
@@ -84,6 +85,9 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.RowsNumber]: {
         path: { extension: 'valueInteger', questionnaire: 'rowsNumber' },
+    },
+    [ExtensionIdentifier.ColsNumber]: {
+        path: { extension: 'valueInteger', questionnaire: 'colsNumber' },
     },
     [ExtensionIdentifier.ReferenceResource]: {
         transform: {
