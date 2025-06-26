@@ -45,6 +45,7 @@ export enum ExtensionIdentifier {
     Macro = 'https://emr-core.beda.software/StructureDefinition/macro',
     RowsNumber = 'https://emr-core.beda.software/StructureDefinition/rows-number',
     ColsNumber = 'https://emr-core.beda.software/StructureDefinition/cols-number',
+    SubQuestionnaire = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire',
 }
 
 export type ExtensionTransformer = {
@@ -303,5 +304,27 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.Macro]: {
         path: { extension: 'valueString', questionnaire: 'macro' },
+    },
+    [ExtensionIdentifier.SubQuestionnaire]: {
+        transform: {
+            fromExtensions: (extensions) => ({ subQuestionnaire: extensions[0]!.valueCanonical }),
+            toExtensions: (item) => {
+                if (item.subQuestionnaire) {
+                    return [
+                        {
+                            url: ExtensionIdentifier.SubQuestionnaire,
+                            extension: [
+                                {
+                                    url: ExtensionIdentifier.SubQuestionnaire,
+                                    valueCanonical: item.subQuestionnaire,
+                                },
+                            ],
+                        },
+                    ];
+                }
+
+                return [];
+            },
+        },
     },
 };
