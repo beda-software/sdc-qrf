@@ -16,9 +16,7 @@ import { toFirstClassExtension, toFirstClassExtensionV2 } from './fhirToFce';
 import { processLaunchContext as processLaunchContextToFce } from './fhirToFce/questionnaire/processExtensions';
 export * from './utils';
 
-export function convertFromFHIRExtension(
-    extensions: FHIRExtension[],
-): Partial<FCEQuestionnaireItem> | undefined {
+export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<FCEQuestionnaireItem> | undefined {
     const identifier = extensions[0]!.url;
     const transformer = extensionTransformers[identifier as ExtensionIdentifier];
     if (transformer !== undefined) {
@@ -95,18 +93,21 @@ export function fromFHIRReference(r?: FHIRReference): InternalReference | undefi
     }
 }
 
-export function toFHIRReference(r?: InternalReference): FHIRReference | undefined {
+export function toFHIRReference(r?: InternalReference | FHIRReference): FHIRReference | undefined {
     if (!r) {
         return undefined;
     }
 
-    const { id, resourceType, ...commonReferenceProperties } = r;
+    // @ts-expect-error(handles for both types of references)
+    const { id, resourceType, reference, ...commonReferenceProperties } = r;
 
+    // @ts-expect-error(resource is defined for internal reference only)
     delete commonReferenceProperties.resource;
 
     return {
         ...commonReferenceProperties,
-        reference: `${resourceType}/${id}`,
+        // This function will work both with FHIR and Aidbox references
+        reference: reference ?? `${resourceType}/${id}`,
     };
 }
 

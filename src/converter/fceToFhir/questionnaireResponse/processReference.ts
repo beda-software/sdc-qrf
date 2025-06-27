@@ -1,31 +1,22 @@
 import { QuestionnaireResponse as FHIRQuestionnaireResponse } from 'fhir/r4b';
 
 import { QuestionnaireResponse as FCEQuestionnaireResponse } from '@beda.software/aidbox-types';
+import { toFHIRReference } from '../../index';
 
 export function processReference(fceQR: FCEQuestionnaireResponse): FHIRQuestionnaireResponse {
     const { encounter, source, subject, ...commonProperties } = fceQR;
-    const fhirQuestionnaireResponse: FHIRQuestionnaireResponse =
-        commonProperties as FHIRQuestionnaireResponse;
-    if (encounter && encounter.resourceType && encounter.id) {
-        const { id, resourceType, ...encounterProperties } = encounter;
-        fhirQuestionnaireResponse.encounter = {
-            reference: `${resourceType}/${id}`,
-            ...encounterProperties,
-        };
+    const fhirQuestionnaireResponse: FHIRQuestionnaireResponse = commonProperties as FHIRQuestionnaireResponse;
+    if (encounter) {
+        fhirQuestionnaireResponse.encounter = toFHIRReference(encounter);
     }
-    if (source && source.resourceType && source.id) {
-        const { id, resourceType, ...sourceProperties } = source;
-        fhirQuestionnaireResponse.source = {
-            reference: `${resourceType}/${id}`,
-            ...sourceProperties,
-        };
+
+    if (source) {
+        fhirQuestionnaireResponse.source = toFHIRReference(source);
     }
-    if (subject && subject.resourceType && subject.id) {
-        const { id, resourceType, ...subjectProperties } = subject;
-        fhirQuestionnaireResponse.subject = {
-            reference: `${resourceType}/${id}`,
-            ...subjectProperties,
-        };
+
+    if (subject) {
+        fhirQuestionnaireResponse.subject = toFHIRReference(subject);
     }
+
     return fhirQuestionnaireResponse;
 }
