@@ -45,6 +45,7 @@ export enum ExtensionIdentifier {
     StopLabel = 'https://beda.software/fhir-emr-questionnaire/slider-stop-label',
     Macro = 'https://beda.software/fhir-emr-questionnaire/macro',
     RowsNumber = 'https://beda.software/fhir-emr-questionnaire/rows-number',
+    SubQuestionnaire = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire',
 }
 
 export type ExtensionTransformer = {
@@ -85,6 +86,9 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.RowsNumber]: {
         path: { extension: 'valueInteger', questionnaire: 'rowsNumber' },
+    },
+    [ExtensionIdentifier.SubQuestionnaire]: {
+        path: { extension: 'valueCanonical', questionnaire: 'subQuestionnaire' },
     },
     [ExtensionIdentifier.ReferenceResource]: {
         transform: {
