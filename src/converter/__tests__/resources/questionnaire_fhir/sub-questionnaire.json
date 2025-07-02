@@ -1,0 +1,32 @@
+{
+    "subjectType": ["Encounter", "Patient"],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2023-04-10T03:43:34.792167Z",
+        "versionId": "694"
+    },
+    "name": "SubQuestionnaire",
+    "item": [
+        {
+            "text": "SubQuestionnaire",
+            "type": "group",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire",
+                    "valueCanonical": "allergies"
+                }
+            ],
+            "linkId": "sub-questionnaire"
+        }
+    ],
+    "resourceType": "Questionnaire",
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "sub-questionnaire"
+        }
+    ],
+    "status": "active",
+    "id": "sub-questionnaire",
+    "url": "https://aidbox.emr.beda.software/ui/console#/entities/Questionnaire/sub-questionnaire"
+}
