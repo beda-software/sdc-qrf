@@ -19,7 +19,8 @@ export enum ExtensionIdentifier {
     MinQuantity = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-minQuantity',
     MaxQuantity = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-maxQuantity',
     ShowOrdinalValue = 'http://aidbox.io/questionnaire-showOrdinalValue',
-    PreferredTerminologyServer = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer',
+    PreferredTerminologyServerSDC = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer',
+    PreferredTerminologyServer = 'http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer',
     OpenLabel = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel',
     BackgroundImage = 'http://aidbox.io/questionnaire-backgroundImage',
     Language = 'http://hl7.org/fhir/StructureDefinition/language',
@@ -158,8 +159,11 @@ export const extensionTransformers: ExtensionTransformer = {
     [ExtensionIdentifier.ShowOrdinalValue]: {
         path: { extension: 'valueBoolean', questionnaire: 'showOrdinalValue' },
     },
+    [ExtensionIdentifier.PreferredTerminologyServerSDC]: {
+        path: { extension: 'valueUrl', questionnaire: 'preferredTerminologyServer' },
+    },
     [ExtensionIdentifier.PreferredTerminologyServer]: {
-        path: { extension: 'valueUri', questionnaire: 'preferredTerminologyServer' },
+        path: { extension: 'valueUrl', questionnaire: 'preferredTerminologyServer' },
     },
     [ExtensionIdentifier.OpenLabel]: {
         path: { extension: 'valueString', questionnaire: 'openLabel' },
