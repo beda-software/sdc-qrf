@@ -1,7 +1,11 @@
+## 1.0.0-beta.17
+
+- Fix value for preferredTerminologyServer
+
 ## 1.0.0-beta.16
 
 - Add subQuestionnaire item extension
-- 
+
 ## 1.0.0-beta.15
 
 - Add colsNumber item extension
