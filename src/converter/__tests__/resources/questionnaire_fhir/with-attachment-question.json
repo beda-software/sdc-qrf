@@ -1,0 +1,32 @@
+{
+    "resourceType": "Questionnaire",
+    "name": "with-attachment",
+    "status": "active",
+    "meta": {
+        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "lastUpdated": "2023-05-04T01:00:51.328418Z",
+        "extension": [
+            {
+                "url": "ex:createdAt",
+                "valueInstant": "2023-05-04T01:00:51.328418Z"
+            }
+        ]
+    },
+    "item": [
+        {
+            "linkId": "logo-image",
+            "type": "attachment",
+            "text": "upload something",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+                    "valueCode": "image/jpeg"
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+                    "valueCode": "application/pdf"
+                }
+            ]
+        }
+    ]
+}

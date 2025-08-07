@@ -1,0 +1,18 @@
+{
+    "resourceType": "Questionnaire",
+    "name": "with-attachment",
+    "status": "active",
+    "meta": {
+        "profile": ["https://beda.software/beda-emr-questionnaire"],
+        "lastUpdated": "2023-05-04T01:00:51.328418Z",
+        "createdAt": "2023-05-04T01:00:51.328418Z"
+    },
+    "item": [
+        {
+            "linkId": "logo-image",
+            "type": "attachment",
+            "text": "upload something",
+            "mimeType": ["image/jpeg", "application/pdf"]
+        }
+    ]
+}
