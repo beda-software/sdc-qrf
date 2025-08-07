@@ -14227,6 +14227,8 @@ export interface QuestionnaireItem {
     choiceOrientation?: 'horizontal' | 'vertical';
     choiceColumns?: integer;
     ordinalValue?: decimal;
+    /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/mimeType */
+    mimeType?: code[];
 }
 
 export interface QuestionnaireItemText {
