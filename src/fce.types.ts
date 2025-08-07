@@ -122,6 +122,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     choiceOrientation?: 'horizontal' | 'vertical';
     choiceColumns?: number;
     ordinalValue?: number;
+    mimeType?: string[];
 }
 
 export interface FCEQuestionnaireItemText {
