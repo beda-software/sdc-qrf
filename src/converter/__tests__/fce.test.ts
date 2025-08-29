@@ -35,6 +35,8 @@ import fce_vitals from './resources/questionnaire_fce/vitals.json';
 import fce_variable from './resources/questionnaire_fce/variable.json';
 import fce_sub_questionnaire from './resources/questionnaire_fce/sub-questionnaire.json';
 import fce_with_attachment_questionnaire from './resources/questionnaire_fce/with-attachment-question.json';
+import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
+import fce_unknown_extensions from './resources/questionnaire_fce/unknown-extensions.json';
 // fhir questionnaire
 import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
@@ -64,6 +66,8 @@ import fhir_vitals from './resources/questionnaire_fhir/vitals.json';
 import fhir_variable from './resources/questionnaire_fhir/variable.json';
 import fhir_sub_questionnaire from './resources/questionnaire_fhir/sub-questionnaire.json';
 import fhir_with_attachment_questionnaire from './resources/questionnaire_fhir/with-attachment-question.json';
+import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
+import fhir_unknown_extensions from './resources/questionnaire_fhir/unknown-extensions.json';
 // fce questionnaire response
 import fce_allergies_inprogress_qr from './resources/questionnaire_response_fce/allergies_inprogress.json';
 import fce_cardiology_qr from './resources/questionnaire_response_fce/cardiology.json';
@@ -94,73 +98,87 @@ import fhir_practitioner_qr from './resources/questionnaire_response_fhir/practi
 import fhir_reference_answer_with_assoc from './resources/questionnaire_response_fhir/reference_answer_with_assoc.json';
 import fhir_review_of_systems_qr from './resources/questionnaire_response_fhir/review_of_systems.json';
 import fhir_vitals_qr from './resources/questionnaire_response_fhir/vitals.json';
+
 import { toFirstClassExtension, fromFirstClassExtension } from '../../converter';
 import { sortExtensionsList } from '../utils';
 
 describe('Questionanire and QuestionnaireResponses transformation', () => {
     test.each([
-        [fhir_allergies, fce_allergies],
-        [fhir_beverages, fce_beverages],
-        [fhir_choice_answer_option, fce_choice_answer_option],
-        [fhir_encounter_create, fce_encounter_create],
-        [fhir_gad_7, fce_gad_7],
-        [fhir_immunization, fce_immunization],
-        [fhir_medication, fce_medication],
-        [fhir_multiple_type_launch_context, fce_multiple_type_launch_context],
-        [fhir_patient_create, fce_patient_create],
-        [fhir_patient_edit, fce_patient_edit],
-        [fhir_phq_2_phq_9, fce_phq_2_phq_9],
-        [fhir_physicalexam, fce_physicalexam],
-        [fhir_practitioner_create, fce_practitioner_create],
-        [fhir_practitioner_edit, fce_practitioner_edit],
-        [fhir_practitioner_role_create, fce_practitioner_role_create],
-        [fhir_public_appointment, fce_public_appointment],
-        [fhir_review_of_systems, fce_review_of_systems],
-        [fhir_source_queries, fce_source_queries],
-        [fhir_vitals, fce_vitals],
-        [fhir_practitioner_create_structure_map, fce_practitioner_create_structure_map],
-        [fhir_consent, fce_consent],
-        [fhir_enable_when, fce_enable_when],
-        [fhir_cqf_examples, fce_cqf_examples],
-        [fhir_constraint, fce_constraint],
-        [fhir_unit_option, fce_unit_option],
-        [fhir_variable, fce_variable],
-        [fhir_sub_questionnaire, fce_sub_questionnaire],
-        [fhir_with_attachment_questionnaire, fce_with_attachment_questionnaire],
-    ])('Each FHIR Questionnaire should convert to FCE', async (fhir_questionnaire, fce_questionnaire) => {
+        ['allergies', fhir_allergies, fce_allergies],
+        ['beverages', fhir_beverages, fce_beverages],
+        ['choice-answer-option', fhir_choice_answer_option, fce_choice_answer_option],
+        ['encounter-create', fhir_encounter_create, fce_encounter_create],
+        ['gad-7', fhir_gad_7, fce_gad_7],
+        ['immunization', fhir_immunization, fce_immunization],
+        ['medication', fhir_medication, fce_medication],
+        ['multiple-type-launch-context', fhir_multiple_type_launch_context, fce_multiple_type_launch_context],
+        ['patient-create', fhir_patient_create, fce_patient_create],
+        ['patient-edit', fhir_patient_edit, fce_patient_edit],
+        ['phq-2-phq-9', fhir_phq_2_phq_9, fce_phq_2_phq_9],
+        ['physicalexam', fhir_physicalexam, fce_physicalexam],
+        ['practitioner-create', fhir_practitioner_create, fce_practitioner_create],
+        ['practitioner-edit', fhir_practitioner_edit, fce_practitioner_edit],
+        ['practitioner-role-create', fhir_practitioner_role_create, fce_practitioner_role_create],
+        ['public-appointment', fhir_public_appointment, fce_public_appointment],
+        ['review-of-systems', fhir_review_of_systems, fce_review_of_systems],
+        ['source-queries', fhir_source_queries, fce_source_queries],
+        ['vitals', fhir_vitals, fce_vitals],
+        [
+            'practitioner-create-structure-map',
+            fhir_practitioner_create_structure_map,
+            fce_practitioner_create_structure_map,
+        ],
+        ['consent', fhir_consent, fce_consent],
+        ['enable-when', fhir_enable_when, fce_enable_when],
+        ['cqf-examples', fhir_cqf_examples, fce_cqf_examples],
+        ['constraint', fhir_constraint, fce_constraint],
+        ['unit-option', fhir_unit_option, fce_unit_option],
+        ['variable', fhir_variable, fce_variable],
+        ['sub-questionnaire', fhir_sub_questionnaire, fce_sub_questionnaire],
+        ['with-attachment-questionnaire', fhir_with_attachment_questionnaire, fce_with_attachment_questionnaire],
+        // NOTE: this following is not included here because it's example of mixed FCE + extensions, it is only for FCE -> FHIR
+        // ['mixed-fce-with-extensions', fhir_mixed_fce_with_extensions, fce_mixed_fce_with_extensions],
+        ['unknown-extensions', fhir_unknown_extensions, fce_unknown_extensions],
+    ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
 
     test.each([
-        [fce_allergies, fhir_allergies],
-        [fce_beverages, fhir_beverages],
-        [fce_choice_answer_option, fhir_choice_answer_option],
-        [fce_encounter_create, fhir_encounter_create],
-        [fce_gad_7, fhir_gad_7],
-        [fce_immunization, fhir_immunization],
-        [fce_medication, fhir_medication],
-        [fce_multiple_type_launch_context, fhir_multiple_type_launch_context],
-        [fce_patient_create, fhir_patient_create],
-        [fce_patient_edit, fhir_patient_edit],
-        [fce_phq_2_phq_9, fhir_phq_2_phq_9],
-        [fce_physicalexam, fhir_physicalexam],
-        [fce_practitioner_create, fhir_practitioner_create],
-        [fce_practitioner_edit, fhir_practitioner_edit],
-        [fce_practitioner_role_create, fhir_practitioner_role_create],
-        [fce_public_appointment, fhir_public_appointment],
-        [fce_review_of_systems, fhir_review_of_systems],
-        [fce_source_queries, fhir_source_queries],
-        [fce_vitals, fhir_vitals],
-        [fce_practitioner_create_structure_map, fhir_practitioner_create_structure_map],
-        [fce_consent, fhir_consent],
-        [fce_enable_when, fhir_enable_when],
-        [fce_cqf_examples, fhir_cqf_examples],
-        [fce_constraint, fhir_constraint],
-        [fce_unit_option, fhir_unit_option],
-        [fce_variable, fhir_variable],
-        [fce_sub_questionnaire, fhir_sub_questionnaire],
-        [fce_with_attachment_questionnaire, fhir_with_attachment_questionnaire],
-    ])('Each FCE Questionnaire should convert to FHIR', async (fce_questionnaire, fhir_questionnaire) => {
+        ['allergies', fce_allergies, fhir_allergies],
+        ['beverages', fce_beverages, fhir_beverages],
+        ['choice-answer-option', fce_choice_answer_option, fhir_choice_answer_option],
+        ['encounter-create', fce_encounter_create, fhir_encounter_create],
+        ['gad-7', fce_gad_7, fhir_gad_7],
+        ['immunization', fce_immunization, fhir_immunization],
+        ['medication', fce_medication, fhir_medication],
+        ['multiple-type-launch-context', fce_multiple_type_launch_context, fhir_multiple_type_launch_context],
+        ['patient-create', fce_patient_create, fhir_patient_create],
+        ['patient-edit', fce_patient_edit, fhir_patient_edit],
+        ['phq-2-phq-9', fce_phq_2_phq_9, fhir_phq_2_phq_9],
+        ['physicalexam', fce_physicalexam, fhir_physicalexam],
+        ['practitioner-create', fce_practitioner_create, fhir_practitioner_create],
+        ['practitioner-edit', fce_practitioner_edit, fhir_practitioner_edit],
+        ['practitioner-role-create', fce_practitioner_role_create, fhir_practitioner_role_create],
+        ['public-appointment', fce_public_appointment, fhir_public_appointment],
+        ['review-of-systems', fce_review_of_systems, fhir_review_of_systems],
+        ['source-queries', fce_source_queries, fhir_source_queries],
+        ['vitals', fce_vitals, fhir_vitals],
+        [
+            'practitioner-create-structure-map',
+            fce_practitioner_create_structure_map,
+            fhir_practitioner_create_structure_map,
+        ],
+        ['consent', fce_consent, fhir_consent],
+        ['enable-when', fce_enable_when, fhir_enable_when],
+        ['cqf-examples', fce_cqf_examples, fhir_cqf_examples],
+        ['constraint', fce_constraint, fhir_constraint],
+        ['unit-option', fce_unit_option, fhir_unit_option],
+        ['variable', fce_variable, fhir_variable],
+        ['sub-questionnaire', fce_sub_questionnaire, fhir_sub_questionnaire],
+        ['with-attachment-questionnaire', fce_with_attachment_questionnaire, fhir_with_attachment_questionnaire],
+        ['mixed-fce-with-extensions', fce_mixed_fce_with_extensions, fhir_mixed_fce_with_extensions],
+        ['unknown-extensions', fce_unknown_extensions, fhir_unknown_extensions],
+    ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
         );

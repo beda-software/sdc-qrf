@@ -33,7 +33,8 @@ export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<F
 }
 
 export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtension[] {
-    const extensions: FHIRExtension[] = [];
+    const extensions: FHIRExtension[] = [...(item.extension ?? [])];
+
     Object.values(ExtensionIdentifier).forEach((identifier) => {
         const transformer = extensionTransformers[identifier];
         if ('transform' in transformer) {
@@ -52,6 +53,7 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
             }
         }
     });
+
     return extensions;
 }
 
