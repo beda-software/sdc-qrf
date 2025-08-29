@@ -3,6 +3,22 @@
         {
             "type": "string",
             "linkId": "question-1",
+            "readOnly": true,
+            "_readOnly": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                        "valueExpression": {
+                            "language": "text/fhirpath",
+                            "expression": "{}"
+                        }
+                    },
+                    {
+                        "url": "urn:unknown-primitive-extension-1",
+                        "valueString": "This is unknown primitive extension along with known extension"
+                    }
+                ]
+            },
             "extension": [
                 {
                     "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
@@ -20,6 +36,15 @@
         {
             "type": "string",
             "linkId": "question-2",
+            "readOnly": true,
+            "_readOnly": {
+                "extension": [
+                    {
+                        "url": "urn:unknown-primitive-extension-2",
+                        "valueString": "This is single unknown primitive extension"
+                    }
+                ]
+            },
             "extension": [
                 {
                     "url": "urn:unknown-extension-2",
