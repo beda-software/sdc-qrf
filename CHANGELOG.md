@@ -1,3 +1,7 @@
+## 1.0.0-beta.20
+
+- Add minOccurs/maxOccurs converter #31
+
 ## 1.0.0-beta.19
 
 - Preserve unknown extensions (including primitive) #6 #8
