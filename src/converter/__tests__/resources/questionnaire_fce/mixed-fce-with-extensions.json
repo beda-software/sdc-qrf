@@ -1,0 +1,26 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "fce-with-extensions",
+    "meta": {
+        "profile": [
+            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ]
+    },
+    "status": "active",
+    "item": [
+        {
+            "type": "string",
+            "linkId": "question",
+            "entryFormat": "This is FCE",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+                    "valueExpression": {
+                        "language": "text/fhirpath",
+                        "expression": "'This is extension'"
+                    }
+                }
+            ]
+        }
+    ]
+}

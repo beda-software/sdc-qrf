@@ -13,19 +13,23 @@ export function processItems(fhirQuestionnaire: FHIRQuestionnaire) {
 }
 
 function convertItemProperties(item: FHIRQuestionnaireItem): FCEQuestionnaireItem {
-    const updatedProperties = getUpdatedPropertiesFromItem(item);
+    const { updatedProperties, processedExtensionUrls } = getUpdatedPropertiesFromItem(item);
     const newItem = { ...item, ...updatedProperties };
 
     newItem.item = item.item?.map((nestedItem) => convertItemProperties(nestedItem));
 
     if (newItem.extension) {
-        delete newItem.extension;
+        newItem.extension = newItem.extension.filter((ext) => !processedExtensionUrls.includes(ext.url));
+        if (!newItem.extension.length) {
+            delete newItem.extension;
+        }
     }
 
     return newItem;
 }
 
 function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
+    const processedExtensionUrls: string[] = [];
     let updatedProperties: FCEQuestionnaireItem = { linkId: item.linkId, type: item.type };
 
     for (const identifier of Object.values(ExtensionIdentifier)) {
@@ -35,6 +39,9 @@ function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
                 const primitiveExtensions = (element as FHIRElement)?.extension ?? [];
                 for (const extension of primitiveExtensions) {
                     if (extension.url === identifier) {
+                        if (!processedExtensionUrls.includes(identifier)) {
+                            processedExtensionUrls.push(identifier);
+                        }
                         updatedProperties = {
                             ...updatedProperties,
                             ...{ [property]: convertFromFHIRExtension([extension]) },
@@ -46,6 +53,9 @@ function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
 
         const extensions = filterQuestionnaireItemExtensions(item, identifier);
         if (extensions?.length) {
+            if (!processedExtensionUrls.includes(identifier)) {
+                processedExtensionUrls.push(identifier);
+            }
             updatedProperties = {
                 ...updatedProperties,
                 ...convertFromFHIRExtension(extensions),
@@ -53,5 +63,5 @@ function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
         }
     }
 
-    return updatedProperties;
+    return { updatedProperties, processedExtensionUrls };
 }

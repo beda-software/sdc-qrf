@@ -1,0 +1,36 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "unknown-extensions",
+    "meta": {
+        "profile": [
+            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ]
+    },
+    "status": "active",
+    "item": [
+        {
+            "type": "string",
+            "linkId": "question-1",
+            "initialExpression": {
+                "language": "text/fhirpath",
+                "expression": "'This is known extension'"
+            },
+            "extension": [
+                {
+                    "url": "urn:unknown-extension-1",
+                    "valueString": "This is unknown extension along with known extension"
+                }
+            ]
+        },
+        {
+            "type": "string",
+            "linkId": "question-2",
+            "extension": [   
+                {
+                    "url": "urn:unknown-extension-2",
+                    "valueString": "This is single unknown extension"
+                }
+            ]
+        }
+    ]
+}
