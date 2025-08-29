@@ -1,4 +1,4 @@
-import { QuestionnaireItem as FHIRQuestionnaireItem, Meta } from 'fhir/r4b';
+import { Meta } from 'fhir/r4b';
 import cloneDeep from 'lodash/cloneDeep';
 
 function sortExtensionsRecursive(object: any) {
@@ -22,10 +22,6 @@ function sortExtensionsRecursive(object: any) {
 
 export function sortExtensionsList(object: any) {
     return sortExtensionsRecursive(cloneDeep(object));
-}
-
-export function filterQuestionnaireItemExtensions(item: FHIRQuestionnaireItem, url: string) {
-    return item.extension?.filter((ext) => ext.url === url);
 }
 
 export function extractCreatedAtFromMeta(meta: Meta | undefined) {

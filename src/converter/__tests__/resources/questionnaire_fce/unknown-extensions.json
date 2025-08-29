@@ -15,6 +15,19 @@
                 "language": "text/fhirpath",
                 "expression": "'This is known extension'"
             },
+            "readOnly": true,
+            "_readOnly": {
+                "cqfExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "{}"
+                },
+                "extension": [
+                    {
+                        "url": "urn:unknown-primitive-extension-1",
+                        "valueString": "This is unknown primitive extension along with known extension"
+                    }
+                ]
+            },
             "extension": [
                 {
                     "url": "urn:unknown-extension-1",
@@ -25,6 +38,15 @@
         {
             "type": "string",
             "linkId": "question-2",
+            "readOnly": true,
+            "_readOnly": {
+                "extension": [
+                    {
+                        "url": "urn:unknown-primitive-extension-2",
+                        "valueString": "This is single unknown primitive extension"
+                    }
+                ]
+            },
             "extension": [   
                 {
                     "url": "urn:unknown-extension-2",
