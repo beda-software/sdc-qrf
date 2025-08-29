@@ -4,7 +4,7 @@ import {
     QuestionnaireItem as FHIRQuestionnaireItem,
     QuestionnaireItemAnswerOption as FHIRQuestionnaireItemAnswerOption,
     QuestionnaireItemInitial as FHIRQuestionnaireItemInitial,
-    Element as FHIRElement,
+    Extension as FHIRExtension,
 } from 'fhir/r4b';
 import _ from 'lodash';
 
@@ -16,7 +16,7 @@ import {
     QuestionnaireItemInitial as FCEQuestionnaireItemInitial,
 } from '@beda.software/aidbox-types';
 
-import { convertFromFHIRExtension, filterExtensions, fromFHIRReference } from '../../../converter';
+import { convertFromFHIRExtension, fromFHIRReference } from '../../../converter';
 import { ExtensionIdentifier } from '../../extensions';
 
 export function processItems(fhirQuestionnaire: FHIRQuestionnaire, extensionsOnly: boolean) {
@@ -24,63 +24,66 @@ export function processItems(fhirQuestionnaire: FHIRQuestionnaire, extensionsOnl
 }
 
 function convertItemProperties(item: FHIRQuestionnaireItem, extensionsOnly: boolean): FCEQuestionnaireItem {
-    const { updatedProperties, processedExtensionUrls } = getUpdatedPropertiesFromItem(item, extensionsOnly);
-    const newItem = { ...item, ...updatedProperties };
+    const newItem = getUpdatedPropertiesFromItem(item, extensionsOnly);
 
-    newItem.item = item.item?.map((nestedItem) => convertItemProperties(nestedItem, extensionsOnly));
-
-    if (newItem.extension) {
-        newItem.extension = newItem.extension.filter((ext) => !processedExtensionUrls.includes(ext.url));
-        if (!newItem.extension.length) {
-            delete newItem.extension;
-        }
+    if (item.item) {
+        newItem.item = item.item.map((nestedItem) => convertItemProperties(nestedItem, extensionsOnly));
     }
-
     return newItem;
 }
 
 function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem, extensionsOnly: boolean) {
-    const processedExtensionUrls: string[] = [];
-    let updatedProperties: FCEQuestionnaireItem = { linkId: item.linkId, type: item.type };
+    let newItem: FCEQuestionnaireItem = { ...item };
 
-    for (const identifier of Object.values(ExtensionIdentifier)) {
-        for (const property of Object.keys(item)) {
-            const element = item[property as keyof FHIRQuestionnaireItem];
-            if (property.startsWith('_') && element instanceof Object) {
-                const primitiveExtensions = (element as FHIRElement)?.extension ?? [];
-                for (const extension of primitiveExtensions) {
-                    if (extension.url === identifier) {
-                        if (!processedExtensionUrls.includes(identifier)) {
-                            processedExtensionUrls.push(identifier);
-                        }
-                        updatedProperties = {
-                            ...updatedProperties,
-                            ...{ [property]: convertFromFHIRExtension([extension]) },
-                        };
-                    }
-                }
-            }
-        }
-
-        const extensions = filterExtensions(item, identifier);
-        if (extensions?.length) {
-            if (!processedExtensionUrls.includes(identifier)) {
-                processedExtensionUrls.push(identifier);
-            }
-            updatedProperties = {
-                ...updatedProperties,
-                ...convertFromFHIRExtension(extensions),
+    // Primitive extensions
+    for (const property of Object.keys(item)) {
+        const element = item[property as keyof FHIRQuestionnaireItem];
+        if (property.startsWith('_') && element instanceof Object && !Array.isArray(element)) {
+            newItem = {
+                ...newItem,
+                ...{
+                    [property]: processExtensibleElement(element),
+                },
             };
         }
     }
 
     if (!extensionsOnly) {
-        updatedProperties.answerOption = item.answerOption?.map(processItemOption);
-        updatedProperties.initial = item.initial?.map(processItemOption);
-        updatedProperties.enableWhen = item.enableWhen?.map(processEnableWhenItem);
+        newItem.answerOption = item.answerOption?.map(processItemOption);
+        newItem.initial = item.initial?.map(processItemOption);
+        newItem.enableWhen = item.enableWhen?.map(processEnableWhenItem);
     }
 
-    return { updatedProperties, processedExtensionUrls };
+    return processExtensibleElement(newItem);
+}
+
+function processExtensibleElement<T extends { extension?: FHIRExtension[] }>(element: T): T {
+    let newElement = { ...element };
+    const knownExtensionUrls = Object.values(ExtensionIdentifier) as string[];
+
+    const allExtensions = element.extension ?? [];
+    const knownExtensions = allExtensions.filter((ext) => knownExtensionUrls.includes(ext.url));
+    const unknownExtensions = allExtensions.filter((ext) => !knownExtensionUrls.includes(ext.url));
+
+    if (knownExtensions.length) {
+        const uniqueExtensionUrls = new Set(knownExtensions.map((ext) => ext.url));
+        for (const extensionUrl of uniqueExtensionUrls) {
+            const extensions = knownExtensions.filter((ext) => ext.url === extensionUrl);
+
+            newElement = {
+                ...newElement,
+                ...convertFromFHIRExtension(extensions),
+            };
+        }
+    }
+
+    if (unknownExtensions.length) {
+        newElement.extension = unknownExtensions;
+    } else {
+        delete newElement.extension;
+    }
+
+    return newElement;
 }
 
 function processEnableWhenItem(item: FHIRQuestionnaireItemEnableWhen): FCEQuestionnaireItemEnableWhen {

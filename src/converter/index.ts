@@ -1,8 +1,4 @@
-import {
-    Reference as FHIRReference,
-    Extension as FHIRExtension,
-    QuestionnaireItem as FHIRQuestionnaireItem,
-} from 'fhir/r4b';
+import { Reference as FHIRReference, Extension as FHIRExtension } from 'fhir/r4b';
 
 import {
     Extension as FCEExtension,
@@ -59,10 +55,6 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
 
 export function extractExtension(extension: FCEExtension[] | undefined, url: 'ex:createdAt') {
     return extension?.find((e) => e.url === url)?.valueInstant;
-}
-
-export function filterExtensions(item: FHIRQuestionnaireItem, url: string) {
-    return item.extension?.filter((ext) => ext.url === url);
 }
 
 export function fromFHIRReference(r?: FHIRReference): InternalReference | undefined {
