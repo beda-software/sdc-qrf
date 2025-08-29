@@ -1,3 +1,13 @@
+## 1.0.0-beta.19
+
+- Preserve unknown extensions (including primitive) #6 #8
+- Fix bug with mixed FCE and extensions #29
+- Refactor and speed up FHIR to FCE converter
+
+## 1.0.0-beta.18
+
+- Handle mimeType QuestionnaireItem extension by @dmitryashutov in #26
+
 ## 1.0.0-beta.17
 
 - Fix value for preferredTerminologyServer
