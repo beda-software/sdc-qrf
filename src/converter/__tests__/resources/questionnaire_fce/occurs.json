@@ -1,0 +1,16 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "occurs",
+    "meta": {
+        "profile": ["https://beda.software/beda-emr-questionnaire"]
+    },
+    "status": "active",
+    "item": [
+        {
+            "type": "number",
+            "linkId": "number",
+            "minOccurs": 1,
+            "maxOccurs": 2
+        }
+    ]
+}

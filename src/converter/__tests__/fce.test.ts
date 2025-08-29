@@ -37,6 +37,7 @@ import fce_sub_questionnaire from './resources/questionnaire_fce/sub-questionnai
 import fce_with_attachment_questionnaire from './resources/questionnaire_fce/with-attachment-question.json';
 import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
 import fce_unknown_extensions from './resources/questionnaire_fce/unknown-extensions.json';
+import fce_occurs from './resources/questionnaire_fce/occurs.json';
 // fhir questionnaire
 import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
@@ -68,6 +69,7 @@ import fhir_sub_questionnaire from './resources/questionnaire_fhir/sub-questionn
 import fhir_with_attachment_questionnaire from './resources/questionnaire_fhir/with-attachment-question.json';
 import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
 import fhir_unknown_extensions from './resources/questionnaire_fhir/unknown-extensions.json';
+import fhir_occurs from './resources/questionnaire_fhir/occurs.json';
 // fce questionnaire response
 import fce_allergies_inprogress_qr from './resources/questionnaire_response_fce/allergies_inprogress.json';
 import fce_cardiology_qr from './resources/questionnaire_response_fce/cardiology.json';
@@ -139,6 +141,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         // NOTE: this following is not included here because it's example of mixed FCE + extensions, it is only for FCE -> FHIR
         // ['mixed-fce-with-extensions', fhir_mixed_fce_with_extensions, fce_mixed_fce_with_extensions],
         ['unknown-extensions', fhir_unknown_extensions, fce_unknown_extensions],
+        ['occurs', fhir_occurs, fce_occurs],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -178,6 +181,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['with-attachment-questionnaire', fce_with_attachment_questionnaire, fhir_with_attachment_questionnaire],
         ['mixed-fce-with-extensions', fce_mixed_fce_with_extensions, fhir_mixed_fce_with_extensions],
         ['unknown-extensions', fce_unknown_extensions, fhir_unknown_extensions],
+        ['occurs', fce_occurs, fhir_occurs],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
