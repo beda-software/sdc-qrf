@@ -114,6 +114,8 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     maxValue?: Extension;
     minQuantity?: Extension;
     maxQuantity?: Extension;
+    minOccurs?: number;
+    maxOccurs?: number;
     showOrdinalValue?: boolean;
     preferredTerminologyServer?: string;
     openLabel?: string;
