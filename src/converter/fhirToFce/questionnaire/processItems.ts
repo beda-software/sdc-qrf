@@ -27,16 +27,16 @@ function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
             newItem = {
                 ...newItem,
                 ...{
-                    [property]: handleExtensibleElement(element),
+                    [property]: processExtensibleElement(element),
                 },
             };
         }
     }
 
-    return handleExtensibleElement(newItem);
+    return processExtensibleElement(newItem);
 }
 
-function handleExtensibleElement<T extends { extension?: Extension[] }>(element: T): T {
+function processExtensibleElement<T extends { extension?: Extension[] }>(element: T): T {
     let newElement = { ...element };
     const knownExtensionUrls = Object.values(ExtensionIdentifier) as string[];
 
