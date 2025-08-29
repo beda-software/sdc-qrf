@@ -1,0 +1,16 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "occurs",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "status": "active",
+    "item": [
+        {
+            "type": "number",
+            "linkId": "number",
+            "minOccurs": 1,
+            "maxOccurs": 2
+        }
+    ]
+}

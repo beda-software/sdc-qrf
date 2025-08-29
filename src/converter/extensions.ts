@@ -48,6 +48,8 @@ export enum ExtensionIdentifier {
     RowsNumber = 'https://emr-core.beda.software/StructureDefinition/rows-number',
     ColsNumber = 'https://emr-core.beda.software/StructureDefinition/cols-number',
     SubQuestionnaire = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire',
+    MinOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs',
+    MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
 }
 
 export type ExtensionTransformer = {
@@ -184,7 +186,12 @@ export const extensionTransformers: ExtensionTransformer = {
     [ExtensionIdentifier.ChoiceColumns]: {
         path: { extension: 'valueInteger', questionnaire: 'choiceColumns' },
     },
-
+    [ExtensionIdentifier.MinOccurs]: {
+        path: { extension: 'valueInteger', questionnaire: 'minOccurs' },
+    },
+    [ExtensionIdentifier.MaxOccurs]: {
+        path: { extension: 'valueInteger', questionnaire: 'maxOccurs' },
+    },
     [ExtensionIdentifier.ItemPopulationContext]: {
         path: { extension: 'valueExpression', questionnaire: 'itemPopulationContext' },
     },

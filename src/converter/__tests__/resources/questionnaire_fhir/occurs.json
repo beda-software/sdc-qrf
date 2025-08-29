@@ -1,0 +1,24 @@
+{
+    "item": [
+        {
+            "type": "number",
+            "linkId": "number",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+                    "valueInteger": 1
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+                    "valueInteger": 2
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "status": "active",
+    "resourceType": "Questionnaire",
+    "id": "occurs"
+}
