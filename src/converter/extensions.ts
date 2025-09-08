@@ -1,4 +1,4 @@
-import { FCEQuestionnaireItem } from '../fce.types';
+import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
 import { Extension as FHIRExtension } from 'fhir/r4b';
 
 export enum ExtensionIdentifier {
@@ -30,6 +30,7 @@ export enum ExtensionIdentifier {
 
     ItemPopulationContext = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
     ItemConstraint = 'http://hl7.org/fhir/StructureDefinition/questionnaire-constraint',
+    AnswerOptionsToggleExpression = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerOptionsToggleExpression',
     InitialExpression = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression',
     ChoiceColumn = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-choiceColumn',
     CalculatedExpression = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression',
@@ -246,6 +247,49 @@ export const extensionTransformers: ExtensionTransformer = {
             },
         },
     },
+    [ExtensionIdentifier.AnswerOptionsToggleExpression]: {
+        transform: {
+            fromExtensions: (extensions) => {
+                return {
+                    answerOptionsToggleExpression: extensions.map((extension) => {
+                        const answerOptionsToggleExpression = extension.extension!;
+
+                        return {
+                            expression: answerOptionsToggleExpression.find((obj) => obj.url === 'expression')!
+                                .valueExpression!,
+                            option: answerOptionsToggleExpression
+                                .filter((obj) => obj.url === 'option')
+                                .map(
+                                    (obj) =>
+                                        getExtensionValue(
+                                            obj,
+                                        ) as FCEQuestionnaireItemAnswerOptionsToggleExpressionOption,
+                                ),
+                        };
+                    }),
+                };
+            },
+            toExtensions: (item) => {
+                if (item.answerOptionsToggleExpression) {
+                    return item.answerOptionsToggleExpression.map((answerOptionsToggleExpression) => ({
+                        url: ExtensionIdentifier.AnswerOptionsToggleExpression,
+                        extension: [
+                            ...answerOptionsToggleExpression.option.map((option) => ({
+                                url: 'option',
+                                ...option,
+                            })),
+                            {
+                                url: 'expression',
+                                valueExpression: answerOptionsToggleExpression.expression,
+                            },
+                        ],
+                    }));
+                }
+
+                return [];
+            },
+        },
+    },
     [ExtensionIdentifier.Variable]: {
         path: { extension: 'valueExpression', questionnaire: 'variable', isCollection: true },
     },
@@ -324,3 +368,10 @@ export const extensionTransformers: ExtensionTransformer = {
         path: { extension: 'valueString', questionnaire: 'macro' },
     },
 };
+
+function getExtensionValue(extension: FHIRExtension) {
+    const valueKey = Object.keys(extension).find((key) => key.startsWith('value'))! as keyof FHIRExtension;
+    return {
+        [valueKey]: extension[valueKey],
+    };
+}

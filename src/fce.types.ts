@@ -9,6 +9,7 @@ import {
     Questionnaire,
     QuestionnaireItem,
     Reference,
+    QuestionnaireItemAnswerOption,
 } from 'fhir/r4b';
 
 export interface FCEQuestionnaire extends Questionnaire {
@@ -59,6 +60,9 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-constraint */
     /** An invariant that must be satisfied before responses to the questionnaire can be considered "complete". */
     itemConstraint?: FCEQuestionnaireItemConstraint[];
+    /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerOptionsToggleExpression */
+    /** A complex expression that provides a list of the allowed options that should be enabled or disabled based on the evaluation of a provided expression. */
+    answerOptionsToggleExpression?: FCEQuestionnaireItemAnswerOptionsToggleExpression[];
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression */
     /** An expression that returns a boolean value for whether to enable the item. */
     enableWhenExpression?: Expression;
@@ -171,6 +175,16 @@ export interface FCEQuestionnaireItemConstraint {
     requirements?: string;
     /** NOTE: from extension severity */
     severity: string;
+}
+
+export type FCEQuestionnaireItemAnswerOptionsToggleExpressionOption = Omit<
+    QuestionnaireItemAnswerOption,
+    'initialSelected' | '_initialSelected'
+>;
+
+export interface FCEQuestionnaireItemAnswerOptionsToggleExpression {
+    expression: Expression;
+    option: Array<FCEQuestionnaireItemAnswerOptionsToggleExpressionOption>;
 }
 
 export interface FCEQuestionnaireLaunchContext {
