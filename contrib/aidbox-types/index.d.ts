@@ -14134,6 +14134,9 @@ export interface QuestionnaireItem {
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-constraint */
     /** An invariant that must be satisfied before responses to the questionnaire can be considered "complete". */
     itemConstraint?: QuestionnaireItemConstraint[];
+    /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerOptionsToggleExpression */
+    /** A complex expression that provides a list of the allowed options that should be enabled or disabled based on the evaluation of a provided expression. */
+    answerOptionsToggleExpression?: QuestionnaireItemAnswerOptionsToggleExpression[];
     /** ElementDefinition - details for the item */
     definition?: uri;
     /** all | any */
@@ -14300,6 +14303,10 @@ export interface QuestionnaireItemConstraint {
     severity: code;
 }
 
+export interface QuestionnaireItemAnswerOptionsToggleExpression {
+    expression: Expression;
+    option: Array<{ value: QuestionnaireItemAnswerOptionValue }>;
+}
 export interface QuestionnaireItemEnableWhen {
     /** Value for question comparison based on operator */
     answer?: QuestionnaireItemEnableWhenAnswer;
