@@ -1,6 +1,7 @@
 import { Extension as FHIRExtension } from 'fhir/r4b';
 
 import { QuestionnaireItem as FCEQuestionnaireItem } from '@beda.software/aidbox-types';
+import { lowerFirst, upperFirst } from 'lodash';
 
 export enum ExtensionIdentifier {
     Hidden = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
@@ -256,12 +257,7 @@ export const extensionTransformers: ExtensionTransformer = {
                                 .valueExpression!,
                             option: answerOptionsToggleExpression
                                 .filter((obj) => obj.url === 'option')
-                                .map(
-                                    (obj) =>
-                                        getExtensionValue(
-                                            obj,
-                                        ) as FCEQuestionnaireItemAnswerOptionsToggleExpressionOption,
-                                ),
+                                .map((obj) => toAidboxUnionType(obj, 'value')),
                         };
                     }),
                 };
@@ -273,7 +269,7 @@ export const extensionTransformers: ExtensionTransformer = {
                         extension: [
                             ...answerOptionsToggleExpression.option.map((option) => ({
                                 url: 'option',
-                                ...option,
+                                ...fromAidboxUnionType(option.value, 'value'),
                             })),
                             {
                                 url: 'expression',
@@ -366,9 +362,44 @@ export const extensionTransformers: ExtensionTransformer = {
     },
 };
 
-function getExtensionValue(extension: FHIRExtension) {
-    const valueKey = Object.keys(extension).find((key) => key.startsWith('value'))! as keyof FHIRExtension;
+// fromAidboxUnionType({string: '1'}, 'value) => {valueString: '1'}
+function fromAidboxUnionType(obj: any, prefix: string): any {
+    const key = Object.keys(obj)[0]!;
+    const mappedObjKey = prefix + upperFirst(key);
+
+    return { [mappedObjKey]: obj[key] };
+}
+
+const FHIRPrimitiveTypes = [
+    'base64Binary',
+    'boolean',
+    'canonical',
+    'code',
+    'date',
+    'dateTime',
+    'decimal',
+    'id',
+    'instant',
+    'integer',
+    'integer64',
+    'markdown',
+    'oid',
+    'positiveInt',
+    'string',
+    'time',
+    'unsignedInt',
+    'uri',
+    'url',
+    'uuid',
+];
+// toAidboxUnionType({valueString: '1'}, 'value') => {value: {string: '1'}}
+// toAidboxUnionType({valueCoding: '1'}, 'value') => {value: {Coding: '1'}}
+function toAidboxUnionType(obj: any, prefix: string): any {
+    const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0]!;
+    const key = lowerFirst(prefixKey.slice(prefix.length));
+    const answerKey = FHIRPrimitiveTypes.includes(key) ? key : upperFirst(key);
+
     return {
-        [valueKey]: extension[valueKey],
+        [prefix]: { [answerKey]: obj[prefixKey] },
     };
 }

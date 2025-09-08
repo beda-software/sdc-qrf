@@ -2,9 +2,7 @@
     "resourceType": "Questionnaire",
     "id": "answerOptionsToggleExpression",
     "meta": {
-        "profile": [
-            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
-        ]
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
     },
     "status": "active",
     "item": [
@@ -13,27 +11,35 @@
             "linkId": "answerOptions",
             "answerOption": [
                 {
-                    "valueCoding": {
-                        "code": "code-1",
-                        "display": "display-1"
+                    "value": {
+                        "Coding": {
+                            "code": "code-1",
+                            "display": "display-1"
+                        }
                     }
                 },
                 {
-                    "valueCoding": {
-                        "code": "code-2",
-                        "display": "display-2"
+                    "value": {
+                        "Coding": {
+                            "code": "code-2",
+                            "display": "display-2"
+                        }
                     }
                 },
                 {
-                    "valueCoding": {
-                        "code": "code-3",
-                        "display": "display-3"
+                    "value": {
+                        "Coding": {
+                            "code": "code-3",
+                            "display": "display-3"
+                        }
                     }
                 },
                 {
-                    "valueCoding": {
-                        "code": "code-4",
-                        "display": "display-4"
+                    "value": {
+                        "Coding": {
+                            "code": "code-4",
+                            "display": "display-4"
+                        }
                     }
                 }
             ],
@@ -41,15 +47,19 @@
                 {
                     "option": [
                         {
-                            "valueCoding": {
-                                "code": "code-1",
-                                "display": "display-1"
+                            "value": {
+                                "Coding": {
+                                    "code": "code-1",
+                                    "display": "display-1"
+                                }
                             }
                         },
                         {
-                            "valueCoding": {
-                                "code": "code-2",
-                                "display": "display-2"
+                            "value": {
+                                "Coding": {
+                                    "code": "code-2",
+                                    "display": "display-2"
+                                }
                             }
                         }
                     ],
@@ -61,15 +71,19 @@
                 {
                     "option": [
                         {
-                            "valueCoding": {
-                                "code": "code-3",
-                                "display": "display-3"
+                            "value": {
+                                "Coding": {
+                                    "code": "code-3",
+                                    "display": "display-3"
+                                }
                             }
                         },
                         {
-                            "valueCoding": {
-                                "code": "code-4",
-                                "display": "display-4"
+                            "value": {
+                                "Coding": {
+                                    "code": "code-4",
+                                    "display": "display-4"
+                                }
                             }
                         }
                     ],
