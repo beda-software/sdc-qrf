@@ -1,3 +1,7 @@
+## 1.0.0-beta.21
+
+- Add answerOptionsToggleExpression converter
+
 ## 1.0.0-beta.20
 
 - Add minOccurs/maxOccurs converter #31
