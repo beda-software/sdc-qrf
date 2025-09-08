@@ -1,0 +1,84 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "answerOptionsToggleExpression",
+    "meta": {
+        "profile": [
+            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ]
+    },
+    "status": "active",
+    "item": [
+        {
+            "type": "choice",
+            "linkId": "answerOptions",
+            "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "code-1",
+                        "display": "display-1"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-2",
+                        "display": "display-2"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-3",
+                        "display": "display-3"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-4",
+                        "display": "display-4"
+                    }
+                }
+            ],
+            "answerOptionsToggleExpression": [
+                {
+                    "option": [
+                        {
+                            "valueCoding": {
+                                "code": "code-1",
+                                "display": "display-1"
+                            }
+                        },
+                        {
+                            "valueCoding": {
+                                "code": "code-2",
+                                "display": "display-2"
+                            }
+                        }
+                    ],
+                    "expression": {
+                        "language": "text/fhirpath",
+                        "expression": "1 = 1"
+                    }
+                },
+                {
+                    "option": [
+                        {
+                            "valueCoding": {
+                                "code": "code-3",
+                                "display": "display-3"
+                            }
+                        },
+                        {
+                            "valueCoding": {
+                                "code": "code-4",
+                                "display": "display-4"
+                            }
+                        }
+                    ],
+                    "expression": {
+                        "language": "text/fhirpath",
+                        "expression": "1 != 1"
+                    }
+                }
+            ]
+        }
+    ]
+}

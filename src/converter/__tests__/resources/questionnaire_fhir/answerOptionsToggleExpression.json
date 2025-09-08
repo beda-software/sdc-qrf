@@ -1,0 +1,96 @@
+{
+    "item": [
+        {
+            "type": "choice",
+            "linkId": "answerOptions",
+            "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "code-1",
+                        "display": "display-1"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-2",
+                        "display": "display-2"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-3",
+                        "display": "display-3"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "code-4",
+                        "display": "display-4"
+                    }
+                }
+            ],
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerOptionsToggleExpression",
+                    "extension": [
+                        {
+                            "url": "option",
+                            "valueCoding": {
+                                "code": "code-1",
+                                "display": "display-1"
+                            }
+                        },
+                        {
+                            "url": "option",
+                            "valueCoding": {
+                                "code": "code-2",
+                                "display": "display-2"
+                            }
+                        },
+                        {
+                            "url": "expression",
+                            "valueExpression": {
+                                "language": "text/fhirpath",
+                                "expression": "1 = 1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerOptionsToggleExpression",
+                    "extension": [
+                        {
+                            "url": "option",
+                            "valueCoding": {
+                                "code": "code-3",
+                                "display": "display-3"
+                            }
+                        },
+                        {
+                            "url": "option",
+                            "valueCoding": {
+                                "code": "code-4",
+                                "display": "display-4"
+                            }
+                        },
+                        {
+                            "url": "expression",
+                            "valueExpression": {
+                                "language": "text/fhirpath",
+                                "expression": "1 != 1"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "profile": [
+            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ]
+    },
+    "status": "active",
+    "resourceType": "Questionnaire",
+    "id": "answerOptionsToggleExpression"
+}

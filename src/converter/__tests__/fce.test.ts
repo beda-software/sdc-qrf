@@ -12,6 +12,7 @@ import fce_beverages from './resources/questionnaire_fce/beverages.json';
 import fce_choice_answer_option from './resources/questionnaire_fce/choice_answer_option.json';
 import fce_consent from './resources/questionnaire_fce/consent.json';
 import fce_constraint from './resources/questionnaire_fce/constraint.json';
+import fce_answer_options_toggle_expression from './resources/questionnaire_fce/answerOptionsToggleExpression.json';
 import fce_cqf_examples from './resources/questionnaire_fce/cqf-examples.json';
 import fce_enable_when from './resources/questionnaire_fce/enable_when.json';
 import fce_encounter_create from './resources/questionnaire_fce/encounter_create.json';
@@ -44,6 +45,7 @@ import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
 import fhir_choice_answer_option from './resources/questionnaire_fhir/choice_answer_option.json';
 import fhir_consent from './resources/questionnaire_fhir/consent.json';
 import fhir_constraint from './resources/questionnaire_fhir/constraint.json';
+import fhir_answer_options_toggle_expression from './resources/questionnaire_fhir/answerOptionsToggleExpression.json';
 import fhir_cqf_examples from './resources/questionnaire_fhir/cqf-examples.json';
 import fhir_enable_when from './resources/questionnaire_fhir/enable_when.json';
 import fhir_encounter_create from './resources/questionnaire_fhir/encounter_create.json';
@@ -134,6 +136,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-when', fhir_enable_when, fce_enable_when],
         ['cqf-examples', fhir_cqf_examples, fce_cqf_examples],
         ['constraint', fhir_constraint, fce_constraint],
+        ['answerOptionsToggleExpression', fhir_answer_options_toggle_expression, fce_answer_options_toggle_expression],
         ['unit-option', fhir_unit_option, fce_unit_option],
         ['variable', fhir_variable, fce_variable],
         ['sub-questionnaire', fhir_sub_questionnaire, fce_sub_questionnaire],
@@ -175,6 +178,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-when', fce_enable_when, fhir_enable_when],
         ['cqf-examples', fce_cqf_examples, fhir_cqf_examples],
         ['constraint', fce_constraint, fhir_constraint],
+        ['answerOptionsToggleExpression', fce_answer_options_toggle_expression, fhir_answer_options_toggle_expression],
         ['unit-option', fce_unit_option, fhir_unit_option],
         ['variable', fce_variable, fhir_variable],
         ['sub-questionnaire', fce_sub_questionnaire, fhir_sub_questionnaire],
