@@ -1,0 +1,20 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "assemble_context",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "status": "active",
+    "assembledFrom": "assemble_context",
+    "assembleContext": ["prefix1", "prefix2"],
+    "item": [
+        {
+            "type": "string",
+            "linkId": "{{%prefix1}}test"
+        },
+        { 
+            "type": "string",
+            "linkId": "{{%prefix2}}test"
+        }
+    ]
+}

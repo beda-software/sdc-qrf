@@ -1,0 +1,32 @@
+{
+    "item": [
+        {
+            "type": "string",
+            "linkId": "{{%prefix1}}test"
+        },
+        {
+            "type": "string",
+            "linkId": "{{%prefix2}}test"
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "assemble_context"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext",
+            "valueString": "prefix1"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext",
+            "valueString": "prefix2"
+        }
+    ],
+    "status": "active",
+    "id": "assemble_context",
+    "resourceType": "Questionnaire"
+}

@@ -6,12 +6,14 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     sourceQueries?: any[];
     targetStructureMap?: any[];
     assembledFrom?: any;
+    assembleContext?: string[];
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
     const sourceQueries = processSourceQueries(fhirQuestionnaire);
     const targetStructureMap = processTargetStructureMap(fhirQuestionnaire);
     const assembledFrom = processAssembledFrom(fhirQuestionnaire);
+    const assembleContext = processAssembleContext(fhirQuestionnaire);
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
@@ -19,6 +21,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
         sourceQueries: sourceQueries?.length ? sourceQueries : undefined,
         targetStructureMap: targetStructureMap?.length ? targetStructureMap : undefined,
         assembledFrom: assembledFrom ? assembledFrom : undefined,
+        assembleContext: assembleContext.length ? assembleContext : undefined,
     };
 }
 
@@ -110,4 +113,12 @@ function processAssembledFrom(fhirQuestionnaire: FHIRQuestionnaire): string | un
     }
 
     return extension.valueCanonical;
+}
+
+function processAssembleContext(fhirQuestionnaire: FHIRQuestionnaire): string[] {
+    const extensions = fhirQuestionnaire.extension?.filter(
+        (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext',
+    );
+
+    return (extensions ?? []).map((extension) => extension.valueString!);
 }

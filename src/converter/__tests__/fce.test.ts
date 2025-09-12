@@ -34,6 +34,7 @@ import fce_with_attachment_questionnaire from './resources/questionnaire_fce/wit
 import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
 import fce_unknown_extensions from './resources/questionnaire_fce/unknown-extensions.json';
 import fce_occurs from './resources/questionnaire_fce/occurs.json';
+import fce_assemble_context from './resources/questionnaire_fce/assemble_context.json';
 // fhir questionnaire
 import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
@@ -67,6 +68,7 @@ import fhir_with_attachment_questionnaire from './resources/questionnaire_fhir/w
 import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
 import fhir_unknown_extensions from './resources/questionnaire_fhir/unknown-extensions.json';
 import fhir_occurs from './resources/questionnaire_fhir/occurs.json';
+import fhir_assemble_context from './resources/questionnaire_fhir/assemble_context.json';
 
 import { FCEQuestionnaire } from '../../fce.types';
 
@@ -112,6 +114,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         // ['mixed-fce-with-extensions', fhir_mixed_fce_with_extensions, fce_mixed_fce_with_extensions],
         ['unknown-extensions', fhir_unknown_extensions, fce_unknown_extensions],
         ['occurs', fhir_occurs, fce_occurs],
+        ['assemble-context', fhir_assemble_context, fce_assemble_context],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -153,6 +156,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['mixed-fce-with-extensions', fce_mixed_fce_with_extensions, fhir_mixed_fce_with_extensions],
         ['unknown-extensions', fce_unknown_extensions, fhir_unknown_extensions],
         ['occurs', fce_occurs, fhir_occurs],
+        ['assemble-context', fce_assemble_context, fhir_assemble_context],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),

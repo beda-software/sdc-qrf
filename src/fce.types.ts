@@ -14,7 +14,7 @@ import {
 
 export interface FCEQuestionnaire extends Questionnaire {
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext */
-    assembleContext?: QuestionnaireAssembleContext[];
+    assembleContext?: string[];
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#assembledFrom */
     assembledFrom?: string;
     item?: FCEQuestionnaireItem[];
@@ -36,15 +36,6 @@ export interface FCEQuestionnaire extends Questionnaire {
     variable?: Expression[];
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-targetStructureMap */
     targetStructureMap?: string[];
-}
-
-export interface QuestionnaireAssembleContext {
-    /** NOTE: from extension description */
-    description?: string;
-    /** NOTE: from extension name */
-    name?: string;
-    /** NOTE: from extension type */
-    type?: string;
 }
 
 export interface FCEQuestionnaireItem extends QuestionnaireItem {
