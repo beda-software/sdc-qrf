@@ -7,6 +7,10 @@
     "status": "active",
     "assembledFrom": "assemble_context",
     "assembleContext": ["prefix1", "prefix2"],
+    "itemPopulationContext": {
+        "language": "text/fhirpath",
+        "expression": "%LaunchPatient.name"
+    },
     "item": [
         {
             "type": "string",

@@ -11,6 +11,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
         targetStructureMap,
         assembledFrom,
         assembleContext,
+        itemPopulationContext,
         ...fhirQuestionnaire
     } = questionnaire;
 
@@ -93,6 +94,13 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
                 valueString: assembleContextItem,
             })),
         );
+    }
+
+    if (itemPopulationContext) {
+        extensions.push({
+            url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
+            valueExpression: itemPopulationContext,
+        });
     }
 
     if (extensions.length) {

@@ -24,6 +24,13 @@
         {
             "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext",
             "valueString": "prefix2"
+        },
+        {   
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%LaunchPatient.name"
+            }
         }
     ],
     "status": "active",
