@@ -14027,7 +14027,7 @@ export interface Questionnaire {
     /** When the questionnaire was approved by publisher */
     approvalDate?: date;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext */
-    assembleContext?: QuestionnaireAssembleContext[];
+    assembleContext?: string[];
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#assembledFrom */
     assembledFrom?: canonical;
     /** Concept that represents the overall questionnaire */
@@ -14104,15 +14104,6 @@ export interface Questionnaire {
     /** Business version of the questionnaire */
     version?: string;
     targetStructureMap?: canonical[];
-}
-
-export interface QuestionnaireAssembleContext {
-    /** NOTE: from extension description */
-    description?: string;
-    /** NOTE: from extension name */
-    name?: id;
-    /** NOTE: from extension type */
-    type?: code;
 }
 
 export interface QuestionnaireItem {

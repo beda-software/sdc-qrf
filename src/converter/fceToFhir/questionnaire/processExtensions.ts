@@ -4,8 +4,15 @@ import { Questionnaire as FCEQuestionnaire } from '@beda.software/aidbox-types';
 import { legacyMappingExtensionUrl, legacyQuestionnaireProfileUrl, mappingExtensionUrl } from '../../constants';
 
 export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
-    const { launchContext, mapping, sourceQueries, targetStructureMap, assembledFrom, ...fhirQuestionnaire } =
-        questionnaire;
+    const {
+        launchContext,
+        mapping,
+        sourceQueries,
+        targetStructureMap,
+        assembledFrom,
+        assembleContext,
+        ...fhirQuestionnaire
+    } = questionnaire;
 
     let extensions: FHIRExtension[] = [];
 
@@ -77,6 +84,15 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
             url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom',
             valueCanonical: assembledFrom,
         });
+    }
+
+    if (assembleContext) {
+        extensions = extensions.concat(
+            assembleContext.map((assembleContextItem) => ({
+                url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembleContext',
+                valueString: assembleContextItem,
+            })),
+        );
     }
 
     if (extensions.length) {
