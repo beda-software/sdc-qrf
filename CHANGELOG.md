@@ -1,3 +1,7 @@
+## 1.0.0-beta.22
+
+- Add assembleContext converter
+
 ## 1.0.0-beta.21
 
 - Add answerOptionsToggleExpression converter
