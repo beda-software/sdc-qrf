@@ -1,4 +1,4 @@
-import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
+import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression } from 'fhir/r4b';
 
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     launchContext?: any[];
@@ -7,6 +7,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     targetStructureMap?: any[];
     assembledFrom?: any;
     assembleContext?: string[];
+    itemPopulationContext?: FHIRExpression;
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
@@ -14,6 +15,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     const targetStructureMap = processTargetStructureMap(fhirQuestionnaire);
     const assembledFrom = processAssembledFrom(fhirQuestionnaire);
     const assembleContext = processAssembleContext(fhirQuestionnaire);
+    const itemPopulationContext = processItemPopulationContext(fhirQuestionnaire);
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
@@ -22,6 +24,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
         targetStructureMap: targetStructureMap?.length ? targetStructureMap : undefined,
         assembledFrom: assembledFrom ? assembledFrom : undefined,
         assembleContext: assembleContext.length ? assembleContext : undefined,
+        itemPopulationContext: itemPopulationContext ? itemPopulationContext : undefined,
     };
 }
 
@@ -121,4 +124,16 @@ function processAssembleContext(fhirQuestionnaire: FHIRQuestionnaire): string[] 
     );
 
     return (extensions ?? []).map((extension) => extension.valueString!);
+}
+
+function processItemPopulationContext(fhirQuestionnaire: FHIRQuestionnaire): FHIRExpression | undefined {
+    const extension = fhirQuestionnaire.extension?.find(
+        (ext) => ext.url === 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
+    );
+
+    if (!extension) {
+        return undefined;
+    }
+
+    return extension.valueExpression;
 }

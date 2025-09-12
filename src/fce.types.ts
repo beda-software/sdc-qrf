@@ -18,9 +18,6 @@ export interface FCEQuestionnaire extends Questionnaire {
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#assembledFrom */
     assembledFrom?: string;
     item?: FCEQuestionnaireItem[];
-    /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemContext */
-    /** Deprecated in favour itemPopulationContext */
-    itemContext?: Expression;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext */
     /** Specifies a query that identifies the resource (or set of resources for a repeating item) that should be used to populate this Questionnaire or Questionnaire.item on initial population. */
     itemPopulationContext?: Expression;
@@ -64,9 +61,6 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     initialExpression?: Expression;
     /** Nested questionnaire items */
     item?: FCEQuestionnaireItem[];
-    /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemContext */
-    /** Deprecated in favour itemPopulationContext */
-    itemContext?: Expression;
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl */
     /** The type of data entry control or structure that should be used to render the item. */
     itemControl?: CodeableConcept;
