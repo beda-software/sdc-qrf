@@ -1,3 +1,7 @@
+## 1.0.0-beta.23
+
+- Add itemPopulationContext converter
+
 ## 1.0.0-beta.22
 
 - Add assembleContext converter
