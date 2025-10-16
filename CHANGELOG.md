@@ -1,3 +1,7 @@
+## 1.0.0-beta.24
+
+- Clean up non-enumerable props in calculated expressions
+
 ## 1.0.0-beta.23
 
 - Add itemPopulationContext converter
