@@ -12,6 +12,7 @@ import {
     evaluateQuestionItemExpression,
     getBranchItems,
     getEnabledQuestions,
+    stripNonEnumerable,
     wrapAnswerValue,
 } from './utils.js';
 
@@ -73,12 +74,16 @@ export function QuestionItem(props: QuestionItemProps) {
     useEffect(() => {
         // TODO: think about use cases for group context
         if (itemContext && calculatedExpression) {
+            // Fhirpath returns result with non-enumerable properties such as __path__
+            // It's cleaned up here because it's not part of actual value
+            // And it might invoke endless recursion because
+            // we rely on fact of equality of prev and current values
             const newValues = evaluateQuestionItemExpression(
                 linkId,
                 'calculatedExpression',
                 itemContext,
                 calculatedExpression,
-            );
+            ).map(stripNonEnumerable);
 
             const newAnswers: FormAnswerItems[] | undefined = newValues.length
                 ? repeats

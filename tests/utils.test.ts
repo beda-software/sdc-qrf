@@ -21,6 +21,7 @@ import {
     evaluateQuestionItemExpression,
     findAnswersForQuestion,
     ITEM_KEY,
+    stripNonEnumerable,
 } from '../src/utils';
 import {
     ParametersParameter,
@@ -2831,5 +2832,53 @@ describe('findAnswersForQuestion', () => {
                 },
             })),
         );
+    });
+});
+
+describe('stripNonEnumerable', () => {
+    test('works correctly for array without non-enums', () => {
+        expect(stripNonEnumerable([1, null, undefined])).toStrictEqual([1, null, undefined]);
+    });
+
+    test('works correctly for array with non-enums', () => {
+        const arrWithNonEnum = [1, 2, 3];
+        Object.defineProperty(arrWithNonEnum, '__path__', {
+            value: 'non-enum-prop',
+            enumerable: false,
+        });
+        expect(stripNonEnumerable(arrWithNonEnum)).toStrictEqual([1, 2, 3]);
+    });
+
+    test('works correctly for object without non-enums', () => {
+        expect(stripNonEnumerable({ a: 1, b: null, c: undefined })).toStrictEqual({ a: 1, b: null, c: undefined });
+    });
+
+    test('works correctly for object with non-enums', () => {
+        const objWithNonEnum = { a: 1, b: 2, c: 3 };
+        Object.defineProperty(objWithNonEnum, '__path__', {
+            value: 'non-enum-prop',
+            enumerable: false,
+        });
+        expect(stripNonEnumerable(objWithNonEnum)).toStrictEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    test('works correctly for null', () => {
+        expect(stripNonEnumerable(null)).toStrictEqual(null);
+    });
+
+    test('works correctly for undefined', () => {
+        expect(stripNonEnumerable(undefined)).toStrictEqual(undefined);
+    });
+
+    test('works correctly for string', () => {
+        expect(stripNonEnumerable('string')).toStrictEqual('string');
+    });
+
+    test('works correctly for number', () => {
+        expect(stripNonEnumerable(1)).toStrictEqual(1);
+    });
+
+    test('works correctly for boolean', () => {
+        expect(stripNonEnumerable(true)).toStrictEqual(true);
     });
 });

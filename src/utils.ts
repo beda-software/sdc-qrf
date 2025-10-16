@@ -837,6 +837,18 @@ export function evaluateQuestionItemExpression(
     }
 }
 
+export function stripNonEnumerable<T>(obj: T): T {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    if (Array.isArray(obj)) {
+        return [...obj] as unknown as T;
+    }
+
+    return { ...obj };
+}
+
 export function getChoiceTypeValue(obj: Record<any, any>, prefix: string): any | undefined {
     const prefixKey = Object.keys(obj).filter((key: string) => key.startsWith(prefix))[0];
 
