@@ -1,5 +1,5 @@
-import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
 import { Extension as FHIRExtension } from 'fhir/r4b';
+import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
 
 export enum ExtensionIdentifier {
     Hidden = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
@@ -51,6 +51,8 @@ export enum ExtensionIdentifier {
     SubQuestionnaire = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire',
     MinOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs',
     MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
+
+    EnableChart = 'https://emr-core.beda.software/StructureDefinition/enable-chart',
 }
 
 export type ExtensionTransformer = {
@@ -366,6 +368,41 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.Macro]: {
         path: { extension: 'valueString', questionnaire: 'macro' },
+    },
+    [ExtensionIdentifier.EnableChart]: {
+        transform: {
+            fromExtensions: (extensions) => {
+                return {
+                    enableChart: extensions.map((extension) => {
+                        const enableChartExtension = extension.extension!;
+
+                        return {
+                            linkIdX: enableChartExtension.find((obj) => obj.url === 'link-id-x')?.valueString,
+                            linkIdY: enableChartExtension.find((obj) => obj.url === 'link-id-y')?.valueString,
+                        };
+                    }),
+                };
+            },
+            toExtensions: (item) => {
+                if (item.enableChart) {
+                    return item.enableChart.map((enableChart) => ({
+                        url: ExtensionIdentifier.EnableChart,
+                        extension: [
+                            {
+                                url: 'link-id-x',
+                                valueString: enableChart.linkIdX,
+                            },
+                            {
+                                url: 'link-id-y',
+                                valueString: enableChart.linkIdY,
+                            },
+                        ],
+                    }));
+                }
+
+                return [];
+            },
+        },
     },
 };
 
