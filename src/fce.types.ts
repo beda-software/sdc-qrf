@@ -8,8 +8,8 @@ import {
     Quantity,
     Questionnaire,
     QuestionnaireItem,
-    Reference,
     QuestionnaireItemAnswerOption,
+    Reference,
 } from 'fhir/r4b';
 
 export interface FCEQuestionnaire extends Questionnaire {
@@ -114,6 +114,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     choiceColumns?: number;
     ordinalValue?: number;
     mimeType?: string[];
+    enableChart?: FCEQuestionnaireItemEnableChart;
 }
 
 export interface FCEQuestionnaireItemText {
@@ -170,6 +171,11 @@ export type FCEQuestionnaireItemAnswerOptionsToggleExpressionOption = Omit<
 export interface FCEQuestionnaireItemAnswerOptionsToggleExpression {
     expression: Expression;
     option: Array<FCEQuestionnaireItemAnswerOptionsToggleExpressionOption>;
+}
+
+export interface FCEQuestionnaireItemEnableChart {
+    linkIdX?: string;
+    linkIdY?: string;
 }
 
 export interface FCEQuestionnaireLaunchContext {

@@ -1,0 +1,78 @@
+{
+    "item": [
+        {
+            "text": "Group Table Chart",
+            "type": "group",
+            "linkId": "group-table",
+            "item": [
+                {
+                    "text": "Chart data",
+                    "type": "group",
+                    "repeats": true,
+                    "extension": [
+                        {
+                            "url": "https://emr-core.beda.software/StructureDefinition/enableChart",
+                            "extension": [
+                                {
+                                    "url": "linkIdX",
+                                    "valueString": "date"
+                                },
+                                {
+                                    "url": "linkIdY",
+                                    "valueString": "weight"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "Coding": [
+                                    {
+                                        "code": "group-table"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "item": [
+                        {
+                            "text": "Date",
+                            "type": "date",
+                            "linkId": "date"
+                        },
+                        {
+                            "text": "Weight",
+                            "type": "quantity",
+                            "linkId": "weight",
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+                                    "valueCoding": {
+                                        "code": "kg",
+                                        "system": "http://unitsofmeasure.org",
+                                        "display": "kg"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "enable-chart"
+        }
+    ],
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}

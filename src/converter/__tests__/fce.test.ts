@@ -3,18 +3,22 @@ import { describe, expect, test } from 'vitest';
 
 // fce questionnaire
 import fce_allergies from './resources/questionnaire_fce/allergies.json';
+import fce_answer_options_toggle_expression from './resources/questionnaire_fce/answerOptionsToggleExpression.json';
+import fce_assemble_context from './resources/questionnaire_fce/assemble_context.json';
 import fce_beverages from './resources/questionnaire_fce/beverages.json';
 import fce_choice_answer_option from './resources/questionnaire_fce/choice_answer_option.json';
 import fce_consent from './resources/questionnaire_fce/consent.json';
 import fce_constraint from './resources/questionnaire_fce/constraint.json';
-import fce_answer_options_toggle_expression from './resources/questionnaire_fce/answerOptionsToggleExpression.json';
 import fce_cqf_examples from './resources/questionnaire_fce/cqf-examples.json';
+import fce_enable_chart from './resources/questionnaire_fce/enable_chart.json';
 import fce_enable_when from './resources/questionnaire_fce/enable_when.json';
 import fce_encounter_create from './resources/questionnaire_fce/encounter_create.json';
 import fce_gad_7 from './resources/questionnaire_fce/gad_7.json';
 import fce_immunization from './resources/questionnaire_fce/immunization.json';
 import fce_medication from './resources/questionnaire_fce/medication.json';
+import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
 import fce_multiple_type_launch_context from './resources/questionnaire_fce/multiple_type_launch_context.json';
+import fce_occurs from './resources/questionnaire_fce/occurs.json';
 import fce_patient_create from './resources/questionnaire_fce/patient_create.json';
 import fce_patient_edit from './resources/questionnaire_fce/patient_edit.json';
 import fce_phq_2_phq_9 from './resources/questionnaire_fce/phq_2_phq_9.json';
@@ -26,29 +30,30 @@ import fce_practitioner_role_create from './resources/questionnaire_fce/practiti
 import fce_public_appointment from './resources/questionnaire_fce/public_appointment.json';
 import fce_review_of_systems from './resources/questionnaire_fce/review_of_systems.json';
 import fce_source_queries from './resources/questionnaire_fce/source_queries.json';
-import fce_unit_option from './resources/questionnaire_fce/unit-option.json';
-import fce_vitals from './resources/questionnaire_fce/vitals.json';
-import fce_variable from './resources/questionnaire_fce/variable.json';
 import fce_sub_questionnaire from './resources/questionnaire_fce/sub-questionnaire.json';
-import fce_with_attachment_questionnaire from './resources/questionnaire_fce/with-attachment-question.json';
-import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
+import fce_unit_option from './resources/questionnaire_fce/unit-option.json';
 import fce_unknown_extensions from './resources/questionnaire_fce/unknown-extensions.json';
-import fce_occurs from './resources/questionnaire_fce/occurs.json';
-import fce_assemble_context from './resources/questionnaire_fce/assemble_context.json';
+import fce_variable from './resources/questionnaire_fce/variable.json';
+import fce_vitals from './resources/questionnaire_fce/vitals.json';
+import fce_with_attachment_questionnaire from './resources/questionnaire_fce/with-attachment-question.json';
 // fhir questionnaire
 import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
+import fhir_answer_options_toggle_expression from './resources/questionnaire_fhir/answerOptionsToggleExpression.json';
+import fhir_assemble_context from './resources/questionnaire_fhir/assemble_context.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
 import fhir_choice_answer_option from './resources/questionnaire_fhir/choice_answer_option.json';
 import fhir_consent from './resources/questionnaire_fhir/consent.json';
 import fhir_constraint from './resources/questionnaire_fhir/constraint.json';
-import fhir_answer_options_toggle_expression from './resources/questionnaire_fhir/answerOptionsToggleExpression.json';
 import fhir_cqf_examples from './resources/questionnaire_fhir/cqf-examples.json';
+import fhir_enable_chart from './resources/questionnaire_fhir/enable_chart.json';
 import fhir_enable_when from './resources/questionnaire_fhir/enable_when.json';
 import fhir_encounter_create from './resources/questionnaire_fhir/encounter_create.json';
 import fhir_gad_7 from './resources/questionnaire_fhir/gad_7.json';
 import fhir_immunization from './resources/questionnaire_fhir/immunization.json';
 import fhir_medication from './resources/questionnaire_fhir/medication.json';
+import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
 import fhir_multiple_type_launch_context from './resources/questionnaire_fhir/multiple_type_launch_context.json';
+import fhir_occurs from './resources/questionnaire_fhir/occurs.json';
 import fhir_patient_create from './resources/questionnaire_fhir/patient_create.json';
 import fhir_patient_edit from './resources/questionnaire_fhir/patient_edit.json';
 import fhir_phq_2_phq_9 from './resources/questionnaire_fhir/phq_2_phq_9.json';
@@ -60,19 +65,16 @@ import fhir_practitioner_role_create from './resources/questionnaire_fhir/practi
 import fhir_public_appointment from './resources/questionnaire_fhir/public_appointment.json';
 import fhir_review_of_systems from './resources/questionnaire_fhir/review_of_systems.json';
 import fhir_source_queries from './resources/questionnaire_fhir/source_queries.json';
-import fhir_unit_option from './resources/questionnaire_fhir/unit-option.json';
-import fhir_vitals from './resources/questionnaire_fhir/vitals.json';
-import fhir_variable from './resources/questionnaire_fhir/variable.json';
 import fhir_sub_questionnaire from './resources/questionnaire_fhir/sub-questionnaire.json';
-import fhir_with_attachment_questionnaire from './resources/questionnaire_fhir/with-attachment-question.json';
-import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
+import fhir_unit_option from './resources/questionnaire_fhir/unit-option.json';
 import fhir_unknown_extensions from './resources/questionnaire_fhir/unknown-extensions.json';
-import fhir_occurs from './resources/questionnaire_fhir/occurs.json';
-import fhir_assemble_context from './resources/questionnaire_fhir/assemble_context.json';
+import fhir_variable from './resources/questionnaire_fhir/variable.json';
+import fhir_vitals from './resources/questionnaire_fhir/vitals.json';
+import fhir_with_attachment_questionnaire from './resources/questionnaire_fhir/with-attachment-question.json';
 
 import { FCEQuestionnaire } from '../../fce.types';
 
-import { toFirstClassExtension, fromFirstClassExtension } from '../../converter';
+import { fromFirstClassExtension, toFirstClassExtension } from '../../converter';
 import { sortExtensionsList } from '../utils';
 
 describe('Questionanire and QuestionnaireResponses transformation', () => {
@@ -115,6 +117,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['unknown-extensions', fhir_unknown_extensions, fce_unknown_extensions],
         ['occurs', fhir_occurs, fce_occurs],
         ['assemble-context', fhir_assemble_context, fce_assemble_context],
+        ['enable-chart', fhir_enable_chart, fce_enable_chart],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -157,6 +160,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['unknown-extensions', fce_unknown_extensions, fhir_unknown_extensions],
         ['occurs', fce_occurs, fhir_occurs],
         ['assemble-context', fce_assemble_context, fhir_assemble_context],
+        ['enable-chart', fce_enable_chart, fhir_enable_chart],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),

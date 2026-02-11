@@ -1,0 +1,56 @@
+{
+    "item": [
+        {
+            "text": "Group Table Chart",
+            "type": "group",
+            "linkId": "group-table",
+            "item": [
+                {
+                    "text": "Chart data",
+                    "type": "group",
+                    "repeats": true,
+                    "itemControl": {
+                        "Coding": [
+                            {
+                                "code": "group-table"
+                            }
+                        ]
+                    },
+                    "enableChart": {
+                        "linkIdX": "date",
+                        "linkIdY": "weight"
+                    },
+                    "item": [
+                        {
+                            "text": "Date",
+                            "type": "date",
+                            "linkId": "date"
+                        },
+                        {
+                            "text": "Weight",
+                            "type": "quantity",
+                            "linkId": "weight",
+                            "unitOption": [
+                                {
+                                    "code": "kg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "display": "kg"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "assembledFrom": "enable-chart",
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}

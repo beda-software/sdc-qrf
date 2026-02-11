@@ -1,5 +1,5 @@
-import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
 import { Extension as FHIRExtension } from 'fhir/r4b';
+import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
 
 export enum ExtensionIdentifier {
     Hidden = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
@@ -51,6 +51,8 @@ export enum ExtensionIdentifier {
     SubQuestionnaire = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-subQuestionnaire',
     MinOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs',
     MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
+
+    EnableChart = 'https://emr-core.beda.software/StructureDefinition/enableChart',
 }
 
 export type ExtensionTransformer = {
@@ -366,6 +368,39 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.Macro]: {
         path: { extension: 'valueString', questionnaire: 'macro' },
+    },
+    [ExtensionIdentifier.EnableChart]: {
+        transform: {
+            fromExtensions: (extensions) => {
+                return {
+                    enableChart: {
+                        linkIdX: extensions[0]?.extension?.find((obj) => obj.url === 'linkIdX')?.valueString,
+                        linkIdY: extensions[0]?.extension?.find((obj) => obj.url === 'linkIdY')?.valueString,
+                    },
+                };
+            },
+            toExtensions: (item) => {
+                if (item.enableChart) {
+                    return [
+                        {
+                            url: ExtensionIdentifier.EnableChart,
+                            extension: [
+                                {
+                                    url: 'linkIdX',
+                                    valueString: item.enableChart.linkIdX,
+                                },
+                                {
+                                    url: 'linkIdY',
+                                    valueString: item.enableChart.linkIdY,
+                                },
+                            ],
+                        },
+                    ];
+                }
+
+                return [];
+            },
+        },
     },
 };
 
