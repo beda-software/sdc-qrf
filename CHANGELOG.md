@@ -1,3 +1,7 @@
+## 1.0.0-beta.25
+
+- Add support for enableChart extension
+
 ## 1.0.0-beta.24
 
 - Clean up non-enumerable props in calculated expressions
