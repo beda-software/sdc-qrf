@@ -11,14 +11,14 @@
                     "repeats": true,
                     "extension": [
                         {
-                            "url": "https://emr-core.beda.software/StructureDefinition/enable-chart",
+                            "url": "https://emr-core.beda.software/StructureDefinition/enableChart",
                             "extension": [
                                 {
-                                    "url": "link-id-x",
+                                    "url": "linkIdX",
                                     "valueString": "date"
                                 },
                                 {
-                                    "url": "link-id-y",
+                                    "url": "linkIdY",
                                     "valueString": "weight"
                                 }
                             ]

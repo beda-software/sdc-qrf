@@ -114,7 +114,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     choiceColumns?: number;
     ordinalValue?: number;
     mimeType?: string[];
-    enableChart?: FCEQuestionnaireItemEnableChart[];
+    enableChart?: FCEQuestionnaireItemEnableChart;
 }
 
 export interface FCEQuestionnaireItemText {

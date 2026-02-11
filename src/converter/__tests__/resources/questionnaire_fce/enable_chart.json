@@ -16,12 +16,10 @@
                             }
                         ]
                     },
-                    "enableChart": [
-                        {
-                            "linkIdX": "date",
-                            "linkIdY": "weight"
-                        }
-                    ],
+                    "enableChart": {
+                        "linkIdX": "date",
+                        "linkIdY": "weight"
+                    },
                     "item": [
                         {
                             "text": "Date",
