@@ -117,6 +117,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     enableChart?: FCEQuestionnaireItemEnableChart;
     enableFiltering?: boolean;
     enableSort?: boolean;
+    defaultSort?: FCEQuestionnaireItemDefaultSort;
 }
 
 export interface FCEQuestionnaireItemText {
@@ -180,6 +181,10 @@ export interface FCEQuestionnaireItemEnableChart {
     linkIdY?: string;
 }
 
+export interface FCEQuestionnaireItemDefaultSort {
+    linkId?: string;
+    sort?: 'asc' | 'desc';
+}
 export interface FCEQuestionnaireLaunchContext {
     /** NOTE: from extension description */
     description?: string;
