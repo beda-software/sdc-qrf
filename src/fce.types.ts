@@ -115,6 +115,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     ordinalValue?: number;
     mimeType?: string[];
     enableChart?: FCEQuestionnaireItemEnableChart;
+    defaultSort?: FCEQuestionnaireItemDefaultSort;
 }
 
 export interface FCEQuestionnaireItemText {
@@ -178,6 +179,10 @@ export interface FCEQuestionnaireItemEnableChart {
     linkIdY?: string;
 }
 
+export interface FCEQuestionnaireItemDefaultSort {
+    linkId?: string;
+    sort?: 'asc' | 'desc';
+}
 export interface FCEQuestionnaireLaunchContext {
     /** NOTE: from extension description */
     description?: string;

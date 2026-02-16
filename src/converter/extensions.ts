@@ -53,6 +53,7 @@ export enum ExtensionIdentifier {
     MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
 
     EnableChart = 'https://emr-core.beda.software/StructureDefinition/enableChart',
+    DefaultSort = 'https://emr-core.beda.software/StructureDefinition/defaultSort',
 }
 
 export type ExtensionTransformer = {
@@ -392,6 +393,46 @@ export const extensionTransformers: ExtensionTransformer = {
                                 {
                                     url: 'linkIdY',
                                     valueString: item.enableChart.linkIdY,
+                                },
+                            ],
+                        },
+                    ];
+                }
+
+                return [];
+            },
+        },
+    },
+    [ExtensionIdentifier.DefaultSort]: {
+        transform: {
+            fromExtensions: (extensions) => {
+                const sortIsValid = (sort: string | undefined): sort is 'asc' | 'desc' => {
+                    return sort === 'asc' || sort === 'desc';
+                };
+                const sortValue = extensions[0]?.extension?.find((obj) => obj.url === 'sort')?.valueCode;
+
+                return sortIsValid(sortValue)
+                    ? {
+                          defaultSort: {
+                              linkId: extensions[0]?.extension?.find((obj) => obj.url === 'linkId')?.valueString,
+                              sort: sortValue,
+                          },
+                      }
+                    : undefined;
+            },
+            toExtensions: (item) => {
+                if (item.defaultSort) {
+                    return [
+                        {
+                            url: ExtensionIdentifier.DefaultSort,
+                            extension: [
+                                {
+                                    url: 'linkId',
+                                    valueString: item.defaultSort.linkId,
+                                },
+                                {
+                                    url: 'sort',
+                                    valueCode: item.defaultSort.sort,
                                 },
                             ],
                         },
