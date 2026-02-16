@@ -54,6 +54,7 @@ export enum ExtensionIdentifier {
 
     EnableChart = 'https://emr-core.beda.software/StructureDefinition/enableChart',
     EnableFiltering = 'https://emr-core.beda.software/StructureDefinition/enableFiltering',
+    EnableSort = 'https://emr-core.beda.software/StructureDefinition/enableSort',
 }
 
 export type ExtensionTransformer = {
@@ -405,6 +406,9 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.EnableFiltering]: {
         path: { extension: 'valueBoolean', questionnaire: 'enableFiltering' },
+    },
+    [ExtensionIdentifier.EnableSort]: {
+        path: { extension: 'valueBoolean', questionnaire: 'enableSort' },
     },
 };
 
