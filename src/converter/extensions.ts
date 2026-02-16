@@ -53,6 +53,7 @@ export enum ExtensionIdentifier {
     MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
 
     EnableChart = 'https://emr-core.beda.software/StructureDefinition/enableChart',
+    EnableSort = 'https://emr-core.beda.software/StructureDefinition/enableSort',
 }
 
 export type ExtensionTransformer = {
@@ -401,6 +402,9 @@ export const extensionTransformers: ExtensionTransformer = {
                 return [];
             },
         },
+    },
+    [ExtensionIdentifier.EnableSort]: {
+        path: { extension: 'valueBoolean', questionnaire: 'enableSort' },
     },
 };
 
