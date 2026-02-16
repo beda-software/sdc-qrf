@@ -1,3 +1,9 @@
+## 1.0.0-beta.26
+
+- Add support for enableFiltering extension
+- Add support for enableSort extension
+- Add support for defaultSort extension
+
 ## 1.0.0-beta.25
 
 - Add support for enableChart extension
