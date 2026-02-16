@@ -11,6 +11,7 @@ import fce_consent from './resources/questionnaire_fce/consent.json';
 import fce_constraint from './resources/questionnaire_fce/constraint.json';
 import fce_cqf_examples from './resources/questionnaire_fce/cqf-examples.json';
 import fce_enable_chart from './resources/questionnaire_fce/enable_chart.json';
+import fce_enable_filtering from './resources/questionnaire_fce/enable_filtering.json';
 import fce_enable_when from './resources/questionnaire_fce/enable_when.json';
 import fce_encounter_create from './resources/questionnaire_fce/encounter_create.json';
 import fce_gad_7 from './resources/questionnaire_fce/gad_7.json';
@@ -46,6 +47,7 @@ import fhir_consent from './resources/questionnaire_fhir/consent.json';
 import fhir_constraint from './resources/questionnaire_fhir/constraint.json';
 import fhir_cqf_examples from './resources/questionnaire_fhir/cqf-examples.json';
 import fhir_enable_chart from './resources/questionnaire_fhir/enable_chart.json';
+import fhir_enable_filtering from './resources/questionnaire_fhir/enable_filtering.json';
 import fhir_enable_when from './resources/questionnaire_fhir/enable_when.json';
 import fhir_encounter_create from './resources/questionnaire_fhir/encounter_create.json';
 import fhir_gad_7 from './resources/questionnaire_fhir/gad_7.json';
@@ -118,6 +120,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['occurs', fhir_occurs, fce_occurs],
         ['assemble-context', fhir_assemble_context, fce_assemble_context],
         ['enable-chart', fhir_enable_chart, fce_enable_chart],
+        ['enable-filtering', fhir_enable_filtering, fce_enable_filtering],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -161,6 +164,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['occurs', fce_occurs, fhir_occurs],
         ['assemble-context', fce_assemble_context, fhir_assemble_context],
         ['enable-chart', fce_enable_chart, fhir_enable_chart],
+        ['enable-filtering', fce_enable_filtering, fhir_enable_filtering],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
