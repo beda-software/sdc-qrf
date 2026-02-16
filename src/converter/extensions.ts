@@ -53,6 +53,7 @@ export enum ExtensionIdentifier {
     MaxOccurs = 'http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs',
 
     EnableChart = 'https://emr-core.beda.software/StructureDefinition/enableChart',
+    EnableFiltering = 'https://emr-core.beda.software/StructureDefinition/enableFiltering',
 }
 
 export type ExtensionTransformer = {
@@ -401,6 +402,9 @@ export const extensionTransformers: ExtensionTransformer = {
                 return [];
             },
         },
+    },
+    [ExtensionIdentifier.EnableFiltering]: {
+        path: { extension: 'valueBoolean', questionnaire: 'enableFiltering' },
     },
 };
 
