@@ -1,3 +1,7 @@
+## 1.0.0-beta.27
+
+- Add support for mdEditorFeature
+
 ## 1.0.0-beta.26
 
 - Add support for enableFiltering extension
