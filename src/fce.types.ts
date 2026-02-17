@@ -118,7 +118,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     enableFiltering?: boolean;
     enableSort?: boolean;
     defaultSort?: FCEQuestionnaireItemDefaultSort;
-    mdEditorFeatures?: string[];
+    mdEditorFeature?: string[];
 }
 
 export interface FCEQuestionnaireItemText {
