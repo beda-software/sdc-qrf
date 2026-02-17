@@ -128,7 +128,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-chart', fhir_enable_chart, fce_enable_chart],
         ['enable-filtering', fhir_enable_filtering, fce_enable_filtering],
         ['enable-sort', fhir_enable_sort, fce_enable_sort],
-        ['default_sort', fhir_default_sort, fce_default_sort],
+        ['default-sort', fhir_default_sort, fce_default_sort],
         ['md-editor-features', fhir_md_editor_features, fce_md_editor_features],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
@@ -175,7 +175,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-chart', fce_enable_chart, fhir_enable_chart],
         ['enable-filtering', fce_enable_filtering, fhir_enable_filtering],
         ['enable-sort', fce_enable_sort, fhir_enable_sort],
-        ['default_sort', fce_default_sort, fhir_default_sort],
+        ['default-sort', fce_default_sort, fhir_default_sort],
         ['md-editor-features', fce_md_editor_features, fhir_md_editor_features],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
