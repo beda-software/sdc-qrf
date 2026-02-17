@@ -1,0 +1,27 @@
+{
+    "item": [
+        {
+            "text": "Note",
+            "type": "string",
+            "linkId": "note",
+            "itemControl": {
+                "Coding": [
+                    {
+                        "code": "markdown-editor"
+                    }
+                ]
+            },
+            "mdEditorFeature": ["image"]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "assembledFrom": "note",
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}

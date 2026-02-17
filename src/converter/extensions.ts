@@ -56,6 +56,7 @@ export enum ExtensionIdentifier {
     EnableFiltering = 'https://emr-core.beda.software/StructureDefinition/enableFiltering',
     EnableSort = 'https://emr-core.beda.software/StructureDefinition/enableSort',
     DefaultSort = 'https://emr-core.beda.software/StructureDefinition/defaultSort',
+    MDEditorFeature = 'https://emr-core.beda.software/StructureDefinition/mdEditorFeature',
 }
 
 export type ExtensionTransformer = {
@@ -450,6 +451,9 @@ export const extensionTransformers: ExtensionTransformer = {
                 return [];
             },
         },
+    },
+    [ExtensionIdentifier.MDEditorFeature]: {
+        path: { extension: 'valueCode', questionnaire: 'mdEditorFeature', isCollection: true },
     },
 };
 

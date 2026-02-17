@@ -118,6 +118,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     enableFiltering?: boolean;
     enableSort?: boolean;
     defaultSort?: FCEQuestionnaireItemDefaultSort;
+    mdEditorFeature?: string[];
 }
 
 export interface FCEQuestionnaireItemText {
@@ -185,6 +186,7 @@ export interface FCEQuestionnaireItemDefaultSort {
     linkId?: string;
     sort?: 'asc' | 'desc';
 }
+
 export interface FCEQuestionnaireLaunchContext {
     /** NOTE: from extension description */
     description?: string;
