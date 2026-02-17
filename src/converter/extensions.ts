@@ -453,30 +453,7 @@ export const extensionTransformers: ExtensionTransformer = {
         },
     },
     [ExtensionIdentifier.MDEditorFeatures]: {
-        transform: {
-            fromExtensions: (extensions) => {
-                return {
-                    mdEditorFeatures: extensions[0]?.extension?.reduce((acc, extension) => {
-                        const code = extension.valueCode;
-                        return code ? [...acc, code] : acc;
-                    }, [] as string[]),
-                };
-            },
-            toExtensions: (item) => {
-                if (item.mdEditorFeatures) {
-                    return [
-                        {
-                            url: ExtensionIdentifier.MDEditorFeatures,
-                            extension: item.mdEditorFeatures.map((code) => ({
-                                url: 'mdEditorFeature',
-                                valueCode: code,
-                            })),
-                        },
-                    ];
-                }
-                return [];
-            },
-        },
+        path: { extension: 'valueCode', questionnaire: 'mdEditorFeatures', isCollection: true },
     },
 };
 

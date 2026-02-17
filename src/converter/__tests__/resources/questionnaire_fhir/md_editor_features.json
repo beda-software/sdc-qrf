@@ -17,12 +17,7 @@
                 },
                 {
                     "url": "https://emr-core.beda.software/StructureDefinition/mdEditorFeatures",
-                    "extension": [
-                        {
-                            "url": "mdEditorFeature",
-                            "valueCode": "image"
-                        }
-                    ]
+                    "valueCode": "image"
                 }
             ]
         }
