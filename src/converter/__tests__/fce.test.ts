@@ -19,6 +19,7 @@ import fce_encounter_create from './resources/questionnaire_fce/encounter_create
 import fce_gad_7 from './resources/questionnaire_fce/gad_7.json';
 import fce_immunization from './resources/questionnaire_fce/immunization.json';
 import fce_medication from './resources/questionnaire_fce/medication.json';
+import fce_md_editor_features from './resources/questionnaire_fce/md_editor_features.json';
 import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
 import fce_multiple_type_launch_context from './resources/questionnaire_fce/multiple_type_launch_context.json';
 import fce_occurs from './resources/questionnaire_fce/occurs.json';
@@ -57,6 +58,7 @@ import fhir_encounter_create from './resources/questionnaire_fhir/encounter_crea
 import fhir_gad_7 from './resources/questionnaire_fhir/gad_7.json';
 import fhir_immunization from './resources/questionnaire_fhir/immunization.json';
 import fhir_medication from './resources/questionnaire_fhir/medication.json';
+import fhir_md_editor_features from './resources/questionnaire_fhir/md_editor_features.json';
 import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
 import fhir_multiple_type_launch_context from './resources/questionnaire_fhir/multiple_type_launch_context.json';
 import fhir_occurs from './resources/questionnaire_fhir/occurs.json';
@@ -127,6 +129,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-filtering', fhir_enable_filtering, fce_enable_filtering],
         ['enable-sort', fhir_enable_sort, fce_enable_sort],
         ['default_sort', fhir_default_sort, fce_default_sort],
+        ['md-editor-features', fhir_md_editor_features, fce_md_editor_features],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -173,6 +176,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['enable-filtering', fce_enable_filtering, fhir_enable_filtering],
         ['enable-sort', fce_enable_sort, fhir_enable_sort],
         ['default_sort', fce_default_sort, fhir_default_sort],
+        ['md-editor-features', fce_md_editor_features, fhir_md_editor_features],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),

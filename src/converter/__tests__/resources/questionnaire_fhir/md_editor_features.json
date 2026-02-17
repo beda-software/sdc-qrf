@@ -1,0 +1,45 @@
+{
+    "item": [
+        {
+            "text": "Note",
+            "type": "string",
+            "linkId": "note",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                    "valueCodeableConcept": {
+                        "Coding": [
+                            {
+                                "code": "markdown-editor"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "url": "https://emr-core.beda.software/StructureDefinition/mdEditorFeatures",
+                    "extension": [
+                        {
+                            "url": "mdEditorFeature",
+                            "valueCode": "image"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-assembledFrom",
+            "valueCanonical": "note"
+        }
+    ],
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}
