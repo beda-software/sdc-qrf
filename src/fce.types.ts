@@ -10,6 +10,7 @@ import {
     QuestionnaireItem,
     QuestionnaireItemAnswerOption,
     Reference,
+    Range,
 } from 'fhir/r4b';
 
 export interface FCEQuestionnaire extends Questionnaire {
@@ -119,6 +120,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     enableSort?: boolean;
     defaultSort?: FCEQuestionnaireItemDefaultSort;
     mdEditorFeature?: string[];
+    chartYAxisRange?: Range;
 }
 
 export interface FCEQuestionnaireItemText {
