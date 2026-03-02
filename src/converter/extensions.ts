@@ -58,6 +58,7 @@ export enum ExtensionIdentifier {
     DefaultSort = 'https://emr-core.beda.software/StructureDefinition/defaultSort',
     MDEditorFeature = 'https://emr-core.beda.software/StructureDefinition/mdEditorFeature',
     ChartYAxisRange = 'https://emr-core.beda.software/StructureDefinition/chartYAxisRange',
+    ChartHighlight = 'https://emr-core.beda.software/StructureDefinition/chartHighlight',
 }
 
 export type ExtensionTransformer = {
@@ -458,6 +459,58 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.ChartYAxisRange]: {
         path: { extension: 'valueRange', questionnaire: 'chartYAxisRange' },
+    },
+    [ExtensionIdentifier.ChartHighlight]: {
+        transform: {
+            fromExtensions: (extensions) => {
+                return {
+                    chartHighlight: extensions.map((extension) => {
+                        const chartHighlightExtension = extension.extension!;
+
+                        return {
+                            from: chartHighlightExtension.find((obj) => obj.url === 'from')?.valueDecimal ?? undefined,
+                            to: chartHighlightExtension.find((obj) => obj.url === 'to')?.valueDecimal ?? undefined,
+                            color: chartHighlightExtension.find((obj) => obj.url === 'color')?.valueString ?? undefined,
+                        };
+                    }),
+                };
+            },
+            toExtensions: (item) => {
+                if (item.chartHighlight) {
+                    return item.chartHighlight.map((chartHighlight) => ({
+                        url: ExtensionIdentifier.ChartHighlight,
+                        extension: [
+                            ...(chartHighlight.from
+                                ? [
+                                      {
+                                          url: 'from',
+                                          valueDecimal: chartHighlight.from,
+                                      },
+                                  ]
+                                : []),
+                            ...(chartHighlight.to
+                                ? [
+                                      {
+                                          url: 'to',
+                                          valueDecimal: chartHighlight.to,
+                                      },
+                                  ]
+                                : []),
+                            ...(chartHighlight.color
+                                ? [
+                                      {
+                                          url: 'color',
+                                          valueString: chartHighlight.color,
+                                      },
+                                  ]
+                                : []),
+                        ],
+                    }));
+                }
+
+                return [];
+            },
+        },
     },
 };
 

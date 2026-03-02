@@ -121,6 +121,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     defaultSort?: FCEQuestionnaireItemDefaultSort;
     mdEditorFeature?: string[];
     chartYAxisRange?: Range;
+    chartHighlight?: FCEQuestionnaireItemChartHighlight[];
 }
 
 export interface FCEQuestionnaireItemText {
@@ -187,6 +188,12 @@ export interface FCEQuestionnaireItemEnableChart {
 export interface FCEQuestionnaireItemDefaultSort {
     linkId?: string;
     sort?: 'asc' | 'desc';
+}
+
+export interface FCEQuestionnaireItemChartHighlight {
+    from?: number;
+    to?: number;
+    color?: string;
 }
 
 export interface FCEQuestionnaireLaunchContext {

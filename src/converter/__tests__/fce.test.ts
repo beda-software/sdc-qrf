@@ -6,6 +6,7 @@ import fce_allergies from './resources/questionnaire_fce/allergies.json';
 import fce_answer_options_toggle_expression from './resources/questionnaire_fce/answerOptionsToggleExpression.json';
 import fce_assemble_context from './resources/questionnaire_fce/assemble_context.json';
 import fce_beverages from './resources/questionnaire_fce/beverages.json';
+import fce_chart_highlight from './resources/questionnaire_fce/chart_highlight.json';
 import fce_chart_y_axis_range from './resources/questionnaire_fce/chart_y_axis_range.json';
 import fce_choice_answer_option from './resources/questionnaire_fce/choice_answer_option.json';
 import fce_consent from './resources/questionnaire_fce/consent.json';
@@ -46,6 +47,7 @@ import fhir_allergies from './resources/questionnaire_fhir/allergies.json';
 import fhir_answer_options_toggle_expression from './resources/questionnaire_fhir/answerOptionsToggleExpression.json';
 import fhir_assemble_context from './resources/questionnaire_fhir/assemble_context.json';
 import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
+import fhir_chart_highlight from './resources/questionnaire_fhir/chart_highlight.json';
 import fhir_chart_y_axis_range from './resources/questionnaire_fhir/chart_y_axis_range.json';
 import fhir_choice_answer_option from './resources/questionnaire_fhir/choice_answer_option.json';
 import fhir_consent from './resources/questionnaire_fhir/consent.json';
@@ -133,6 +135,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['default-sort', fhir_default_sort, fce_default_sort],
         ['md-editor-features', fhir_md_editor_feature, fce_md_editor_feature],
         ['chart-y-axis-range', fhir_chart_y_axis_range, fce_chart_y_axis_range],
+        ['chart-highlight', fhir_chart_highlight, fce_chart_highlight],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -181,6 +184,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['default-sort', fce_default_sort, fhir_default_sort],
         ['md-editor-features', fce_md_editor_feature, fhir_md_editor_feature],
         ['chart-y-axis-range', fce_chart_y_axis_range, fhir_chart_y_axis_range],
+        ['chart-highlight', fce_chart_highlight, fhir_chart_highlight],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),

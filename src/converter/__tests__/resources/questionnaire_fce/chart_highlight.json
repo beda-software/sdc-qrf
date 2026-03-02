@@ -1,0 +1,58 @@
+{
+    "item": [
+        {
+            "text": "Table",
+            "type": "group",
+            "repeats": true,
+            "itemControl": {
+                "Coding": [
+                    {
+                        "code": "group-table"
+                    }
+                ]
+            },
+            "chartHighlight": [
+                {
+                    "to": 5,
+                    "color": "#FFCCC766"
+                },
+                {
+                    "from": 5,
+                    "to": 10,
+                    "color": "#FFFBE6CC"
+                },
+                {
+                    "from": 25,
+                    "to": 30,
+                    "color": "#FFFBE6CC"
+                },
+                {
+                    "from": 30,
+                    "color": "#FFCCC766"
+                }
+            ],
+            "item": [
+                {
+                    "text": "Date",
+                    "type": "date",
+                    "linkId": "date"
+                },
+                {
+                    "text": "Value",
+                    "type": "decimal",
+                    "linkId": "value"
+                }
+            ]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "assembledFrom": "chart-highlight",
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}
