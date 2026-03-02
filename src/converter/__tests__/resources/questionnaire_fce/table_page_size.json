@@ -1,0 +1,39 @@
+{
+    "item": [
+        {
+            "text": "Table",
+            "type": "group",
+            "repeats": true,
+            "tablePageSize": 5,
+            "itemControl": {
+                "Coding": [
+                    {
+                        "code": "group-table"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "text": "Date",
+                    "type": "date",
+                    "linkId": "date"
+                },
+                {
+                    "text": "Value",
+                    "type": "decimal",
+                    "linkId": "value"
+                }
+            ]
+        }
+    ],
+    "status": "draft",
+    "subjectType": ["Patient"],
+    "assembledFrom": "table-page-size",
+    "id": "example",
+    "resourceType": "Questionnaire",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"],
+        "lastUpdated": "2026-02-10T00:09:00.000000Z",
+        "versionId": "205"
+    }
+}

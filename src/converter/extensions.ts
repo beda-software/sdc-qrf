@@ -57,6 +57,7 @@ export enum ExtensionIdentifier {
     EnableSort = 'https://emr-core.beda.software/StructureDefinition/enableSort',
     DefaultSort = 'https://emr-core.beda.software/StructureDefinition/defaultSort',
     MDEditorFeature = 'https://emr-core.beda.software/StructureDefinition/mdEditorFeature',
+    TablePageSize = 'https://emr-core.beda.software/StructureDefinition/tablePageSize',
 }
 
 export type ExtensionTransformer = {
@@ -454,6 +455,9 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.MDEditorFeature]: {
         path: { extension: 'valueCode', questionnaire: 'mdEditorFeature', isCollection: true },
+    },
+    [ExtensionIdentifier.TablePageSize]: {
+        path: { extension: 'valueInteger', questionnaire: 'tablePageSize' },
     },
 };
 
