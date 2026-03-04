@@ -1,3 +1,8 @@
+## 1.0.0-beta.28
+
+- Add support for chartYAxisRange
+- Add support for chartHighlight
+
 ## 1.0.0-beta.27
 
 - Add support for mdEditorFeature
