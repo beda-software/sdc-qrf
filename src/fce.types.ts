@@ -10,6 +10,7 @@ import {
     QuestionnaireItem,
     QuestionnaireItemAnswerOption,
     Reference,
+    Range,
 } from 'fhir/r4b';
 
 export interface FCEQuestionnaire extends Questionnaire {
@@ -119,6 +120,8 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     enableSort?: boolean;
     defaultSort?: FCEQuestionnaireItemDefaultSort;
     mdEditorFeature?: string[];
+    chartYAxisRange?: Range;
+    chartHighlight?: FCEQuestionnaireItemChartHighlight[];
 }
 
 export interface FCEQuestionnaireItemText {
@@ -185,6 +188,12 @@ export interface FCEQuestionnaireItemEnableChart {
 export interface FCEQuestionnaireItemDefaultSort {
     linkId?: string;
     sort?: 'asc' | 'desc';
+}
+
+export interface FCEQuestionnaireItemChartHighlight {
+    from?: number;
+    to?: number;
+    color?: string;
 }
 
 export interface FCEQuestionnaireLaunchContext {
