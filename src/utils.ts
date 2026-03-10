@@ -562,7 +562,7 @@ interface IsQuestionEnabledArgs {
     context: ItemContext;
 }
 function isQuestionEnabled(args: IsQuestionEnabledArgs) {
-    const { enableWhen, enableBehavior, enableWhenExpression } = args.qItem;
+    const { enableWhen, enableBehavior, enableWhenExpression, linkId } = args.qItem;
 
     if (enableWhen && enableWhenExpression) {
         console.warn(`
@@ -579,12 +579,10 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
 
     if (enableWhenExpression && enableWhenExpression.language === 'text/fhirpath') {
         try {
-            const expressionResult = fhirpath.evaluate(
-                args.context.resource,
-                enableWhenExpression.expression!,
-                args.context ?? {},
-                fhirpathR4BModel,
-                { async: false },
+            const expressionResult = evaluateFHIRPathExpression(
+                enableWhenExpression,
+                args.context,
+                `${linkId}.enableWhenExpression`,
             )[0];
 
             if (typeof expressionResult !== 'boolean') {
@@ -771,29 +769,63 @@ export function calcInitialContext(
     };
 }
 
-function resolveTemplateExpr(str: string, context: ItemContext) {
+export function resolveTemplateExpr(
+    str: string,
+    context: ItemContext,
+    path: string,
+    returnNullIfUnresolved?: false,
+): string;
+export function resolveTemplateExpr(
+    str: string,
+    context: ItemContext,
+    path: string,
+    returnNullIfUnresolved: true,
+): string | null;
+export function resolveTemplateExpr(
+    str: string,
+    context: ItemContext,
+    path: string,
+    returnNullIfUnresolved: boolean = false,
+): string | null {
     const matches = str.match(/{{[^}]+}}/g);
 
-    if (matches) {
-        return matches.reduce((result, match) => {
-            const expr = match.replace(/[{}]/g, '');
-
-            const resolvedVar = fhirpath.evaluate(context.context || {}, expr, context, fhirpathR4BModel, {
-                async: false,
-            });
-
-            if (resolvedVar?.length) {
-                return result.replace(match, resolvedVar.join(','));
-            } else {
-                return result.replace(match, '');
-            }
-        }, str);
+    if (!matches) {
+        return str;
     }
 
-    return str;
+    return matches.reduce<string | null>((acc, match) => {
+        if (!acc) {
+            return null;
+        }
+
+        const expr = match.replace(/[{}]/g, '');
+
+        const resolvedVar = evaluateFHIRPathExpression(
+            {
+                language: 'text/fhirpath',
+                expression: expr,
+            },
+            context,
+            path,
+        );
+
+        if (resolvedVar?.length) {
+            return acc.replace(match, resolvedVar.join(','));
+        }
+
+        if (returnNullIfUnresolved) {
+            return null;
+        }
+
+        return acc.replace(match, '');
+    }, str);
 }
 
-export function parseFhirQueryExpression(expression: string, context: ItemContext) {
+export function parseFhirQueryExpression(
+    expression: string,
+    context: ItemContext,
+    path: string = 'unknown',
+): [string | undefined, Record<string, any>] {
     const [resourceType, paramsQS] = expression.split('?', 2);
     const searchParams = Object.fromEntries(
         Object.entries(queryString.parse(paramsQS ?? '')).map(([key, value]) => {
@@ -804,8 +836,8 @@ export function parseFhirQueryExpression(expression: string, context: ItemContex
             return [
                 key,
                 isArray(value)
-                    ? value.map((arrValue) => resolveTemplateExpr(arrValue!, context))
-                    : resolveTemplateExpr(value, context),
+                    ? value.map((arrValue) => resolveTemplateExpr(arrValue!, context, path))
+                    : resolveTemplateExpr(value, context, path),
             ];
         }),
     );
@@ -813,11 +845,10 @@ export function parseFhirQueryExpression(expression: string, context: ItemContex
     return [resourceType, searchParams];
 }
 
-export function evaluateQuestionItemExpression(
-    linkId: string,
-    path: string,
+export function evaluateFHIRPathExpression(
+    expression: Expression | undefined,
     context: ItemContext,
-    expression?: Expression,
+    path: string = 'unknown',
 ) {
     if (!expression) {
         return [];
@@ -833,7 +864,7 @@ export function evaluateQuestionItemExpression(
             async: false,
         });
     } catch (err: unknown) {
-        throw Error(`FHIRPath expression evaluation failure for ${linkId}.${path}: ${err}`);
+        throw Error(`FHIRPath expression evaluation failure for ${path}: ${err}`);
     }
 }
 

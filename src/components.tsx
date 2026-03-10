@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import isEqual from 'lodash/isEqual';
 import React, { PropsWithChildren, useEffect, useContext, useMemo, useRef, useState } from 'react';
-import type { RemoteData } from '@beda.software/remote-data';
-import { success } from '@beda.software/remote-data';
 
 import { FCEQuestionnaireItem } from './fce.types';
 
@@ -10,13 +8,13 @@ import { useQuestionnaireResponseFormContext } from '.';
 import { QRFContext } from './context';
 import { FormAnswerItems, ItemContext, QRFContextData, QuestionItemProps, QuestionItemsProps } from './types';
 import {
-    calcContext,
-    evaluateQuestionItemExpression,
+    evaluateFHIRPathExpression,
     getBranchItems,
     getEnabledQuestions,
     stripNonEnumerable,
     wrapAnswerValue,
 } from './utils.js';
+import { useQuestionItemContext } from 'hooks';
 
 function usePreviousValue<T>(value: T) {
     const prevValue = useRef<T | undefined>(value);
@@ -43,34 +41,6 @@ export function QuestionItems(props: QuestionItemsProps) {
             })}
         </React.Fragment>
     );
-}
-
-type UseQuestionItemContextArgs = {
-    initialContext: ItemContext;
-    branchItems: ReturnType<typeof getBranchItems>;
-    variables: FCEQuestionnaireItem['variable'];
-};
-
-export function useQuestionItemContext({
-    initialContext,
-    branchItems,
-    variables: variable,
-}: UseQuestionItemContextArgs): {
-    contexts: ItemContext[];
-    evaluationResponse: RemoteData<ItemContext[]>;
-} {
-    const contexts = useMemo(
-        () =>
-            branchItems.qrItems.map((curQRItem) => calcContext(initialContext, variable, branchItems.qItem, curQRItem)),
-        [branchItems, initialContext, variable],
-    );
-
-    const evaluationResponse: RemoteData<ItemContext[]> = useMemo(() => success<ItemContext[]>(contexts), [contexts]);
-
-    return {
-        contexts,
-        evaluationResponse,
-    };
 }
 
 export function QuestionItem(props: QuestionItemProps) {
@@ -108,11 +78,10 @@ export function QuestionItem(props: QuestionItemProps) {
             // It's cleaned up here because it's not part of actual value
             // And it might invoke endless recursion because
             // we rely on fact of equality of prev and current values
-            const newValues = evaluateQuestionItemExpression(
-                linkId,
-                'calculatedExpression',
-                itemContext,
+            const newValues = evaluateFHIRPathExpression(
                 calculatedExpression,
+                itemContext,
+                `${linkId}.calculatedExpression`,
             ).map(stripNonEnumerable);
 
             const newAnswers: FormAnswerItems[] | undefined = newValues.length
@@ -151,7 +120,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _text) {
             const cqfExpression = _text.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_text.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._text.cqfExpression`)[0] ??
                 initialQuestionItem.text;
 
             if (prevQuestionItem?.text !== calculatedValue) {
@@ -165,7 +134,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _readOnly) {
             const cqfExpression = _readOnly.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_readOnly.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._readOnly.cqfExpression`)[0] ??
                 initialQuestionItem.readOnly;
 
             if (prevQuestionItem?.readOnly !== calculatedValue) {
@@ -179,7 +148,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _required) {
             const cqfExpression = _required.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_required.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._required.cqfExpression`)[0] ??
                 initialQuestionItem.required;
 
             if (prevQuestionItem?.required !== calculatedValue) {
