@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import isEqual from 'lodash/isEqual';
 import React, { PropsWithChildren, useEffect, useContext, useMemo, useRef, useState } from 'react';
+import type { RemoteData } from '@beda.software/remote-data';
+import { success } from '@beda.software/remote-data';
 
 import { FCEQuestionnaireItem } from './fce.types';
 
@@ -16,7 +18,7 @@ import {
     wrapAnswerValue,
 } from './utils.js';
 
-function usePreviousValue<T = any>(value: T) {
+function usePreviousValue<T>(value: T) {
     const prevValue = useRef<T | undefined>(value);
 
     useEffect(() => {
@@ -43,6 +45,34 @@ export function QuestionItems(props: QuestionItemsProps) {
     );
 }
 
+type UseQuestionItemContextArgs = {
+    initialContext: ItemContext;
+    branchItems: ReturnType<typeof getBranchItems>;
+    variables: FCEQuestionnaireItem['variable'];
+};
+
+export function useQuestionItemContext({
+    initialContext,
+    branchItems,
+    variables: variable,
+}: UseQuestionItemContextArgs): {
+    contexts: ItemContext[];
+    evaluationResponse: RemoteData<ItemContext[]>;
+} {
+    const contexts = useMemo(
+        () =>
+            branchItems.qrItems.map((curQRItem) => calcContext(initialContext, variable, branchItems.qItem, curQRItem)),
+        [branchItems, initialContext, variable],
+    );
+
+    const evaluationResponse: RemoteData<ItemContext[]> = useMemo(() => success<ItemContext[]>(contexts), [contexts]);
+
+    return {
+        contexts,
+        evaluationResponse,
+    };
+}
+
 export function QuestionItem(props: QuestionItemProps) {
     const { questionItem: initialQuestionItem, context: initialContext, parentPath } = props;
     const {
@@ -61,18 +91,18 @@ export function QuestionItem(props: QuestionItemProps) {
 
     // TODO: how to do when item is not in QR (e.g. default element of repeatable group)
     const branchItems = getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource);
-    const context =
-        type === 'group'
-            ? branchItems.qrItems.map((curQRItem) =>
-                  calcContext(initialContext, variable, branchItems.qItem, curQRItem),
-              )
-            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]!);
+    const { contexts } = useQuestionItemContext({
+        initialContext,
+        branchItems,
+        variables: variable,
+    });
+    const context = type === 'group' ? contexts : contexts[0]!;
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));
 
     const itemContext = isGroupItem(questionItem, context) ? context[0] : context;
 
     useEffect(() => {
-        // TODO: think about use cases for group context
+        // TODO: think about use cases for group context - it's currently available ONLY for questions
         if (itemContext && calculatedExpression) {
             // Fhirpath returns result with non-enumerable properties such as __path__
             // It's cleaned up here because it's not part of actual value
@@ -87,7 +117,7 @@ export function QuestionItem(props: QuestionItemProps) {
 
             const newAnswers: FormAnswerItems[] | undefined = newValues.length
                 ? repeats
-                    ? newValues.map((answer: any) => ({
+                    ? newValues.map((answer) => ({
                           value: wrapAnswerValue(type, answer),
                       }))
                     : [{ value: wrapAnswerValue(type, newValues[0]) }]
