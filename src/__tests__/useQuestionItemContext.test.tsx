@@ -264,13 +264,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
         const orgItem = questionnaire.item![1] as FCEQuestionnaireItem;
 
         const initialQuestionnaireResponse = makeQuestionnaireResponse();
-        const initialContext: ItemContext = {
-            questionnaire,
-            resource: initialQuestionnaireResponse,
-            context: initialQuestionnaireResponse,
-            Questionnaire: questionnaire,
-            QuestionnaireResponse: initialQuestionnaireResponse,
-        };
+        const initialContext = createInitialContext(questionnaire, initialQuestionnaireResponse);
 
         const initialBranchItems = getBranchItems([orgItem.linkId], questionnaire, initialQuestionnaireResponse);
 
@@ -454,13 +448,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
 
         const questionItem = questionnaire.item![0] as FCEQuestionnaireItem;
 
-        const initialContext: ItemContext = {
-            questionnaire,
-            resource: questionnaireResponse,
-            context: questionnaireResponse,
-            Questionnaire: questionnaire,
-            QuestionnaireResponse: questionnaireResponse,
-        };
+        const initialContext = createInitialContext(questionnaire, questionnaireResponse);
         const branchItems = getBranchItems(['row'], questionnaire, questionnaireResponse);
 
         const { result } = renderHook(() =>
