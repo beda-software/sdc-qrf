@@ -50,21 +50,25 @@ export function QuestionItem(props: QuestionItemProps) {
         groupItemComponent,
         itemControlQuestionItemComponents,
         itemControlGroupItemComponents,
+        fhirService,
     } = useContext(QRFContext);
     const { formValues, setFormValues } = useQuestionnaireResponseFormContext();
     const [questionItem, setQuestionItem] = useState(initialQuestionItem);
     const prevQuestionItem: FCEQuestionnaireItem | undefined = usePreviousValue(questionItem);
 
-    const { type, linkId, calculatedExpression, variable, repeats, itemControl, _text, _readOnly, _required } =
-        questionItem;
+    const { type, linkId, calculatedExpression, repeats, itemControl, _text, _readOnly, _required } = questionItem;
     const fieldPath = useMemo(() => [...parentPath, linkId!], [parentPath, linkId]);
 
     // TODO: how to do when item is not in QR (e.g. default element of repeatable group)
-    const branchItems = getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource);
+    const branchItems = useMemo(
+        () => getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource),
+        [fieldPath, initialContext.questionnaire, initialContext.resource],
+    );
     const { contexts } = useQuestionItemContext({
         initialContext,
         branchItems,
-        variables: variable,
+        fhirService,
+        questionItem,
     });
     const context = type === 'group' ? contexts : contexts[0]!;
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));

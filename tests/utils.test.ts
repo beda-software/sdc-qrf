@@ -2001,7 +2001,7 @@ describe('getAnswerValues', () => {
     const valueList: Array<{ value: FormAnswerItems[]; expect: AnswerValue[] }> = [
         { value: [], expect: [] },
         { value: [{ items: { linkId: {} } }], expect: [] },
-        { value: [{ value: { string: null } }], expect: [] },
+        { value: [{ value: { string: null as any } }], expect: [] },
         { value: [{ value: undefined }], expect: [] },
         { value: [{}], expect: [] },
         { value: [{ value: { string: 'ok' } }], expect: [{ string: 'ok' }] },

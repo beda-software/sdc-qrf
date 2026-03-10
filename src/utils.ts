@@ -165,30 +165,6 @@ export function getBranchItems(
     };
 }
 
-export function calcContext(
-    initialContext: ItemContext,
-    variables: FCEQuestionnaireItem['variable'],
-    qItem: QuestionnaireItem,
-    qrItem: QuestionnaireResponseItem,
-): ItemContext {
-    // TODO: add root variable support
-    try {
-        return {
-            ...(variables || []).reduce(
-                (acc, curVariable) => ({
-                    ...acc,
-                    [curVariable.name!]: fhirpath.evaluate(qrItem, curVariable.expression!, acc, fhirpathR4BModel, {
-                        async: false,
-                    }),
-                }),
-                { ...initialContext, context: qrItem, qitem: qItem },
-            ),
-        };
-    } catch (err: unknown) {
-        throw Error(`FHIRPath expression evaluation failure for "variable" in ${qItem.linkId}: ${err}`);
-    }
-}
-
 function isGroup(question: QuestionnaireItem) {
     return question.type === 'group';
 }

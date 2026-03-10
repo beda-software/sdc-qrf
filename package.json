@@ -44,7 +44,9 @@
         "vitest": "^3.0.9"
     },
     "peerDependencies": {
-        "react": "18.x"
+        "react": "18.x",
+        "axios": "^1.0.0",
+        "@beda.software/remote-data": "^1.1.4"
     },
     "files": [
         "dist/**/*",
