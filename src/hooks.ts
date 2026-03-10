@@ -5,7 +5,7 @@ import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray
 
 import { QRFContext } from './context';
 import { ItemContext } from './types';
-import { resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems, stripNonEnumerable } from './utils';
+import { resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
 
 export function useQuestionnaireResponseFormContext() {
     return useContext(QRFContext);
@@ -53,9 +53,6 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
                 const { name, expression, language } = variable;
 
-                const branchState = asyncState[branchIndex] ?? {};
-                const current = branchState[name];
-
                 if (language === 'application/x-fhir-query') {
                     const url = resolveTemplateExpr(expression!, workingContext, `${linkId}.variable.${name}`, true);
 
@@ -65,6 +62,8 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     }
 
                     const key = url;
+                    const branchState = asyncState[branchIndex] ?? {};
+                    const current = branchState[name];
 
                     if (current && current.key === key) {
                         if (isSuccess(current.remoteData)) {
@@ -112,28 +111,11 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                         });
                     })();
                 } else {
-                    const result = evaluateFHIRPathExpression(variable, workingContext, `${linkId}.variable.${name}`);
-                    // Fhirpath returns result with non-enumerable properties such as __path__
-                    // It's cleaned up here because it's not part of actual value
-                    const key = JSON.stringify(result.map(stripNonEnumerable));
-
-                    workingContext[name] = result;
-
-                    if (current && current.key === key) {
-                        return;
-                    }
-
-                    setAsyncState((prev) => {
-                        const prevBranch = prev[branchIndex] ?? {};
-
-                        return {
-                            ...prev,
-                            [branchIndex]: {
-                                ...prevBranch,
-                                [name]: { key, remoteData: success(result) },
-                            },
-                        };
-                    });
+                    workingContext[name] = evaluateFHIRPathExpression(
+                        variable,
+                        workingContext,
+                        `${linkId}.variable.${name}`,
+                    );
                 }
             });
         });
@@ -152,15 +134,23 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     return;
                 }
 
-                const { name } = variable;
+                const { name, language } = variable;
 
-                const branchState = asyncState[branchIndex];
-                const current = branchState?.[name];
+                if (language === 'application/x-fhir-query') {
+                    const branchState = asyncState[branchIndex] ?? {};
+                    const current = branchState[name];
 
-                if (current && isSuccess(current.remoteData)) {
-                    workingContext[name] = current.remoteData.data;
+                    if (current && isSuccess(current.remoteData)) {
+                        workingContext[name] = current.remoteData.data;
+                    } else {
+                        workingContext[name] = null;
+                    }
                 } else {
-                    workingContext[name] = null;
+                    workingContext[name] = evaluateFHIRPathExpression(
+                        variable,
+                        workingContext,
+                        `${linkId}.variable.${name}`,
+                    );
                 }
             });
 

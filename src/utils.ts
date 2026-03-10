@@ -770,7 +770,7 @@ export function resolveTemplateExpr(
     }
 
     return matches.reduce<string | null>((acc, match) => {
-        if (!acc) {
+        if (acc === null) {
             return null;
         }
 

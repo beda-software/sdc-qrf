@@ -14,7 +14,7 @@ import {
     stripNonEnumerable,
     wrapAnswerValue,
 } from './utils.js';
-import { useQuestionItemContext } from 'hooks';
+import { useQuestionItemContext } from './hooks';
 
 function usePreviousValue<T>(value: T) {
     const prevValue = useRef<T | undefined>(value);
