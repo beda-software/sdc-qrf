@@ -56,7 +56,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 const branchState = asyncState[branchIndex] ?? {};
                 const current = branchState[name];
 
-                if (language === 'x-fhir-query') {
+                if (language === 'application/x-fhir-query') {
                     const url = resolveTemplateExpr(expression!, workingContext, `${linkId}.variable.${name}`, true);
 
                     if (!url) {

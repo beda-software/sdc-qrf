@@ -192,7 +192,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
                     variable: [
                         {
                             name: 'PatientBundle',
-                            language: 'x-fhir-query',
+                            language: 'application/x-fhir-query',
                             expression:
                                 "Patient?_id={{ %resource.item.where(linkId='patient-id').answer.valueString }}",
                         },
@@ -203,7 +203,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
                         },
                         {
                             name: 'OrgBundle',
-                            language: 'x-fhir-query',
+                            language: 'application/x-fhir-query',
                             expression: 'Organization?_id={{ %OrgId }}',
                         },
                         {
@@ -351,7 +351,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
                     variable: [
                         {
                             name: 'PatientBundle',
-                            language: 'x-fhir-query',
+                            language: 'application/x-fhir-query',
                             expression: "Patient?_id={{ %context.item.where(linkId='patient-id').answer.valueString }}",
                         },
                         {
@@ -361,7 +361,7 @@ describe('useQuestionItemContext with x-fhir-query', () => {
                         },
                         {
                             name: 'OrgBundle',
-                            language: 'x-fhir-query',
+                            language: 'application/x-fhir-query',
                             expression: 'Organization?_id={{ %OrgId }}',
                         },
                         {
