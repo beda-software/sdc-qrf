@@ -13,6 +13,8 @@ import {
     Reference,
 } from 'fhir/r4b';
 import { FCEQuestionnaire, FCEQuestionnaireItem } from './fce.types';
+import { AxiosRequestConfig } from 'axios';
+import { RemoteData } from '@beda.software/remote-data';
 
 export type GroupItemComponent = ComponentType<GroupItemProps>;
 export type QuestionItemComponent = ComponentType<QuestionItemProps>;
@@ -46,6 +48,7 @@ export interface QRFContextData {
     itemControlGroupItemComponents?: ItemControlGroupItemComponentMapping;
     readOnly?: boolean;
 
+    fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
     formValues: FormItems;
     setFormValues: (values: FormItems, fieldPath: Array<string | number>, value: any) => void;
 }

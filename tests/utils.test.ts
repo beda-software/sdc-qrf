@@ -1,7 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import {
-    calcContext,
     calcInitialContext,
     compareValue,
     getAnswerValues,
@@ -15,10 +14,11 @@ import {
     mapResponseToForm,
     removeDisabledAnswers,
     parseFhirQueryExpression,
+    resolveTemplateExpr,
     toAnswerValue,
     toFHIRAnswerValue,
     wrapAnswerValue,
-    evaluateQuestionItemExpression,
+    evaluateFHIRPathExpression,
     findAnswersForQuestion,
     ITEM_KEY,
     stripNonEnumerable,
@@ -2001,7 +2001,7 @@ describe('getAnswerValues', () => {
     const valueList: Array<{ value: FormAnswerItems[]; expect: AnswerValue[] }> = [
         { value: [], expect: [] },
         { value: [{ items: { linkId: {} } }], expect: [] },
-        { value: [{ value: { string: null } }], expect: [] },
+        { value: [{ value: { string: null as any } }], expect: [] },
         { value: [{ value: undefined }], expect: [] },
         { value: [{}], expect: [] },
         { value: [{ value: { string: 'ok' } }], expect: [{ string: 'ok' }] },
@@ -2484,72 +2484,6 @@ describe('getBranchItems', () => {
     });
 });
 
-describe('calcContext', () => {
-    const questionnaire: Questionnaire = {
-        resourceType: 'Questionnaire',
-        status: 'active',
-        item: [
-            {
-                linkId: 'demographics-group',
-                type: 'group',
-                item: [
-                    { linkId: 'full-name', type: 'string' },
-                    { linkId: 'address-group', type: 'group', item: [{ linkId: 'city', type: 'string' }] },
-                ],
-            },
-        ],
-    };
-
-    const questionnaireResponse: QuestionnaireResponse = {
-        resourceType: 'QuestionnaireResponse',
-        status: 'completed',
-        item: [
-            {
-                linkId: 'demographics-group',
-                item: [
-                    {
-                        linkId: 'full-name',
-                        answer: [{ valueString: 'Alice' }],
-                    },
-                    { linkId: 'address-group', item: [{ linkId: 'city', answer: [{ valueString: 'NY' }] }] },
-                ],
-            },
-        ],
-    };
-    const initialContext = {
-        resource: questionnaireResponse,
-        questionnaire,
-        context: questionnaireResponse,
-    };
-
-    const variables = [
-        {
-            name: 'Name',
-            language: 'text/fhirpath',
-            expression: `%resource.item.where(linkId='demographics-group').item.where(linkId='full-name').answer.value`,
-        },
-        {
-            name: 'City',
-            language: 'text/fhirpath',
-            // valueString here not value because fhirpath model does not know about QuestionnaireResponseItem
-            expression: `%context.item.where(linkId='address-group').item.where(linkId='city').answer.valueString`,
-        },
-    ];
-    const qItem = questionnaire.item![0]!;
-    const qrItem = questionnaireResponse.item![0]!;
-
-    test('with specified qr item', () => {
-        expect(calcContext(initialContext, variables, qItem, qrItem)).toStrictEqual({
-            resource: questionnaireResponse,
-            questionnaire,
-            context: qrItem,
-            qitem: qItem,
-            Name: ['Alice'],
-            City: ['NY'],
-        });
-    });
-});
-
 describe('calcInitialContext', () => {
     const questionnaire: Questionnaire = {
         resourceType: 'Questionnaire',
@@ -2655,7 +2589,39 @@ describe('parseFhirQueryExpression', () => {
     });
 });
 
-describe('evaluateQuestionItemExpression', () => {
+describe('resolveTemplateExpr', () => {
+    const baseContext = {
+        context: {
+            value: 'abc',
+        },
+    } as any as ItemContext;
+
+    test('replaces missing values with empty string by default', () => {
+        const str = 'Patient?name={{ %context.value }}&city={{ %context.missing }}';
+
+        const result = resolveTemplateExpr(str, baseContext, 'q1.answerExpression');
+
+        expect(result).toBe('Patient?name=abc&city=');
+    });
+
+    test('returns null when unresolved and returnNullIfUnresolved is true', () => {
+        const str = 'Patient?name={{ %context.missing }}';
+
+        const result = resolveTemplateExpr(str, baseContext, 'q1.answerExpression', true);
+
+        expect(result).toBeNull();
+    });
+
+    test('returns resolved string when all placeholders are resolved and returnNullIfUnresolved is true', () => {
+        const str = 'Patient?name={{ %context.value }}';
+
+        const result = resolveTemplateExpr(str, baseContext, 'q1.answerExpression', true);
+
+        expect(result).toBe('Patient?name=abc');
+    });
+});
+
+describe('evaluateFHIRPathExpression', () => {
     const patient: Patient = {
         resourceType: 'Patient',
         id: 'p-1',
@@ -2668,27 +2634,39 @@ describe('evaluateQuestionItemExpression', () => {
 
     test('works correctly for regular expression', () => {
         expect(
-            evaluateQuestionItemExpression('link-id', 'path.to', context, {
-                language: 'text/fhirpath',
-                expression: '%Patient.id',
-            }),
+            evaluateFHIRPathExpression(
+                {
+                    language: 'text/fhirpath',
+                    expression: '%Patient.id',
+                },
+                context,
+                'link-id.path.to',
+            ),
         ).toStrictEqual(['p-1']);
     });
     test('works correctly for non-fhirpath expression', () => {
         expect(
-            evaluateQuestionItemExpression('link-id', 'path.to', context, {
-                language: 'x-fhir-query',
-                expression: '/Patient',
-            }),
+            evaluateFHIRPathExpression(
+                {
+                    language: 'x-fhir-query',
+                    expression: '/Patient',
+                },
+                context,
+                'link-id.path.to',
+            ),
         ).toStrictEqual([]);
     });
 
     test('throws for error in expression', () => {
         expect(() =>
-            evaluateQuestionItemExpression('link-id', 'path.to', context, {
-                language: 'text/fhirpath',
-                expression: '%P',
-            }),
+            evaluateFHIRPathExpression(
+                {
+                    language: 'text/fhirpath',
+                    expression: '%P',
+                },
+                context,
+                'link-id.path.to',
+            ),
         ).toThrow();
     });
 });

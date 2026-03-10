@@ -1,3 +1,7 @@
+## 1.1.0-alpha.1
+
+- Add support for x-fhir-query expressions
+
 ## 1.0.0-beta.28
 
 - Add support for chartYAxisRange

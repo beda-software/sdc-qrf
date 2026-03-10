@@ -8,15 +8,15 @@ import { useQuestionnaireResponseFormContext } from '.';
 import { QRFContext } from './context';
 import { FormAnswerItems, ItemContext, QRFContextData, QuestionItemProps, QuestionItemsProps } from './types';
 import {
-    calcContext,
-    evaluateQuestionItemExpression,
+    evaluateFHIRPathExpression,
     getBranchItems,
     getEnabledQuestions,
     stripNonEnumerable,
     wrapAnswerValue,
 } from './utils.js';
+import { useQuestionItemContext } from './hooks';
 
-function usePreviousValue<T = any>(value: T) {
+function usePreviousValue<T>(value: T) {
     const prevValue = useRef<T | undefined>(value);
 
     useEffect(() => {
@@ -50,44 +50,47 @@ export function QuestionItem(props: QuestionItemProps) {
         groupItemComponent,
         itemControlQuestionItemComponents,
         itemControlGroupItemComponents,
+        fhirService,
     } = useContext(QRFContext);
     const { formValues, setFormValues } = useQuestionnaireResponseFormContext();
     const [questionItem, setQuestionItem] = useState(initialQuestionItem);
     const prevQuestionItem: FCEQuestionnaireItem | undefined = usePreviousValue(questionItem);
 
-    const { type, linkId, calculatedExpression, variable, repeats, itemControl, _text, _readOnly, _required } =
-        questionItem;
+    const { type, linkId, calculatedExpression, repeats, itemControl, _text, _readOnly, _required } = questionItem;
     const fieldPath = useMemo(() => [...parentPath, linkId!], [parentPath, linkId]);
 
     // TODO: how to do when item is not in QR (e.g. default element of repeatable group)
-    const branchItems = getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource);
-    const context =
-        type === 'group'
-            ? branchItems.qrItems.map((curQRItem) =>
-                  calcContext(initialContext, variable, branchItems.qItem, curQRItem),
-              )
-            : calcContext(initialContext, variable, branchItems.qItem, branchItems.qrItems[0]!);
+    const branchItems = useMemo(
+        () => getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource),
+        [fieldPath, initialContext.questionnaire, initialContext.resource],
+    );
+    const { contexts } = useQuestionItemContext({
+        initialContext,
+        branchItems,
+        fhirService,
+        questionItem,
+    });
+    const context = type === 'group' ? contexts : contexts[0]!;
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));
 
     const itemContext = isGroupItem(questionItem, context) ? context[0] : context;
 
     useEffect(() => {
-        // TODO: think about use cases for group context
+        // TODO: think about use cases for group context - it's currently available ONLY for questions
         if (itemContext && calculatedExpression) {
             // Fhirpath returns result with non-enumerable properties such as __path__
             // It's cleaned up here because it's not part of actual value
             // And it might invoke endless recursion because
             // we rely on fact of equality of prev and current values
-            const newValues = evaluateQuestionItemExpression(
-                linkId,
-                'calculatedExpression',
-                itemContext,
+            const newValues = evaluateFHIRPathExpression(
                 calculatedExpression,
+                itemContext,
+                `${linkId}.calculatedExpression`,
             ).map(stripNonEnumerable);
 
             const newAnswers: FormAnswerItems[] | undefined = newValues.length
                 ? repeats
-                    ? newValues.map((answer: any) => ({
+                    ? newValues.map((answer) => ({
                           value: wrapAnswerValue(type, answer),
                       }))
                     : [{ value: wrapAnswerValue(type, newValues[0]) }]
@@ -121,7 +124,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _text) {
             const cqfExpression = _text.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_text.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._text.cqfExpression`)[0] ??
                 initialQuestionItem.text;
 
             if (prevQuestionItem?.text !== calculatedValue) {
@@ -135,7 +138,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _readOnly) {
             const cqfExpression = _readOnly.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_readOnly.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._readOnly.cqfExpression`)[0] ??
                 initialQuestionItem.readOnly;
 
             if (prevQuestionItem?.readOnly !== calculatedValue) {
@@ -149,7 +152,7 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _required) {
             const cqfExpression = _required.cqfExpression;
             const calculatedValue =
-                evaluateQuestionItemExpression(linkId, '_required.cqfExpression', itemContext, cqfExpression)[0] ??
+                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._required.cqfExpression`)[0] ??
                 initialQuestionItem.required;
 
             if (prevQuestionItem?.required !== calculatedValue) {
