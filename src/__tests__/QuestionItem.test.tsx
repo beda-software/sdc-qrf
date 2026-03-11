@@ -1,5 +1,7 @@
 import React from 'react';
 import fhirpath from 'fhirpath';
+import fhirpathR4BModel from 'fhirpath/fhir-context/r4';
+
 import { render, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { Questionnaire, QuestionnaireResponse } from 'fhir/r4b';
@@ -275,12 +277,10 @@ describe('QuestionnaireResponseFormProvider evaluateFhirpath', () => {
 
         const initialContext = createInitialContext(questionnaire, questionnaireResponse);
 
-        const customEvaluateFhirpath: EvaluateFhirpath = (fhirData, path, context, model, options) =>
-            fhirpath.evaluate(fhirData, path, context, model, {
+        const customEvaluateFhirpath: EvaluateFhirpath = (context, path, env) =>
+            fhirpath.evaluate(context, path, env, fhirpathR4BModel, {
                 async: false,
-                ...options,
                 userInvocationTable: {
-                    ...options?.userInvocationTable,
                     customFn: {
                         fn: () => {
                             return ['from-custom-evaluator'];
