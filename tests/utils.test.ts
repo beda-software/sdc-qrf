@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import fhirpath from 'fhirpath';
+import fhirpathR4BModel from 'fhirpath/fhir-context/r4';
 import {
     calcInitialContext,
     compareValue,
@@ -2678,12 +2679,10 @@ describe('evaluateFHIRPathExpression', () => {
     });
 
     test('uses custom evaluator from 4th parameter when provided', () => {
-        const customEvaluateFhirpath: EvaluateFhirpath = (fhirData, path, context, model, options) =>
-            fhirpath.evaluate(fhirData, path, context, model, {
+        const customEvaluateFhirpath: EvaluateFhirpath = (context, path, env) =>
+            fhirpath.evaluate(context, path, env, fhirpathR4BModel, {
                 async: false,
-                ...options,
                 userInvocationTable: {
-                    ...options?.userInvocationTable,
                     customFn: {
                         fn: () => {
                             return ['from-custom-evaluator'];
