@@ -1,5 +1,5 @@
 import { ComponentType } from 'react';
-import { Context, Model, Path, UserInvocationTable } from 'fhirpath';
+import { Context, Path } from 'fhirpath';
 
 import {
     Attachment,
@@ -33,17 +33,7 @@ export type ItemControlGroupItemComponentMapping = {
     [code: string]: GroupItemComponent;
 };
 
-export type EvaluateFhirpath = (
-    fhirData: any,
-    path: string | Path,
-    context?: Context | undefined,
-    model?: Model,
-    options?: {
-        resolveInternalTypes?: boolean;
-        traceFn?: (value: any, label: string) => void;
-        userInvocationTable?: UserInvocationTable;
-    },
-) => any[];
+export type EvaluateFhirpath = (context: Context | undefined, path: string | Path, env: any) => any[];
 
 export type ItemContext = {
     // ItemContext contains items in FHIR format, this context is passed to all expressions

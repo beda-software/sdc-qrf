@@ -32,11 +32,11 @@ function usePreviousValue<T>(value: T) {
 
 export function QuestionItems(props: QuestionItemsProps) {
     const { questionItems, parentPath, context } = props;
-    const { formValues } = useQuestionnaireResponseFormContext();
+    const { formValues, evaluateFhirpath } = useQuestionnaireResponseFormContext();
 
     return (
         <React.Fragment>
-            {getEnabledQuestions(questionItems, parentPath, formValues, context).map((item) => {
+            {getEnabledQuestions(questionItems, parentPath, formValues, context, evaluateFhirpath).map((item) => {
                 return <QuestionItem key={item.linkId} questionItem={item} context={context} parentPath={parentPath} />;
             })}
         </React.Fragment>
