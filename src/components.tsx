@@ -51,6 +51,7 @@ export function QuestionItem(props: QuestionItemProps) {
         itemControlQuestionItemComponents,
         itemControlGroupItemComponents,
         fhirService,
+        evaluateFhirpath,
     } = useContext(QRFContext);
     const { formValues, setFormValues } = useQuestionnaireResponseFormContext();
     const [questionItem, setQuestionItem] = useState(initialQuestionItem);
@@ -86,6 +87,7 @@ export function QuestionItem(props: QuestionItemProps) {
                 calculatedExpression,
                 itemContext,
                 `${linkId}.calculatedExpression`,
+                evaluateFhirpath,
             ).map(stripNonEnumerable);
 
             const newAnswers: FormAnswerItems[] | undefined = newValues.length
@@ -124,8 +126,12 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _text) {
             const cqfExpression = _text.cqfExpression;
             const calculatedValue =
-                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._text.cqfExpression`)[0] ??
-                initialQuestionItem.text;
+                evaluateFHIRPathExpression(
+                    cqfExpression,
+                    itemContext,
+                    `${linkId}._text.cqfExpression`,
+                    evaluateFhirpath,
+                )[0] ?? initialQuestionItem.text;
 
             if (prevQuestionItem?.text !== calculatedValue) {
                 setQuestionItem((qi) => ({
@@ -138,8 +144,12 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _readOnly) {
             const cqfExpression = _readOnly.cqfExpression;
             const calculatedValue =
-                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._readOnly.cqfExpression`)[0] ??
-                initialQuestionItem.readOnly;
+                evaluateFHIRPathExpression(
+                    cqfExpression,
+                    itemContext,
+                    `${linkId}._readOnly.cqfExpression`,
+                    evaluateFhirpath,
+                )[0] ?? initialQuestionItem.readOnly;
 
             if (prevQuestionItem?.readOnly !== calculatedValue) {
                 setQuestionItem((qi) => ({
@@ -152,8 +162,12 @@ export function QuestionItem(props: QuestionItemProps) {
         if (itemContext && _required) {
             const cqfExpression = _required.cqfExpression;
             const calculatedValue =
-                evaluateFHIRPathExpression(cqfExpression, itemContext, `${linkId}._required.cqfExpression`)[0] ??
-                initialQuestionItem.required;
+                evaluateFHIRPathExpression(
+                    cqfExpression,
+                    itemContext,
+                    `${linkId}._required.cqfExpression`,
+                    evaluateFhirpath,
+                )[0] ?? initialQuestionItem.required;
 
             if (prevQuestionItem?.required !== calculatedValue) {
                 setQuestionItem((qi) => ({

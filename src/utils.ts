@@ -20,6 +20,7 @@ import {
 
 import {
     AnswerValue,
+    EvaluateFhirpath,
     FHIRAnswerValue,
     FormAnswerItems,
     FormGroupItems,
@@ -821,10 +822,14 @@ export function parseFhirQueryExpression(
     return [resourceType, searchParams];
 }
 
+const defaultFhirpathEvaluate: EvaluateFhirpath = (resource, expression, env, model, options) =>
+    fhirpath.evaluate(resource, expression, env, model, { async: false, ...options });
+
 export function evaluateFHIRPathExpression(
     expression: Expression | undefined,
     context: ItemContext,
     path: string = 'unknown',
+    evaluateFhirpath?: EvaluateFhirpath,
 ) {
     if (!expression) {
         return [];
@@ -835,10 +840,10 @@ export function evaluateFHIRPathExpression(
         return [];
     }
 
+    const evaluator: EvaluateFhirpath = evaluateFhirpath ?? defaultFhirpathEvaluate;
+
     try {
-        return fhirpath.evaluate(context.context ?? {}, expression.expression!, context, fhirpathR4BModel, {
-            async: false,
-        });
+        return evaluator(context.context ?? {}, expression.expression!, context, fhirpathR4BModel);
     } catch (err: unknown) {
         throw Error(`FHIRPath expression evaluation failure for ${path}: ${err}`);
     }
