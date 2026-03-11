@@ -819,6 +819,7 @@ export function parseFhirQueryExpression(
     expression: string,
     context: ItemContext,
     path: string = 'unknown',
+    evaluateFhirpath?: EvaluateFhirpath,
 ): [string | undefined, Record<string, any>] {
     const [resourceType, paramsQS] = expression.split('?', 2);
     const searchParams = Object.fromEntries(
@@ -830,10 +831,8 @@ export function parseFhirQueryExpression(
             return [
                 key,
                 isArray(value)
-                    ? value.map((arrValue) =>
-                          resolveTemplateExpr(arrValue!, context, path, false, defaultFhirpathEvaluate),
-                      )
-                    : resolveTemplateExpr(value, context, path, false, defaultFhirpathEvaluate),
+                    ? value.map((arrValue) => resolveTemplateExpr(arrValue!, context, path, false, evaluateFhirpath))
+                    : resolveTemplateExpr(value, context, path, false, evaluateFhirpath),
             ];
         }),
     );
