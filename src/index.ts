@@ -16,6 +16,9 @@ export {
     populateItemKey,
     removeItemKey,
     getItemKey,
+    expandEnableWhenExpressions,
+    isEnableWhenExpressionHelperLinkId,
+    removeEnableWhenExpressionHelperItems,
 } from './utils';
 export { useQuestionnaireResponseFormContext } from './hooks';
 export { QuestionItems, QuestionItem, QuestionnaireResponseFormProvider } from './components';

@@ -94,11 +94,13 @@ function buildEmptyQuestionnaireResponseItem(qItem: QuestionnaireItem): Question
     return { linkId: qItem.linkId, ...(qItem.text ? { text: qItem.text } : {}) };
 }
 
+export type BranchItems = { qItem: QuestionnaireItem; qrItems: QuestionnaireResponseItem[] };
+
 export function getBranchItems(
     fieldPath: string[],
     questionnaire: Questionnaire,
     questionnaireResponse: QuestionnaireResponse,
-): { qItem: QuestionnaireItem; qrItems: QuestionnaireResponseItem[] } {
+): BranchItems {
     // The purpose of this function is to extract qItem and qrItem
     // from original questionnaire and questionnaire response
     // that are located for fieldPath in FormItems internal structure
@@ -159,10 +161,7 @@ export function getBranchItems(
     return {
         qItem,
         qrItems: qrItem ? [qrItem] : [buildEmptyQuestionnaireResponseItem(qItem as QuestionnaireItem)],
-    } as {
-        qItem: QuestionnaireItem;
-        qrItems: QuestionnaireResponseItem[];
-    };
+    } as BranchItems;
 }
 
 function isGroup(question: QuestionnaireItem) {
@@ -362,6 +361,71 @@ export function mapResponseToForm(resource: QuestionnaireResponse, questionnaire
     return mapResponseToFormRecursive(resource.item ?? [], questionnaire.item ?? []);
 }
 
+export const ENABLE_WHEN_EXPRESSION_SUFFIX = '-enable-when-expression';
+
+/** True when linkId is a virtual enableWhenExpression helper (from expandEnableWhenExpressions). */
+export function isEnableWhenExpressionHelperLinkId(linkId: string): boolean {
+    return linkId.endsWith(ENABLE_WHEN_EXPRESSION_SUFFIX);
+}
+
+/**
+ * Expands each enableWhenExpression into a separate boolean calculated item and classic enableWhen.
+ * For each item that has enableWhenExpression:
+ * - Inserts right before it a new item (helper) with linkId `${originalLinkId}${ENABLE_WHEN_EXPRESSION_SUFFIX}`,
+ *   type 'boolean', and calculatedExpression set to the same expression.
+ * - If the original has `variable`: for a group the helper gets a copy (original keeps variable);
+ *   for a non-group the variable is moved to the helper (removed from original) so the helper
+ *   can evaluate expressions like %MyVar (issue #47).
+ * - Removes enableWhenExpression from the original and adds enableWhen referencing the helper.
+ * Recurses into nested items. Returns a new questionnaire; does not mutate the input.
+ */
+export function expandEnableWhenExpressions(questionnaire: FCEQuestionnaire): FCEQuestionnaire {
+    return {
+        ...questionnaire,
+        item: (questionnaire.item ?? []).flatMap(expandEnableWhenExpressionItem),
+    };
+}
+
+function expandEnableWhenExpressionItem(item: FCEQuestionnaireItem): FCEQuestionnaireItem[] {
+    const withExpandedChildren: FCEQuestionnaireItem = {
+        ...item,
+        item: item.item?.flatMap((child) => expandEnableWhenExpressionItem(child as FCEQuestionnaireItem)),
+    };
+
+    if (!withExpandedChildren.enableWhenExpression) {
+        return [withExpandedChildren];
+    }
+
+    const linkId = withExpandedChildren.linkId!;
+    const helperLinkId = `${linkId}${ENABLE_WHEN_EXPRESSION_SUFFIX}`;
+    const expression = withExpandedChildren.enableWhenExpression;
+    const isGroup = withExpandedChildren.type === 'group';
+
+    const helperItem: FCEQuestionnaireItem = {
+        linkId: helperLinkId,
+        type: 'boolean',
+        calculatedExpression: expression,
+        ...(withExpandedChildren.variable?.length ? { variable: [...withExpandedChildren.variable] } : {}),
+    };
+
+    // Omit enableWhenExpression (moved to helper); variable omitted for non-groups (moved to helper)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- intentionally omitted
+    const { enableWhenExpression, variable, ...rest } = withExpandedChildren;
+    const originalWithEnableWhen: FCEQuestionnaireItem = {
+        ...rest,
+        ...(isGroup && variable?.length ? { variable } : {}),
+        enableWhen: [
+            {
+                question: helperLinkId,
+                operator: '=' as QuestionnaireItemEnableWhen['operator'],
+                answerBoolean: true,
+            },
+        ],
+    };
+
+    return [helperItem, originalWithEnableWhen];
+}
+
 function findAnswersForQuestionsRecursive(linkId: string, values?: FormItems): any | null {
     // TODO: specify types for returning value
     // TODO: pass Questionnaire structure to make code robust
@@ -538,39 +602,14 @@ interface IsQuestionEnabledArgs {
     context: ItemContext;
 }
 function isQuestionEnabled(args: IsQuestionEnabledArgs) {
-    const { enableWhen, enableBehavior, enableWhenExpression, linkId } = args.qItem;
+    const { enableWhen, enableBehavior, enableWhenExpression } = args.qItem;
 
-    if (enableWhen && enableWhenExpression) {
-        console.warn(`
-        linkId: ${args.qItem.linkId}
-        Both enableWhen and enableWhenExpression are used in the
-        same QuestionItem.
-        enableWhenExpression is used as more prioritized
-        `);
+    if (enableWhenExpression) {
+        throw Error(`enableWhenExpression is not supported, use expandEnableWhenExpressions on FCEQuestionnaire`);
     }
 
-    if (!enableWhen && !enableWhenExpression) {
+    if (!enableWhen) {
         return true;
-    }
-
-    if (enableWhenExpression && enableWhenExpression.language === 'text/fhirpath') {
-        try {
-            const expressionResult = evaluateFHIRPathExpression(
-                enableWhenExpression,
-                args.context,
-                `${linkId}.enableWhenExpression`,
-            )[0];
-
-            if (typeof expressionResult !== 'boolean') {
-                throw Error(
-                    `The result of enableWhenExpression is not a boolean value. Expression result: ${expressionResult}`,
-                );
-            }
-
-            return expressionResult;
-        } catch (err: unknown) {
-            throw Error(`FHIRPath expression evaluation failure for ${args.qItem.linkId}.enableWhenExpression: ${err}`);
-        }
     }
 
     const iterFn = enableBehavior === 'any' ? _.some : _.every;
@@ -602,13 +641,84 @@ export function removeDisabledAnswers(
     values: FormItems,
     context: ItemContext,
 ): FormItems {
-    return removeDisabledAnswersRecursive({
+    const afterRecursive = removeDisabledAnswersRecursive({
         questionnaireItems: questionnaire.item ?? [],
         parentPath: [],
         answersItems: values,
         initialValues: {},
         context,
     });
+    return removeEnableWhenExpressionHelperItems(questionnaire, afterRecursive);
+}
+
+/**
+ * Removes virtual enableWhenExpression helper items (linkId ending with ENABLE_WHEN_EXPRESSION_SUFFIX)
+ * from form values so they do not appear in the QR. Recurses into nested items.
+ */
+export function removeEnableWhenExpressionHelperItems(
+    questionnaire: FCEQuestionnaire,
+    formItems: FormItems,
+): FormItems {
+    return removeEnableWhenExpressionHelperItemsRecursive(questionnaire.item ?? [], formItems);
+}
+
+function removeEnableWhenExpressionHelperItemsRecursive(
+    questionnaireItems: FCEQuestionnaireItem[],
+    formItems: FormItems,
+): FormItems {
+    return Object.fromEntries(
+        Object.entries(formItems)
+            .filter(([linkId]) => !isEnableWhenExpressionHelperLinkId(linkId))
+            .map(([linkId, value]) => {
+                if (value == null) {
+                    return [linkId, value];
+                }
+                const questionnaireItem = questionnaireItems.find((i) => i.linkId === linkId);
+                if (Array.isArray(value)) {
+                    return [
+                        linkId,
+                        value.map((answer) =>
+                            answer?.items && questionnaireItem
+                                ? {
+                                      ...answer,
+                                      items: removeEnableWhenExpressionHelperItemsRecursive(
+                                          questionnaireItem.item ?? [],
+                                          answer.items,
+                                      ),
+                                  }
+                                : answer,
+                        ),
+                    ];
+                }
+                if (!questionnaireItem || !isFormGroupItems(questionnaireItem, value)) {
+                    return [linkId, value];
+                }
+                if (!value.items) {
+                    return [linkId, value];
+                }
+                if (isRepeatableFormGroupItems(questionnaireItem, value)) {
+                    return [
+                        linkId,
+                        {
+                            ...value,
+                            items: value.items.map((group) =>
+                                removeEnableWhenExpressionHelperItemsRecursive(questionnaireItem.item ?? [], group),
+                            ),
+                        },
+                    ];
+                }
+                return [
+                    linkId,
+                    {
+                        ...value,
+                        items: removeEnableWhenExpressionHelperItemsRecursive(
+                            questionnaireItem.item ?? [],
+                            value.items,
+                        ),
+                    },
+                ];
+            }),
+    ) as FormItems;
 }
 
 interface RemoveDisabledAnswersRecursiveArgs {
