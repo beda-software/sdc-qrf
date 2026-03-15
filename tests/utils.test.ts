@@ -3,16 +3,19 @@ import { describe, expect, test, vi } from 'vitest';
 import {
     calcInitialContext,
     compareValue,
+    ENABLE_WHEN_EXPRESSION_SUFFIX,
+    expandEnableWhenExpressions,
     getAnswerValues,
     getBranchItems,
     getChoiceTypeValue,
-    getEnabledQuestions,
     isAnswerValueEmpty,
+    isEnableWhenExpressionHelperLinkId,
     isValueEmpty,
     isValueEqual,
     mapFormToResponse,
     mapResponseToForm,
     removeDisabledAnswers,
+    removeEnableWhenExpressionHelperItems,
     parseFhirQueryExpression,
     resolveTemplateExpr,
     toAnswerValue,
@@ -1293,123 +1296,348 @@ describe('enableWhen in deep nested', () => {
     });
 });
 
-test('enableWhenExpression logic', () => {
-    const questionnaire: FCEQuestionnaire = {
-        resourceType: 'Questionnaire',
-        status: 'active',
-        item: [
-            {
-                linkId: 'root-group',
-                type: 'group',
-                text: 'Root group',
-                item: [
-                    {
-                        linkId: 'non-repeatable-group',
-                        type: 'group',
-                        text: 'Non Repeatable group',
-                        item: [
-                            { linkId: 'condition', text: 'Condition', type: 'boolean' },
-                            {
-                                linkId: 'question-for-yes',
-                                text: 'Question for yes',
-                                type: 'text',
-                                enableWhenExpression: {
-                                    language: 'text/fhirpath',
-                                    expression:
-                                        "%resource.repeat(item).where(linkId = 'condition').answer.valueBoolean = true",
-                                },
-                            },
-                            {
-                                linkId: 'question-for-no',
-                                text: 'Question for no',
-                                type: 'text',
-                                enableWhenExpression: {
-                                    language: 'text/fhirpath',
-                                    expression:
-                                        "%resource.repeat(item).where(linkId = 'condition').answer.valueBoolean = false",
-                                },
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-
-    const qr: QuestionnaireResponse = {
-        resourceType: 'QuestionnaireResponse',
-        status: 'completed',
-        item: [
-            {
-                linkId: 'root-group',
-                item: [
-                    {
-                        linkId: 'non-repeatable-group',
-                        item: [
-                            {
-                                linkId: 'condition',
-                                answer: [{ valueBoolean: true }],
-                            },
-                            {
-                                linkId: 'question-for-yes',
-                                answer: [{ valueString: 'yes' }],
-                            },
-                            {
-                                linkId: 'question-for-no',
-                                answer: [{ valueString: 'no' }],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-    const expectedQR: QuestionnaireResponse = {
-        resourceType: 'QuestionnaireResponse',
-        status: 'completed',
-        item: [
-            {
-                linkId: 'root-group',
-                item: [
-                    {
-                        linkId: 'non-repeatable-group',
-                        item: [
-                            {
-                                linkId: 'condition',
-                                answer: [{ valueBoolean: true }],
-                            },
-                            {
-                                linkId: 'question-for-yes',
-                                answer: [{ valueString: 'yes' }],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-    const formItems = mapResponseToForm(qr, questionnaire);
-    const enabledQuestionsLinkIds = getEnabledQuestions(
-        questionnaire.item?.[0]?.item?.[0]?.item ?? [],
-        ['items', 'root-group', 'items'],
-        formItems,
-        {
-            questionnaire,
-            resource: qr,
-            context: qr,
-        },
-    ).map((questionnaireItem) => questionnaireItem.linkId);
-
-    expect(enabledQuestionsLinkIds).toStrictEqual(['condition', 'question-for-yes']);
-
-    const enabledFormItems = removeDisabledAnswers(questionnaire, formItems, {
-        questionnaire,
-        resource: qr,
-        context: qr,
+describe('expandEnableWhenExpressions', () => {
+    test('returns copy unchanged when no item has enableWhenExpression', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                { linkId: 'q1', type: 'string' },
+                { linkId: 'q2', type: 'boolean' },
+            ],
+        };
+        const result = expandEnableWhenExpressions(questionnaire);
+        expect(result).not.toBe(questionnaire);
+        expect(result.item).toHaveLength(2);
+        expect(result.item?.[0]?.linkId).toBe('q1');
+        expect(result.item?.[1]?.linkId).toBe('q2');
     });
-    const actualQR = { ...qr, ...mapFormToResponse(enabledFormItems, questionnaire) };
 
-    expect(actualQR).toEqual(expectedQR);
+    test('inserts boolean calculated item before item with enableWhenExpression and replaces with enableWhen', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                { linkId: 'q-without-ewe', type: 'string' },
+                {
+                    linkId: 'q-with-ewe',
+                    type: 'string',
+                    enableWhenExpression: {
+                        language: 'text/fhirpath',
+                        expression: "%resource.item.where(linkId='q-without-ewe').answer.valueString.exists()",
+                    },
+                },
+            ],
+        };
+        const result = expandEnableWhenExpressions(questionnaire);
+        expect(result.item).toHaveLength(3);
+        expect(result.item?.[0]?.linkId).toBe('q-without-ewe');
+        expect(result.item?.[1]?.linkId).toBe('q-with-ewe-enable-when-expression');
+        expect(result.item?.[1]?.type).toBe('boolean');
+        expect((result.item?.[1] as FCEQuestionnaireItem).calculatedExpression).toEqual({
+            language: 'text/fhirpath',
+            expression: "%resource.item.where(linkId='q-without-ewe').answer.valueString.exists()",
+        });
+        expect(result.item?.[2]?.linkId).toBe('q-with-ewe');
+        expect((result.item?.[2] as FCEQuestionnaireItem).enableWhenExpression).toBeUndefined();
+        expect((result.item?.[2] as FCEQuestionnaireItem).enableWhen).toEqual([
+            {
+                question: 'q-with-ewe-enable-when-expression',
+                operator: '=',
+                answerBoolean: true,
+            },
+        ]);
+    });
+
+    test('recurses into nested groups and expands enableWhenExpression in children', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'group',
+                    type: 'group',
+                    item: [
+                        { linkId: 'q-a', type: 'string' },
+                        {
+                            linkId: 'q-b',
+                            type: 'string',
+                            enableWhenExpression: {
+                                language: 'text/fhirpath',
+                                expression: "'true'",
+                            },
+                        },
+                    ],
+                },
+            ],
+        };
+        const result = expandEnableWhenExpressions(questionnaire);
+        const group = result.item?.[0];
+        expect(group?.type).toBe('group');
+        const children = (group as FCEQuestionnaireItem).item ?? [];
+        expect(children).toHaveLength(3);
+        expect(children[0]?.linkId).toBe('q-a');
+        expect(children[1]?.linkId).toBe('q-b-enable-when-expression');
+        expect(children[1]?.type).toBe('boolean');
+        expect((children[1] as FCEQuestionnaireItem).calculatedExpression?.expression).toBe("'true'");
+        expect(children[2]?.linkId).toBe('q-b');
+        expect((children[2] as FCEQuestionnaireItem).enableWhen).toEqual([
+            { question: 'q-b-enable-when-expression', operator: '=', answerBoolean: true },
+        ]);
+    });
+
+    test('moves variable from non-group item to helper so enableWhenExpression can reference it (issue #47)', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'q-root-1',
+                    type: 'string',
+                    variable: [{ name: 'MyVar', language: 'text/fhirpath', expression: "'value'" }],
+                    enableWhenExpression: {
+                        language: 'text/fhirpath',
+                        expression: '%MyVar',
+                    },
+                },
+            ],
+        };
+        const result = expandEnableWhenExpressions(questionnaire);
+        expect(result.item).toHaveLength(2);
+        const helper = result.item?.[0] as FCEQuestionnaireItem;
+        const original = result.item?.[1] as FCEQuestionnaireItem;
+        expect(helper.linkId).toBe('q-root-1-enable-when-expression');
+        expect(helper.variable).toHaveLength(1);
+        expect(helper.variable?.[0]?.name).toBe('MyVar');
+        expect(original.linkId).toBe('q-root-1');
+        expect(original.variable).toBeUndefined();
+    });
+
+    test('copies variable to helper when original is a group (group keeps variable)', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'a',
+                    type: 'group',
+                    variable: [{ name: 'X', language: 'text/fhirpath', expression: '1' }],
+                    enableWhenExpression: {
+                        language: 'text/fhirpath',
+                        expression: '%X = 1',
+                    },
+                    item: [{ linkId: 'q-a-1', type: 'string' }],
+                },
+            ],
+        };
+        const result = expandEnableWhenExpressions(questionnaire);
+        expect(result.item).toHaveLength(2);
+        const helper = result.item?.[0] as FCEQuestionnaireItem;
+        const group = result.item?.[1] as FCEQuestionnaireItem;
+        expect(helper.linkId).toBe('a-enable-when-expression');
+        expect(helper.variable).toHaveLength(1);
+        expect(helper.variable?.[0]?.name).toBe('X');
+        expect(group.type).toBe('group');
+        expect(group.variable).toHaveLength(1);
+        expect(group.variable?.[0]?.name).toBe('X');
+    });
+});
+
+describe('removeEnableWhenExpressionHelperItems', () => {
+    const suffix = ENABLE_WHEN_EXPRESSION_SUFFIX;
+
+    test('isEnableWhenExpressionHelperLinkId identifies helper linkIds', () => {
+        expect(isEnableWhenExpressionHelperLinkId('q1' + suffix)).toBe(true);
+        expect(isEnableWhenExpressionHelperLinkId('group-enable-when-expression')).toBe(true);
+        expect(isEnableWhenExpressionHelperLinkId('q1')).toBe(false);
+        expect(isEnableWhenExpressionHelperLinkId('q1-enable-when')).toBe(false);
+    });
+
+    test('strips top-level helper linkId and keeps non-helper entries', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                { linkId: 'q1', type: 'string' },
+                { linkId: 'q1' + suffix, type: 'boolean' },
+                { linkId: 'q2', type: 'boolean' },
+            ],
+        };
+        const formItems: FormItems = {
+            q1: [{ value: { string: 'a' } }],
+            ['q1' + suffix]: [{ value: { boolean: true } }],
+            q2: [{ value: { boolean: false } }],
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        expect(Object.keys(result)).toEqual(['q1', 'q2']);
+        expect(result['q1']).toEqual([{ value: { string: 'a' } }]);
+        expect(result['q2']).toEqual([{ value: { boolean: false } }]);
+        expect(result['q1' + suffix]).toBeUndefined();
+    });
+
+    test('recurses into non-repeatable group and strips helper items inside', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'g',
+                    type: 'group',
+                    item: [
+                        { linkId: 'a', type: 'string' },
+                        { linkId: 'a' + suffix, type: 'boolean' },
+                        { linkId: 'b', type: 'boolean' },
+                    ],
+                },
+            ],
+        };
+        const formItems: FormItems = {
+            g: {
+                items: {
+                    a: [{ value: { string: 'x' } }],
+                    ['a' + suffix]: [{ value: { boolean: true } }],
+                    b: [{ value: { boolean: false } }],
+                },
+            },
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        expect(result.g).toBeDefined();
+        const g = result.g as { items: FormItems };
+        expect(Object.keys(g.items)).toEqual(['a', 'b']);
+        expect(g.items['a']).toEqual([{ value: { string: 'x' } }]);
+        expect(g.items['b']).toEqual([{ value: { boolean: false } }]);
+        expect(g.items['a' + suffix]).toBeUndefined();
+    });
+
+    test('recurses into repeatable group and strips helper items in each instance', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'g',
+                    type: 'group',
+                    repeats: true,
+                    item: [
+                        { linkId: 'x', type: 'string' },
+                        { linkId: 'x' + suffix, type: 'boolean' },
+                    ],
+                },
+            ],
+        };
+        const helperLinkId = 'x' + suffix;
+        const formItems: FormItems = {
+            g: {
+                items: [
+                    { x: [{ value: { string: '1' } }], [helperLinkId]: [{ value: { boolean: true } }] },
+                    { x: [{ value: { string: '2' } }], [helperLinkId]: [{ value: { boolean: false } }] },
+                ],
+            },
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        const g = result.g as { items: FormItems[] };
+        expect(g.items).toHaveLength(2);
+        expect(Object.keys(g.items[0]!)).toEqual(['x']);
+        expect(g.items[0]!['x']).toEqual([{ value: { string: '1' } }]);
+        expect(Object.keys(g.items[1]!)).toEqual(['x']);
+        expect(g.items[1]!['x']).toEqual([{ value: { string: '2' } }]);
+    });
+
+    test('recurses into answer array sub-items (repeatable question with nested items) and strips helpers', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'repeat-q',
+                    type: 'group',
+                    repeats: true,
+                    item: [
+                        { linkId: 'nested', type: 'string' },
+                        { linkId: 'nested' + suffix, type: 'boolean' },
+                    ],
+                },
+            ],
+        };
+        const formItems: FormItems = {
+            'repeat-q': [
+                {
+                    items: {
+                        nested: [{ value: { string: 'v1' } }],
+                        ['nested' + suffix]: [{ value: { boolean: true } }],
+                    },
+                },
+            ],
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        const arr = result['repeat-q'] as FormAnswerItems[];
+        expect(arr).toHaveLength(1);
+        expect(arr[0]?.items).toBeDefined();
+        const nested = (arr[0] as { items: FormItems }).items;
+        expect(Object.keys(nested)).toEqual(['nested']);
+        expect(nested['nested']).toEqual([{ value: { string: 'v1' } }]);
+        expect(nested['nested' + suffix]).toBeUndefined();
+    });
+
+    test('when no questionnaire item found for linkId, keeps value as-is', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [{ linkId: 'known', type: 'string' }],
+        };
+        const formItems: FormItems = {
+            known: [{ value: { string: 'ok' } }],
+            unknown: [{ value: { string: 'keep' } }],
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        expect(result.known).toEqual([{ value: { string: 'ok' } }]);
+        expect(result.unknown).toEqual([{ value: { string: 'keep' } }]);
+    });
+
+    test('empty formItems returns empty object', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [],
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, {});
+        expect(result).toEqual({});
+    });
+
+    test('mixed: helper at root and inside nested group', () => {
+        const questionnaire: FCEQuestionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                { linkId: 'root', type: 'string' },
+                { linkId: 'root' + suffix, type: 'boolean' },
+                {
+                    linkId: 'group',
+                    type: 'group',
+                    item: [
+                        { linkId: 'inner', type: 'string' },
+                        { linkId: 'inner' + suffix, type: 'boolean' },
+                    ],
+                },
+            ],
+        };
+        const formItems: FormItems = {
+            root: [{ value: { string: 'r' } }],
+            ['root' + suffix]: [{ value: { boolean: true } }],
+            group: {
+                items: {
+                    inner: [{ value: { string: 'i' } }],
+                    ['inner' + suffix]: [{ value: { boolean: false } }],
+                },
+            },
+        };
+        const result = removeEnableWhenExpressionHelperItems(questionnaire, formItems);
+        expect(Object.keys(result)).toEqual(['root', 'group']);
+        expect(result['root' + suffix]).toBeUndefined();
+        const group = result.group as { items: FormItems };
+        expect(Object.keys(group.items)).toEqual(['inner']);
+        expect(group.items['inner' + suffix]).toBeUndefined();
+    });
 });
 
 describe('enableWhen exists logic for non-repeatable groups primitives', () => {
