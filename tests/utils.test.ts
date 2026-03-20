@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-
+import fhirpath from 'fhirpath';
+import fhirpathR4BModel from 'fhirpath/fhir-context/r4';
 import {
     calcInitialContext,
     compareValue,
@@ -33,7 +34,14 @@ import {
     QuestionnaireResponseItem,
 } from 'fhir/r4b';
 import { FCEQuestionnaire, FCEQuestionnaireItem } from '../src/fce.types';
-import { AnswerValue, FormAnswerItems, FormItems, ItemContext, QuestionnaireResponseFormData } from '../src/types';
+import {
+    AnswerValue,
+    EvaluateFhirpath,
+    FormAnswerItems,
+    FormItems,
+    ItemContext,
+    QuestionnaireResponseFormData,
+} from '../src/types';
 
 vi.mock('uuid', () => ({
     v4: () => 'itemkey',
@@ -2668,6 +2676,30 @@ describe('evaluateFHIRPathExpression', () => {
                 'link-id.path.to',
             ),
         ).toThrow();
+    });
+
+    test('uses custom evaluator from 4th parameter when provided', () => {
+        const customEvaluateFhirpath: EvaluateFhirpath = (context, path, env) =>
+            fhirpath.evaluate(context, path, env, fhirpathR4BModel, {
+                async: false,
+                userInvocationTable: {
+                    customFn: {
+                        fn: () => {
+                            return ['from-custom-evaluator'];
+                        },
+                        arity: { 0: [], 1: ['String'] },
+                    },
+                },
+            });
+
+        const result = evaluateFHIRPathExpression(
+            { language: 'text/fhirpath', expression: '%Patient.id.customFn()' },
+            context,
+            'test.path',
+            customEvaluateFhirpath,
+        );
+
+        expect(result).toStrictEqual(['from-custom-evaluator']);
     });
 });
 

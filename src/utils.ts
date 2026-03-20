@@ -20,6 +20,7 @@ import {
 
 import {
     AnswerValue,
+    EvaluateFhirpath,
     FHIRAnswerValue,
     FormAnswerItems,
     FormGroupItems,
@@ -536,6 +537,7 @@ interface IsQuestionEnabledArgs {
     parentPath: string[];
     values: FormItems;
     context: ItemContext;
+    evaluateFhirpath?: EvaluateFhirpath;
 }
 function isQuestionEnabled(args: IsQuestionEnabledArgs) {
     const { enableWhen, enableBehavior, enableWhenExpression, linkId } = args.qItem;
@@ -559,6 +561,7 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
                 enableWhenExpression,
                 args.context,
                 `${linkId}.enableWhenExpression`,
+                args.evaluateFhirpath,
             )[0];
 
             if (typeof expressionResult !== 'boolean') {
@@ -601,6 +604,7 @@ export function removeDisabledAnswers(
     questionnaire: FCEQuestionnaire,
     values: FormItems,
     context: ItemContext,
+    evaluateFhirpath?: EvaluateFhirpath,
 ): FormItems {
     return removeDisabledAnswersRecursive({
         questionnaireItems: questionnaire.item ?? [],
@@ -608,6 +612,7 @@ export function removeDisabledAnswers(
         answersItems: values,
         initialValues: {},
         context,
+        evaluateFhirpath,
     });
 }
 
@@ -617,6 +622,7 @@ interface RemoveDisabledAnswersRecursiveArgs {
     answersItems: FormItems;
     initialValues: FormItems;
     context: ItemContext;
+    evaluateFhirpath?: EvaluateFhirpath;
 }
 function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs): FormItems {
     return args.questionnaireItems.reduce((acc, questionnaireItem) => {
@@ -635,6 +641,7 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
                 parentPath: args.parentPath,
                 values,
                 context: args.context,
+                evaluateFhirpath: args.evaluateFhirpath,
             })
         ) {
             return acc;
@@ -657,6 +664,7 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
                                 answersItems: group,
                                 initialValues: values,
                                 context: args.context,
+                                evaluateFhirpath: args.evaluateFhirpath,
                             }),
                         ),
                     },
@@ -672,6 +680,7 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
                             answersItems: answers.items,
                             initialValues: values,
                             context: args.context,
+                            evaluateFhirpath: args.evaluateFhirpath,
                         }),
                     },
                 };
@@ -688,6 +697,7 @@ function removeDisabledAnswersRecursive(args: RemoveDisabledAnswersRecursiveArgs
                           answersItems: answer.items,
                           initialValues: { ...values, [linkId!]: [...answersAcc, { ...answer, items: [] }] },
                           context: args.context,
+                          evaluateFhirpath: args.evaluateFhirpath,
                       })
                     : {};
 
@@ -702,6 +712,7 @@ export function getEnabledQuestions(
     parentPath: string[],
     values: FormItems,
     context: ItemContext,
+    evaluateFhirpath?: EvaluateFhirpath,
 ) {
     return _.filter(questionnaireItems, (qItem) => {
         const { linkId } = qItem;
@@ -711,7 +722,7 @@ export function getEnabledQuestions(
             return false;
         }
 
-        return isQuestionEnabled({ qItem, parentPath, values, context });
+        return isQuestionEnabled({ qItem, parentPath, values, context, evaluateFhirpath });
     });
 }
 
@@ -750,18 +761,21 @@ export function resolveTemplateExpr(
     context: ItemContext,
     path: string,
     returnNullIfUnresolved?: false,
+    evaluateFhirpath?: EvaluateFhirpath,
 ): string;
 export function resolveTemplateExpr(
     str: string,
     context: ItemContext,
     path: string,
     returnNullIfUnresolved: true,
+    evaluateFhirpath?: EvaluateFhirpath,
 ): string | null;
 export function resolveTemplateExpr(
     str: string,
     context: ItemContext,
     path: string,
     returnNullIfUnresolved: boolean = false,
+    evaluateFhirpath?: EvaluateFhirpath,
 ): string | null {
     const matches = str.match(/{{[^}]+}}/g);
 
@@ -783,6 +797,7 @@ export function resolveTemplateExpr(
             },
             context,
             path,
+            evaluateFhirpath,
         );
 
         if (resolvedVar?.length) {
@@ -797,10 +812,14 @@ export function resolveTemplateExpr(
     }, str);
 }
 
+const defaultFhirpathEvaluate: EvaluateFhirpath = (context, path, env) =>
+    fhirpath.evaluate(context, path, env, fhirpathR4BModel, { async: false });
+
 export function parseFhirQueryExpression(
     expression: string,
     context: ItemContext,
     path: string = 'unknown',
+    evaluateFhirpath?: EvaluateFhirpath,
 ): [string | undefined, Record<string, any>] {
     const [resourceType, paramsQS] = expression.split('?', 2);
     const searchParams = Object.fromEntries(
@@ -812,8 +831,8 @@ export function parseFhirQueryExpression(
             return [
                 key,
                 isArray(value)
-                    ? value.map((arrValue) => resolveTemplateExpr(arrValue!, context, path))
-                    : resolveTemplateExpr(value, context, path),
+                    ? value.map((arrValue) => resolveTemplateExpr(arrValue!, context, path, false, evaluateFhirpath))
+                    : resolveTemplateExpr(value, context, path, false, evaluateFhirpath),
             ];
         }),
     );
@@ -825,6 +844,7 @@ export function evaluateFHIRPathExpression(
     expression: Expression | undefined,
     context: ItemContext,
     path: string = 'unknown',
+    evaluateFhirpath?: EvaluateFhirpath,
 ) {
     if (!expression) {
         return [];
@@ -835,10 +855,10 @@ export function evaluateFHIRPathExpression(
         return [];
     }
 
+    const evaluator: EvaluateFhirpath = evaluateFhirpath ?? defaultFhirpathEvaluate;
+
     try {
-        return fhirpath.evaluate(context.context ?? {}, expression.expression!, context, fhirpathR4BModel, {
-            async: false,
-        });
+        return evaluator(context.context ?? {}, expression.expression!, context);
     } catch (err: unknown) {
         throw Error(`FHIRPath expression evaluation failure for ${path}: ${err}`);
     }

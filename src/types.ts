@@ -1,4 +1,5 @@
 import { ComponentType } from 'react';
+import { Context, Path } from 'fhirpath';
 
 import {
     Attachment,
@@ -32,6 +33,8 @@ export type ItemControlGroupItemComponentMapping = {
     [code: string]: GroupItemComponent;
 };
 
+export type EvaluateFhirpath = (context: Context | undefined, path: string | Path, env: any) => any[];
+
 export type ItemContext = {
     // ItemContext contains items in FHIR format, this context is passed to all expressions
     resource: QuestionnaireResponse;
@@ -51,6 +54,8 @@ export interface QRFContextData {
     fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
     formValues: FormItems;
     setFormValues: (values: FormItems, fieldPath: Array<string | number>, value: any) => void;
+
+    evaluateFhirpath?: EvaluateFhirpath;
 }
 
 export interface QuestionItemsProps {

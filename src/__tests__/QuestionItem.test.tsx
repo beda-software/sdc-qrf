@@ -1,11 +1,14 @@
 import React from 'react';
+import fhirpath from 'fhirpath';
+import fhirpathR4BModel from 'fhirpath/fhir-context/r4';
+
 import { render, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { Questionnaire, QuestionnaireResponse } from 'fhir/r4b';
 import { success } from '@beda.software/remote-data';
 
 import { QuestionItem, QuestionnaireResponseFormProvider } from '../components';
-import type { ItemContext, QRFContextData, QuestionItemComponent } from '../types';
+import type { EvaluateFhirpath, ItemContext, QRFContextData, QuestionItemComponent } from '../types';
 import type { FCEQuestionnaireItem } from '../fce.types';
 
 function createInitialContext(questionnaire: Questionnaire, questionnaireResponse: QuestionnaireResponse): ItemContext {
@@ -246,5 +249,66 @@ describe('QuestionItem cqf expressions', () => {
         expect(lastProps.questionItem.text).toBe('Computed text');
         expect(lastProps.questionItem.readOnly).toBe(true);
         expect(lastProps.questionItem.required).toBe(true);
+    });
+});
+
+describe('QuestionnaireResponseFormProvider evaluateFhirpath', () => {
+    test('uses custom evaluateFhirpath from provider when evaluating calculatedExpression via QuestionItems', async () => {
+        const questionnaire: Questionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'target',
+                    type: 'string',
+                    calculatedExpression: {
+                        language: 'text/fhirpath',
+                        expression: '%resource.item.first().linkId.customFn()',
+                    },
+                } as FCEQuestionnaireItem,
+            ],
+        };
+
+        const questionnaireResponse: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'in-progress',
+            item: [{ linkId: 'target' }],
+        };
+
+        const initialContext = createInitialContext(questionnaire, questionnaireResponse);
+
+        const customEvaluateFhirpath: EvaluateFhirpath = (context, path, env) =>
+            fhirpath.evaluate(context, path, env, fhirpathR4BModel, {
+                async: false,
+                userInvocationTable: {
+                    customFn: {
+                        fn: () => {
+                            return ['from-custom-evaluator'];
+                        },
+                        arity: { 0: [], 1: ['String'] },
+                    },
+                },
+            });
+
+        const providerProps = createQRFProviderProps({
+            evaluateFhirpath: customEvaluateFhirpath,
+        });
+        const setFormValuesSpy = providerProps.setFormValues as ReturnType<typeof vi.fn>;
+
+        render(
+            <QuestionnaireResponseFormProvider {...providerProps}>
+                <QuestionItem parentPath={[]} context={initialContext} questionItem={questionnaire.item![0]} />
+            </QuestionnaireResponseFormProvider>,
+        );
+
+        await waitFor(() => {
+            expect(setFormValuesSpy).toHaveBeenCalled();
+        });
+
+        const lastCall = setFormValuesSpy.mock.calls.at(-1)!;
+        const answers = lastCall[2] as any[];
+
+        expect(answers).toHaveLength(1);
+        expect(answers).toStrictEqual([{ value: { string: 'from-custom-evaluator' } }]);
     });
 });

@@ -4,7 +4,7 @@ import { FCEQuestionnaireItem } from './fce.types';
 import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray } from '@beda.software/remote-data';
 
 import { QRFContext } from './context';
-import { ItemContext } from './types';
+import { EvaluateFhirpath, ItemContext } from './types';
 import { resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
 
 export function useQuestionnaireResponseFormContext() {
@@ -16,6 +16,7 @@ export type UseQuestionItemContextArgs = {
     branchItems: ReturnType<typeof getBranchItems>;
     fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
     questionItem: FCEQuestionnaireItem;
+    evaluateFhirpath?: EvaluateFhirpath;
 };
 
 type AsyncState = Record<
@@ -33,7 +34,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
     contexts: ItemContext[];
     evaluationResponse: RemoteData<ItemContext[]>;
 } {
-    const { initialContext, branchItems, fhirService, questionItem } = props;
+    const { initialContext, branchItems, fhirService, questionItem, evaluateFhirpath } = props;
     const { variable, linkId } = questionItem;
     const variables = useMemo(() => variable ?? [], [variable]);
     const [asyncState, setAsyncState] = useState<AsyncState>({});
@@ -115,6 +116,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                         variable,
                         workingContext,
                         `${linkId}.variable.${name}`,
+                        evaluateFhirpath,
                     );
                 }
             });
@@ -150,6 +152,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                         variable,
                         workingContext,
                         `${linkId}.variable.${name}`,
+                        evaluateFhirpath,
                     );
                 }
             });
