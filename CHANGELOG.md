@@ -1,3 +1,7 @@
+## 1.1.0-alpha.2
+
+- Pass optional fhirpath.aveluate with QRFContext
+
 ## 1.1.0-alpha.1
 
 - Add support for x-fhir-query expressions
