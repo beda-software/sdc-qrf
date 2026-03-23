@@ -36,8 +36,11 @@
                             }
                         },
                         {
-                            "url": "https://emr-core.beda.software/StructureDefinition/columnWidth",
-                            "valueInteger": 200
+                            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-width",
+                            "valueQuantity": {
+                                "value": 200,
+                                "unit": "px"
+                            }
                         }
                     ]
                 }

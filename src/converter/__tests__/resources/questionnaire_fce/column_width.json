@@ -21,7 +21,10 @@
                     "text": "Weight",
                     "type": "quantity",
                     "linkId": "weight",
-                    "columnWidth": 200,
+                    "columnWidth": {
+                        "value": 200,
+                        "unit": "px"
+                    },
                     "unitOption": [
                         {
                             "code": "kg",
