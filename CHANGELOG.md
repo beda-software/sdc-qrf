@@ -1,3 +1,7 @@
+## 1.1.0-alpha.3
+
+- Add support for columnWidth extension
+
 ## 1.1.0-alpha.2
 
 - Pass optional fhirpath.aveluate with QRFContext
