@@ -122,7 +122,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     mdEditorFeature?: string[];
     chartYAxisRange?: Range;
     chartHighlight?: FCEQuestionnaireItemChartHighlight[];
-    columnWidth?: number;
+    columnWidth?: Quantity;
 }
 
 export interface FCEQuestionnaireItemText {
