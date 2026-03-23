@@ -59,6 +59,7 @@ export enum ExtensionIdentifier {
     MDEditorFeature = 'https://emr-core.beda.software/StructureDefinition/mdEditorFeature',
     ChartYAxisRange = 'https://emr-core.beda.software/StructureDefinition/chartYAxisRange',
     ChartHighlight = 'https://emr-core.beda.software/StructureDefinition/chartHighlight',
+    CoolumnWidth = 'https://emr-core.beda.software/StructureDefinition/columnWidth',
 }
 
 export type ExtensionTransformer = {
@@ -511,6 +512,9 @@ export const extensionTransformers: ExtensionTransformer = {
                 return [];
             },
         },
+    },
+    [ExtensionIdentifier.CoolumnWidth]: {
+        path: { extension: 'valueInteger', questionnaire: 'columnWidth' },
     },
 };
 
