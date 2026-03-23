@@ -9,6 +9,7 @@ import fce_beverages from './resources/questionnaire_fce/beverages.json';
 import fce_chart_highlight from './resources/questionnaire_fce/chart_highlight.json';
 import fce_chart_y_axis_range from './resources/questionnaire_fce/chart_y_axis_range.json';
 import fce_choice_answer_option from './resources/questionnaire_fce/choice_answer_option.json';
+import fce_column_width from './resources/questionnaire_fce/column_width.json';
 import fce_consent from './resources/questionnaire_fce/consent.json';
 import fce_constraint from './resources/questionnaire_fce/constraint.json';
 import fce_cqf_examples from './resources/questionnaire_fce/cqf-examples.json';
@@ -50,6 +51,7 @@ import fhir_beverages from './resources/questionnaire_fhir/beverages.json';
 import fhir_chart_highlight from './resources/questionnaire_fhir/chart_highlight.json';
 import fhir_chart_y_axis_range from './resources/questionnaire_fhir/chart_y_axis_range.json';
 import fhir_choice_answer_option from './resources/questionnaire_fhir/choice_answer_option.json';
+import fhir_column_width from './resources/questionnaire_fhir/column_width.json';
 import fhir_consent from './resources/questionnaire_fhir/consent.json';
 import fhir_constraint from './resources/questionnaire_fhir/constraint.json';
 import fhir_cqf_examples from './resources/questionnaire_fhir/cqf-examples.json';
@@ -136,6 +138,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['md-editor-features', fhir_md_editor_feature, fce_md_editor_feature],
         ['chart-y-axis-range', fhir_chart_y_axis_range, fce_chart_y_axis_range],
         ['chart-highlight', fhir_chart_highlight, fce_chart_highlight],
+        ['column-width', fhir_column_width, fce_column_width],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -185,6 +188,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['md-editor-features', fce_md_editor_feature, fhir_md_editor_feature],
         ['chart-y-axis-range', fce_chart_y_axis_range, fhir_chart_y_axis_range],
         ['chart-highlight', fce_chart_highlight, fhir_chart_highlight],
+        ['column-width', fce_column_width, fhir_column_width],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
