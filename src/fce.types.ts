@@ -26,7 +26,7 @@ export interface FCEQuestionnaire extends Questionnaire {
     launchContext?: FCEQuestionnaireLaunchContext[];
     /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/questionnaire-mapper */
     /** List of mapping resources that must be executed on extract */
-    mapping?: Array<Reference>;
+    mapping?: Array<Reference | string>;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-sourceQueries */
     sourceQueries?: Array<Reference>;
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/variable */

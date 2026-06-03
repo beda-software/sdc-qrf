@@ -82,7 +82,9 @@ function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined
         return undefined;
     }
 
-    return mapperExtensions.map((mapperExtension: any) => mapperExtension.valueReference);
+    return mapperExtensions.map(
+        (mapperExtension: any) => mapperExtension.valueReference ?? mapperExtension.valueString,
+    );
 }
 
 function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {

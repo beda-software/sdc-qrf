@@ -21,6 +21,7 @@ import fce_enable_when from './resources/questionnaire_fce/enable_when.json';
 import fce_encounter_create from './resources/questionnaire_fce/encounter_create.json';
 import fce_gad_7 from './resources/questionnaire_fce/gad_7.json';
 import fce_immunization from './resources/questionnaire_fce/immunization.json';
+import fce_mapping_inline from './resources/questionnaire_fce/mapping_inline.json';
 import fce_medication from './resources/questionnaire_fce/medication.json';
 import fce_md_editor_feature from './resources/questionnaire_fce/md_editor_feature.json';
 import fce_mixed_fce_with_extensions from './resources/questionnaire_fce/mixed-fce-with-extensions.json';
@@ -63,6 +64,7 @@ import fhir_enable_when from './resources/questionnaire_fhir/enable_when.json';
 import fhir_encounter_create from './resources/questionnaire_fhir/encounter_create.json';
 import fhir_gad_7 from './resources/questionnaire_fhir/gad_7.json';
 import fhir_immunization from './resources/questionnaire_fhir/immunization.json';
+import fhir_mapping_inline from './resources/questionnaire_fhir/mapping_inline.json';
 import fhir_medication from './resources/questionnaire_fhir/medication.json';
 import fhir_md_editor_feature from './resources/questionnaire_fhir/md_editor_feature.json';
 import fhir_mixed_fce_with_extensions from './resources/questionnaire_fhir/mixed-fce-with-extensions.json';
@@ -139,6 +141,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['chart-y-axis-range', fhir_chart_y_axis_range, fce_chart_y_axis_range],
         ['chart-highlight', fhir_chart_highlight, fce_chart_highlight],
         ['column-width', fhir_column_width, fce_column_width],
+        ['mapping-inline', fhir_mapping_inline, fce_mapping_inline],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -189,6 +192,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['chart-y-axis-range', fce_chart_y_axis_range, fhir_chart_y_axis_range],
         ['chart-highlight', fce_chart_highlight, fhir_chart_highlight],
         ['column-width', fce_column_width, fhir_column_width],
+        ['mapping-inline', fce_mapping_inline, fhir_mapping_inline],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),

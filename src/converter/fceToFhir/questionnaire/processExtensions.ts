@@ -47,12 +47,20 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
 
     if (mapping) {
         extensions = extensions.concat(
-            mapping.map((m) => ({
-                url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
-                valueReference: {
-                    reference: m.reference,
-                },
-            })),
+            mapping.map((mapper) => {
+                if (typeof mapper === 'string') {
+                    return {
+                        url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
+                        valueString: mapper,
+                    };
+                }
+                return {
+                    url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
+                    valueReference: {
+                        reference: mapper.reference,
+                    },
+                };
+            }),
         );
     }
 
