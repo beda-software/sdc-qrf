@@ -5,6 +5,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
     const {
         launchContext,
         mapping,
+        mappingBody,
         sourceQueries,
         targetStructureMap,
         assembledFrom,
@@ -47,20 +48,21 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
 
     if (mapping) {
         extensions = extensions.concat(
-            mapping.map((mapper) => {
-                if (typeof mapper === 'string') {
-                    return {
-                        url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
-                        valueString: mapper,
-                    };
-                }
-                return {
-                    url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
-                    valueReference: {
-                        reference: mapper.reference,
-                    },
-                };
-            }),
+            mapping.map((mapper) => ({
+                url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
+                valueReference: {
+                    reference: mapper.reference,
+                },
+            })),
+        );
+    }
+
+    if (mappingBody) {
+        extensions = extensions.concat(
+            mappingBody.map((body) => ({
+                url: 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper-body',
+                valueString: body,
+            })),
         );
     }
 
