@@ -152,7 +152,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/immunization-extract"
+            "valueReference": {
+                "reference": "Mapping/immunization-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",

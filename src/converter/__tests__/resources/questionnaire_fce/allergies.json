@@ -348,7 +348,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/allergy-extract"
+            "valueReference": {
+                "reference": "Mapping/allergy-extract"
+            }
         }
     ],
     "assembledFrom": "allergies",

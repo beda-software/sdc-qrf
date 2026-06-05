@@ -127,7 +127,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/practitioner-edit"
+            "valueReference": {
+                "reference": "Mapping/practitioner-edit"
+            }
         }
     ],
     "resourceType": "Questionnaire",

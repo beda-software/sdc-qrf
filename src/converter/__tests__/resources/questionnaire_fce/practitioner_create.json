@@ -69,7 +69,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/practitioner-create"
+            "valueReference": {
+                "reference": "Mapping/practitioner-create"
+            }
         }
     ],
     "resourceType": "Questionnaire",

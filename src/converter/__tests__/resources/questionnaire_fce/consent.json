@@ -78,7 +78,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/consent-extract"
+            "valueReference": {
+                "reference": "Mapping/consent-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",

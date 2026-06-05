@@ -477,7 +477,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/phq2phq9-extract"
+            "valueReference": {
+                "reference": "Mapping/phq2phq9-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",
