@@ -3,7 +3,6 @@ import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression } from
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     launchContext?: any[];
     mapping?: any[];
-    mappingBody?: any[];
     sourceQueries?: any[];
     targetStructureMap?: any[];
     assembledFrom?: any;
@@ -12,7 +11,6 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
-    const mappingBody = processMappingBody(fhirQuestionnaire);
     const sourceQueries = processSourceQueries(fhirQuestionnaire);
     const targetStructureMap = processTargetStructureMap(fhirQuestionnaire);
     const assembledFrom = processAssembledFrom(fhirQuestionnaire);
@@ -22,7 +20,6 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
         mapping: mapping?.length ? mapping : undefined,
-        mappingBody: mappingBody?.length ? mappingBody : undefined,
         sourceQueries: sourceQueries?.length ? sourceQueries : undefined,
         targetStructureMap: targetStructureMap?.length ? targetStructureMap : undefined,
         assembledFrom: assembledFrom ? assembledFrom : undefined,
@@ -85,19 +82,9 @@ function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined
         return undefined;
     }
 
-    return mapperExtensions.map((mapperExtension: any) => mapperExtension.valueReference);
-}
-
-function processMappingBody(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined {
-    const mapperBodyExtensions = fhirQuestionnaire.extension?.filter(
-        (ext: any) => ext.url === 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper-body',
+    return mapperExtensions.map(
+        (mapperExtension: any) => mapperExtension.valueReference ?? mapperExtension.valueExpression,
     );
-
-    if (!mapperBodyExtensions) {
-        return undefined;
-    }
-
-    return mapperBodyExtensions.map((mapperBodyExtension: any) => mapperBodyExtension.valueString);
 }
 
 function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {
