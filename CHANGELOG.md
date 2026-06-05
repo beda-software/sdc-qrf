@@ -1,3 +1,7 @@
+## 1.1.0-alpha.4
+
+- Add support for embedded Mapping resources through mapping.valueExpression
+
 ## 1.1.0-alpha.3
 
 - Add support for columnWidth extension
