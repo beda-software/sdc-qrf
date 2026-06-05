@@ -168,7 +168,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/medication-statement-extract"
+            "valueReference": {
+                "reference": "Mapping/medication-statement-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",

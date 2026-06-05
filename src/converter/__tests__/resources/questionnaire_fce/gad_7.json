@@ -391,7 +391,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/gad-7-extract"
+            "valueReference": {
+                "reference": "Mapping/gad-7-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",

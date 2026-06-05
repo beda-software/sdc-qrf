@@ -340,7 +340,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/allergy-extract"
+            "valueReference": {
+                "reference": "Mapping/allergy-extract"
+            }
         }
     ],
     "resourceType": "Questionnaire",

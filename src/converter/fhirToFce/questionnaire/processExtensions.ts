@@ -75,14 +75,18 @@ export function processLaunchContext(fhirQuestionnaire: FHIRQuestionnaire): any[
 
 function processMapping(fhirQuestionnaire: FHIRQuestionnaire): any[] | undefined {
     const mapperExtensions = fhirQuestionnaire.extension?.filter(
-        (ext: any) => ext.url === 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
+        (ext) => ext.url === 'https://emr-core.beda.software/StructureDefinition/questionnaire-mapper',
     );
 
     if (!mapperExtensions) {
         return undefined;
     }
 
-    return mapperExtensions.map((mapperExtension: any) => mapperExtension.valueReference);
+    return mapperExtensions.map((mapperExtension) =>
+        'valueReference' in mapperExtension
+            ? { valueReference: mapperExtension.valueReference }
+            : { valueExpression: mapperExtension.valueExpression },
+    );
 }
 
 function processSourceQueries(fhirQuestionnaire: FHIRQuestionnaire): any[] {

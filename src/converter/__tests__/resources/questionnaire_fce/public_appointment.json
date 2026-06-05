@@ -79,7 +79,9 @@
     "status": "active",
     "mapping": [
         {
-            "reference": "Mapping/public-appointment-extract"
+            "valueReference": {
+                "reference": "Mapping/public-appointment-extract"
+            }
         }
     ],
     "assembledFrom": "public-appointment",

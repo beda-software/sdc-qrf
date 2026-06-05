@@ -1,0 +1,42 @@
+{
+    "resourceType": "Questionnaire",
+    "status": "active",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "item": [
+        {
+            "linkId": "name",
+            "type": "string",
+            "text": "Name"
+        }
+    ],
+    "extension": [
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
+            "valueReference": {
+                "reference": "Mapping/patient-update"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
+            "valueReference": {
+                "reference": "Mapping/patient-create"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
+            "valueExpression": {
+                "language": "jute",
+                "expression": "{\"resourceType\":\"Mapping\",\"id\":\"patient-create\",\"body\":{\"$let\":{\"lastName\":\"$ fhirpath(\\\"QuestionnaireResponse.repeat(item).where(linkId='last-name').answer.valueString\\\").0\",\"patientId\":\"$ fhirpath(\\\"QuestionnaireResponse.repeat(item).where(linkId='patient-id').answer.valueString\\\").0\"},\"$body\":{\"resourceType\":\"Bundle\",\"type\":\"transaction\",\"entry\":[{\"request\":{\"url\":\"$ \\\"/Patient/\\\" + patientId\",\"method\":\"POST\"},\"resource\":{\"resourceType\":\"Patient\",\"name\":[{\"family\":\"$ lastName\"}]}}]}}}"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/questionnaire-mapper",
+            "valueExpression": {
+                "language": "fpml",
+                "expression": "{\"resourceType\":\"Mapping\",\"id\":\"patient-edit\",\"type\":\"FHIRPath\",\"body\":{\"{% assign %}\":[{\"lastName\":\"{{ %QuestionnaireResponse.answers('last-name') }}\"},{\"patientId\":\"{{ %QuestionnaireResponse.answers('patient-id') }}\"}],\"resourceType\":\"Bundle\",\"type\":\"transaction\",\"entry\":[{\"request\":{\"{% if %patientId.exists() and %patientId!='' %}\":{\"url\":\"/Patient/{{ %patientId }}\",\"method\":\"PATCH\"},\"{% else %}\":{\"url\":\"/Patient\",\"method\":\"POST\"}},\"resource\":{\"resourceType\":\"Patient\",\"name\":[{\"family\":\"{{ %lastName }}\",\"use\":\"official\"}]}}]}}"
+            }
+        }
+    ]
+}

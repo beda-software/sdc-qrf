@@ -219,7 +219,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/vitals"
+            "valueReference": {
+                "reference": "Mapping/vitals"
+            }
         }
     ],
     "resourceType": "Questionnaire",

@@ -112,7 +112,9 @@
     ],
     "mapping": [
         {
-            "reference": "Mapping/patient-create"
+            "valueReference": {
+                "reference": "Mapping/patient-create"
+            }
         }
     ],
     "resourceType": "Questionnaire",
