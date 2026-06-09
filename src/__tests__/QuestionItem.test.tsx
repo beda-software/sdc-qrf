@@ -168,6 +168,73 @@ describe('QuestionItem calculatedExpression', () => {
         expect(answers).toHaveLength(2);
         expect(answers).toStrictEqual([{ value: { string: 'a' } }, { value: { string: 'b' } }]);
     });
+
+    test('does not throw when previous answers array contains undefined values', async () => {
+        const questionnaire: Questionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'source',
+                    type: 'string',
+                },
+                {
+                    linkId: 'target',
+                    type: 'string',
+                    calculatedExpression: {
+                        language: 'text/fhirpath',
+                        expression: "%resource.item.where(linkId='source').answer.valueString",
+                    },
+                } as FCEQuestionnaireItem,
+            ],
+        };
+
+        const questionnaireResponse: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'in-progress',
+            item: [
+                {
+                    linkId: 'source',
+                    answer: [
+                        {
+                            valueString: 'hello',
+                        },
+                    ],
+                },
+                {
+                    linkId: 'target',
+                },
+            ],
+        };
+
+        const initialContext = createInitialContext(questionnaire, questionnaireResponse);
+
+        const providerProps = createQRFProviderProps({
+            formValues: { target: [undefined] },
+        });
+        const setFormValuesSpy = providerProps.setFormValues as ReturnType<typeof vi.fn>;
+
+        expect(() =>
+            render(
+                <QuestionnaireResponseFormProvider {...providerProps}>
+                    <QuestionItem
+                        parentPath={[]}
+                        context={initialContext}
+                        questionItem={questionnaire.item![1] as FCEQuestionnaireItem}
+                    />
+                </QuestionnaireResponseFormProvider>,
+            ),
+        ).not.toThrow();
+
+        await waitFor(() => {
+            expect(setFormValuesSpy).toHaveBeenCalled();
+        });
+
+        const lastCall = setFormValuesSpy.mock.calls.at(-1)!;
+        const answers = lastCall[2] as any[];
+
+        expect(answers).toStrictEqual([{ value: { string: 'hello' } }]);
+    });
 });
 
 describe('QuestionItem cqf expressions', () => {
