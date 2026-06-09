@@ -100,8 +100,8 @@ export function QuestionItem(props: QuestionItemProps) {
 
             if (
                 !isEqual(
-                    newAnswers?.map((answer) => answer.value),
-                    prevAnswers?.map((answer) => answer.value),
+                    newAnswers?.map((answer) => answer?.value),
+                    prevAnswers?.map((answer) => answer?.value),
                 )
             ) {
                 const allValues = _.set(_.cloneDeep(formValues), fieldPath, newAnswers);
@@ -181,7 +181,7 @@ export function QuestionItem(props: QuestionItemProps) {
     if (isGroupItem(questionItem, context)) {
         if (itemControl) {
             if (!itemControlGroupItemComponents || !itemControlGroupItemComponents[itemControl.coding![0]!.code!]) {
-                console.warn(`QRF: Unsupported group itemControl '${itemControl.coding![0]!.code!}'. 
+                console.warn(`QRF: Unsupported group itemControl '${itemControl.coding![0]!.code!}'.
                 Please define 'itemControlGroupWidgets' for '${itemControl.coding![0]!.code!}'`);
                 const DefaultComponent = groupItemComponent;
                 return DefaultComponent ? (
