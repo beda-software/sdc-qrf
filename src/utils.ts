@@ -759,6 +759,7 @@ export function calcInitialContext(
     // Evaluate questionnaire-level FHIRPath variables in declaration order
     return (qrfDataContext.fceQuestionnaire.variable ?? []).reduce((ctx: ItemContext, variable) => {
         if (!variable?.name || !variable.expression || variable.language !== 'text/fhirpath') {
+            console.warn(`Only fhirpath variables are supported. Variable ${variable.name} is not supported.`);
             return ctx;
         }
         return {
