@@ -1,3 +1,7 @@
+## 1.1.0-alpha.6
+
+- Add support for questionnaire-level variables defined with fhirpath
+
 ## 1.1.0-alpha.4
 
 - Add support for embedded Mapping resources through mapping.valueExpression
