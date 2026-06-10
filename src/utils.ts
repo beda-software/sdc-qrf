@@ -729,13 +729,14 @@ export function getEnabledQuestions(
 export function calcInitialContext(
     qrfDataContext: QuestionnaireResponseFormData['context'],
     values: FormItems,
+    evaluateFhirpath?: EvaluateFhirpath,
 ): ItemContext {
     const questionnaireResponse = {
         ...qrfDataContext.questionnaireResponse,
         ...mapFormToResponse(values, qrfDataContext.questionnaire),
     };
 
-    return {
+    const baseContext: ItemContext = {
         ...qrfDataContext.launchContextParameters.reduce((acc, { name, resource, ...param }) => {
             const value = getChoiceTypeValue(param, 'value');
 
@@ -754,6 +755,23 @@ export function calcInitialContext(
         Questionnaire: qrfDataContext.questionnaire,
         QuestionnaireResponse: questionnaireResponse,
     };
+
+    // Evaluate questionnaire-level FHIRPath variables in declaration order
+    return (qrfDataContext.fceQuestionnaire.variable ?? []).reduce((ctx: ItemContext, variable) => {
+        if (!variable?.name || !variable.expression || variable.language !== 'text/fhirpath') {
+            console.warn(`Only fhirpath variables are supported. Variable ${variable.name} is not supported.`);
+            return ctx;
+        }
+        return {
+            ...ctx,
+            [variable.name]: evaluateFHIRPathExpression(
+                variable,
+                ctx,
+                `questionnaire.variable.${variable.name}`,
+                evaluateFhirpath,
+            ),
+        };
+    }, baseContext);
 }
 
 export function resolveTemplateExpr(

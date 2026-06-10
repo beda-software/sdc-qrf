@@ -10,6 +10,7 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
         assembledFrom,
         assembleContext,
         itemPopulationContext,
+        variable,
         ...fhirQuestionnaire
     } = questionnaire;
 
@@ -105,6 +106,15 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
             url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemPopulationContext',
             valueExpression: itemPopulationContext,
         });
+    }
+
+    if (variable) {
+        extensions = extensions.concat(
+            variable.map((expr) => ({
+                url: 'http://hl7.org/fhir/StructureDefinition/variable',
+                valueExpression: expr,
+            })),
+        );
     }
 
     if (extensions.length) {

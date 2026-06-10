@@ -2549,6 +2549,75 @@ describe('calcInitialContext', () => {
             StringValue: 'string',
         });
     });
+
+    test('evaluates questionnaire-level variables and adds them to the context', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [{ name: 'Greeting', language: 'text/fhirpath', expression: "'Hello'" }],
+                },
+            },
+            formValues,
+        );
+
+        expect(result.Greeting).toStrictEqual(['Hello']);
+    });
+
+    test('evaluates variables in declaration order so later ones can reference earlier ones', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [
+                        { name: 'First', language: 'text/fhirpath', expression: "'First'" },
+                        { name: 'Second', language: 'text/fhirpath', expression: "%First + 'Second'" },
+                    ],
+                },
+            },
+            formValues,
+        );
+
+        expect(result.First).toStrictEqual(['First']);
+        expect(result.Second).toStrictEqual(['FirstSecond']);
+    });
+
+    test('variables can reference launch context and questionnaire response values', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [{ name: 'PatientType', language: 'text/fhirpath', expression: '%Patient.resourceType' }],
+                },
+            },
+            formValues,
+        );
+
+        expect(result.PatientType).toStrictEqual(['Patient']);
+    });
+
+    test('skips variables that are not text/fhirpath or are missing name/expression', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [
+                        { name: 'Query', language: 'application/x-fhir-query', expression: '/Patient' } as any,
+                        { language: 'text/fhirpath', expression: "'no-name'" } as any,
+                        { name: 'NoExpression', language: 'text/fhirpath' } as any,
+                    ],
+                },
+            },
+            formValues,
+        );
+
+        expect(result).not.toHaveProperty('Query');
+        expect(result).not.toHaveProperty('NoExpression');
+    });
 });
 
 describe('parseFhirQueryExpression', () => {

@@ -1,0 +1,28 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "questionnaire-variable",
+    "meta": {
+        "profile": [
+            "https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"
+        ]
+    },
+    "status": "active",
+    "variable": [
+        {
+            "name": "First",
+            "language": "text/fhirpath",
+            "expression": "'First'"
+        },
+        {
+            "name": "Second",
+            "language": "text/fhirpath",
+            "expression": "%First + 'Second'"
+        }
+    ],
+    "item": [
+        {
+            "type": "string",
+            "linkId": "test"
+        }
+    ]
+}
