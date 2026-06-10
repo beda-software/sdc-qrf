@@ -1,13 +1,14 @@
 {
     "name": "sdc-qrf",
     "license": "MIT",
-    "version": "1.1.0-alpha.6",
+    "version": "1.1.0-alpha.7",
     "scripts": {
         "test": "vitest --watch=false",
         "test:watch": "vitest --watch",
         "test:coverage": "vitest --coverage",
         "typecheck": "tsc --noEmit",
         "build": "tsc",
+        "prepublishOnly": "npm run build",
         "prepare": "husky || true"
     },
     "dependencies": {
