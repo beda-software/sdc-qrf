@@ -8,6 +8,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     assembledFrom?: any;
     assembleContext?: string[];
     itemPopulationContext?: FHIRExpression;
+    variable?: FHIRExpression[];
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
@@ -16,6 +17,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     const assembledFrom = processAssembledFrom(fhirQuestionnaire);
     const assembleContext = processAssembleContext(fhirQuestionnaire);
     const itemPopulationContext = processItemPopulationContext(fhirQuestionnaire);
+    const variable = processVariable(fhirQuestionnaire);
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
@@ -25,6 +27,7 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
         assembledFrom: assembledFrom ? assembledFrom : undefined,
         assembleContext: assembleContext.length ? assembleContext : undefined,
         itemPopulationContext: itemPopulationContext ? itemPopulationContext : undefined,
+        variable: variable?.length ? variable : undefined,
     };
 }
 
@@ -140,4 +143,16 @@ function processItemPopulationContext(fhirQuestionnaire: FHIRQuestionnaire): FHI
     }
 
     return extension.valueExpression;
+}
+
+function processVariable(fhirQuestionnaire: FHIRQuestionnaire): FHIRExpression[] | undefined {
+    const extensions = fhirQuestionnaire.extension?.filter(
+        (ext) => ext.url === 'http://hl7.org/fhir/StructureDefinition/variable',
+    );
+
+    if (!extensions?.length) {
+        return undefined;
+    }
+
+    return extensions.map((ext) => ext.valueExpression!);
 }

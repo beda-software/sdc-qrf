@@ -37,6 +37,7 @@ import fce_practitioner_create_structure_map from './resources/questionnaire_fce
 import fce_practitioner_edit from './resources/questionnaire_fce/practitioner_edit.json';
 import fce_practitioner_role_create from './resources/questionnaire_fce/practitioner_role_create.json';
 import fce_public_appointment from './resources/questionnaire_fce/public_appointment.json';
+import fce_questionnaire_variable from './resources/questionnaire_fce/questionnaire_variable.json';
 import fce_review_of_systems from './resources/questionnaire_fce/review_of_systems.json';
 import fce_source_queries from './resources/questionnaire_fce/source_queries.json';
 import fce_sub_questionnaire from './resources/questionnaire_fce/sub-questionnaire.json';
@@ -81,6 +82,7 @@ import fhir_practitioner_create_structure_map from './resources/questionnaire_fh
 import fhir_practitioner_edit from './resources/questionnaire_fhir/practitioner_edit.json';
 import fhir_practitioner_role_create from './resources/questionnaire_fhir/practitioner_role_create.json';
 import fhir_public_appointment from './resources/questionnaire_fhir/public_appointment.json';
+import fhir_questionnaire_variable from './resources/questionnaire_fhir/questionnaire_variable.json';
 import fhir_review_of_systems from './resources/questionnaire_fhir/review_of_systems.json';
 import fhir_source_queries from './resources/questionnaire_fhir/source_queries.json';
 import fhir_sub_questionnaire from './resources/questionnaire_fhir/sub-questionnaire.json';
@@ -128,6 +130,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['answerOptionsToggleExpression', fhir_answer_options_toggle_expression, fce_answer_options_toggle_expression],
         ['unit-option', fhir_unit_option, fce_unit_option],
         ['variable', fhir_variable, fce_variable],
+        ['questionnaire-variable', fhir_questionnaire_variable, fce_questionnaire_variable],
         ['sub-questionnaire', fhir_sub_questionnaire, fce_sub_questionnaire],
         ['with-attachment-questionnaire', fhir_with_attachment_questionnaire, fce_with_attachment_questionnaire],
         // NOTE: this following is not included here because it's example of mixed FCE + extensions, it is only for FCE -> FHIR
@@ -180,6 +183,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['answerOptionsToggleExpression', fce_answer_options_toggle_expression, fhir_answer_options_toggle_expression],
         ['unit-option', fce_unit_option, fhir_unit_option],
         ['variable', fce_variable, fhir_variable],
+        ['questionnaire-variable', fce_questionnaire_variable, fhir_questionnaire_variable],
         ['sub-questionnaire', fce_sub_questionnaire, fhir_sub_questionnaire],
         ['with-attachment-questionnaire', fce_with_attachment_questionnaire, fhir_with_attachment_questionnaire],
         ['mixed-fce-with-extensions', fce_mixed_fce_with_extensions, fhir_mixed_fce_with_extensions],
