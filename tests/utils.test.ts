@@ -2599,14 +2599,14 @@ describe('calcInitialContext', () => {
         expect(result.PatientType).toStrictEqual(['Patient']);
     });
 
-    test('skips variables that are not text/fhirpath or are missing name/expression', () => {
+    test('defines unresolved/incomplete named variables as empty', () => {
         const result = calcInitialContext(
             {
                 ...qrfDataContext,
                 fceQuestionnaire: {
                     ...questionnaire,
                     variable: [
-                        { name: 'Query', language: 'application/x-fhir-query', expression: '/Patient' } as any,
+                        { name: 'Query', language: 'application/x-fhir-query', expression: 'Patient' } as any,
                         { language: 'text/fhirpath', expression: "'no-name'" } as any,
                         { name: 'NoExpression', language: 'text/fhirpath' } as any,
                     ],
@@ -2615,8 +2615,73 @@ describe('calcInitialContext', () => {
             formValues,
         );
 
-        expect(result).not.toHaveProperty('Query');
-        expect(result).not.toHaveProperty('NoExpression');
+        expect(result.Query).toStrictEqual([]);
+        expect(result.NoExpression).toStrictEqual([]);
+        expect(result).not.toHaveProperty('no-name');
+    });
+
+    test('does not crash when a fhirpath variable references an unresolved x-fhir-query variable', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [
+                        {
+                            name: 'PractitionerRoleLocation',
+                            language: 'application/x-fhir-query',
+                            expression: 'PractitionerRole',
+                        } as any,
+                        {
+                            name: 'ClinicLocation',
+                            language: 'text/fhirpath',
+                            expression: '%PractitionerRoleLocation.entry.resource',
+                        },
+                    ],
+                },
+            },
+            formValues,
+        );
+
+        expect(result.PractitionerRoleLocation).toStrictEqual([]);
+        expect(result.ClinicLocation).toStrictEqual([]);
+    });
+
+    test('injects resolved x-fhir-query variables so dependent fhirpath variables can use them', () => {
+        const result = calcInitialContext(
+            {
+                ...qrfDataContext,
+                fceQuestionnaire: {
+                    ...questionnaire,
+                    variable: [
+                        {
+                            name: 'PractitionerRoleLocation',
+                            language: 'application/x-fhir-query',
+                            expression: 'PractitionerRole',
+                        } as any,
+                        {
+                            name: 'ClinicLocation',
+                            language: 'text/fhirpath',
+                            expression: '%PractitionerRoleLocation.entry.resource.ofType(Location)',
+                        },
+                    ],
+                },
+            },
+            formValues,
+            undefined,
+            {
+                PractitionerRoleLocation: {
+                    resourceType: 'Bundle',
+                    entry: [{ resource: { resourceType: 'Location', id: 'loc1' } }],
+                },
+            },
+        );
+
+        expect(result.PractitionerRoleLocation).toEqual({
+            resourceType: 'Bundle',
+            entry: [{ resource: { resourceType: 'Location', id: 'loc1' } }],
+        });
+        expect(result.ClinicLocation).toEqual([{ resourceType: 'Location', id: 'loc1' }]);
     });
 });
 

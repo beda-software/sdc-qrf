@@ -4,8 +4,8 @@ import { FCEQuestionnaireItem } from './fce.types';
 import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray } from '@beda.software/remote-data';
 
 import { QRFContext } from './context';
-import { EvaluateFhirpath, ItemContext } from './types';
-import { resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
+import { EvaluateFhirpath, FormItems, ItemContext, QuestionnaireResponseFormData } from './types';
+import { calcInitialContext, resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
 
 export function useQuestionnaireResponseFormContext() {
     return useContext(QRFContext);
@@ -178,6 +178,112 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
     return {
         contexts,
+        evaluationResponse,
+    };
+}
+
+export type UseQuestionnaireContextArgs = {
+    qrfDataContext: QuestionnaireResponseFormData['context'];
+    values: FormItems;
+    fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
+    evaluateFhirpath?: EvaluateFhirpath;
+};
+
+type QuestionnaireAsyncState = Record<
+    string,
+    {
+        key: string;
+        remoteData: RemoteData<unknown>;
+    }
+>;
+
+export function useQuestionnaireContext(props: UseQuestionnaireContextArgs): {
+    context: ItemContext;
+    evaluationResponse: RemoteData<ItemContext>;
+} {
+    const { qrfDataContext, values, fhirService, evaluateFhirpath } = props;
+    const variables = useMemo(
+        () => qrfDataContext.fceQuestionnaire.variable ?? [],
+        [qrfDataContext.fceQuestionnaire.variable],
+    );
+    const [asyncState, setAsyncState] = useState<QuestionnaireAsyncState>({});
+
+    const resolutionContext = useMemo(
+        () => calcInitialContext(qrfDataContext, values, evaluateFhirpath),
+        [qrfDataContext, values, evaluateFhirpath],
+    );
+
+    useEffect(() => {
+        variables.forEach((variable) => {
+            if (!variable?.name || !variable.expression || variable.language !== 'application/x-fhir-query') {
+                return;
+            }
+
+            const { name, expression } = variable;
+            const url = resolveTemplateExpr(expression, resolutionContext, `questionnaire.variable.${name}`, true);
+
+            if (!url) {
+                return;
+            }
+
+            const current = asyncState[name];
+            if (current && current.key === url) {
+                // Already fetching/fetched this exact URL.
+                return;
+            }
+
+            setAsyncState((prev) => ({
+                ...prev,
+                [name]: { key: url, remoteData: loading },
+            }));
+
+            void (async () => {
+                const remoteData = await fhirService({ url, method: 'GET' });
+
+                setAsyncState((prev) => {
+                    const prevVar = prev[name];
+
+                    // Ignore outdated responses (url mismatch).
+                    if (prevVar && prevVar.key !== url) {
+                        return prev;
+                    }
+
+                    return {
+                        ...prev,
+                        [name]: { key: url, remoteData },
+                    };
+                });
+            })();
+        });
+    }, [asyncState, resolutionContext, fhirService, variables]);
+
+    const resolvedQueryVariables = useMemo(() => {
+        const resolved: Record<string, unknown> = {};
+        Object.entries(asyncState).forEach(([name, { remoteData }]) => {
+            if (isSuccess(remoteData)) {
+                resolved[name] = remoteData.data;
+            }
+        });
+        return resolved;
+    }, [asyncState]);
+
+    const context = useMemo(
+        () => calcInitialContext(qrfDataContext, values, evaluateFhirpath, resolvedQueryVariables),
+        [qrfDataContext, values, evaluateFhirpath, resolvedQueryVariables],
+    );
+
+    const evaluationResponse: RemoteData<ItemContext> = useMemo(() => {
+        const remoteList = Object.values(asyncState).map(({ remoteData }) => remoteData);
+
+        if (!remoteList.length) {
+            return success<ItemContext>(context);
+        }
+
+        return mapSuccess(sequenceArray(remoteList), () => context);
+    }, [asyncState, context]);
+
+    return {
+        context,
         evaluationResponse,
     };
 }

@@ -730,6 +730,7 @@ export function calcInitialContext(
     qrfDataContext: QuestionnaireResponseFormData['context'],
     values: FormItems,
     evaluateFhirpath?: EvaluateFhirpath,
+    resolvedQueryVariables?: Record<string, unknown>,
 ): ItemContext {
     const questionnaireResponse = {
         ...qrfDataContext.questionnaireResponse,
@@ -756,21 +757,35 @@ export function calcInitialContext(
         QuestionnaireResponse: questionnaireResponse,
     };
 
-    // Evaluate questionnaire-level FHIRPath variables in declaration order
+    // Evaluate questionnaire-level variables in declaration order. Each variable is defined (as an
+    // empty collection at worst) so that dependent FHIRPath expressions referencing it resolve to
+    // empty instead of throwing "undefined environment variable" and crashing the whole form.
     return (qrfDataContext.fceQuestionnaire.variable ?? []).reduce((ctx: ItemContext, variable) => {
-        if (!variable?.name || !variable.expression || variable.language !== 'text/fhirpath') {
-            console.warn(`Only fhirpath variables are supported. Variable ${variable.name} is not supported.`);
+        if (!variable?.name) {
             return ctx;
         }
-        return {
-            ...ctx,
-            [variable.name]: evaluateFHIRPathExpression(
-                variable,
-                ctx,
-                `questionnaire.variable.${variable.name}`,
-                evaluateFhirpath,
-            ),
-        };
+
+        // x-fhir-query variables are resolved asynchronously elsewhere (useQuestionnaireContext) and
+        // passed in via `resolvedQueryVariables`. Anything not (yet) resolved is defined as empty.
+        if (variable.language !== 'text/fhirpath' || !variable.expression) {
+            return { ...ctx, [variable.name]: resolvedQueryVariables?.[variable.name] ?? [] };
+        }
+
+        try {
+            return {
+                ...ctx,
+                [variable.name]: evaluateFHIRPathExpression(
+                    variable,
+                    ctx,
+                    `questionnaire.variable.${variable.name}`,
+                    evaluateFhirpath,
+                ),
+            };
+        } catch (err) {
+            // A single failing variable must not crash the whole form.
+            console.warn(`Failed to evaluate questionnaire variable ${variable.name}, defined as empty. ${err}`);
+            return { ...ctx, [variable.name]: [] };
+        }
     }, baseContext);
 }
 
