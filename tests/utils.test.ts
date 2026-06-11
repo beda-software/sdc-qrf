@@ -23,6 +23,7 @@ import {
     findAnswersForQuestion,
     ITEM_KEY,
     stripNonEnumerable,
+    resolveItemPopulationContext,
 } from '../src/utils';
 import {
     ParametersParameter,
@@ -2682,6 +2683,40 @@ describe('calcInitialContext', () => {
             entry: [{ resource: { resourceType: 'Location', id: 'loc1' } }],
         });
         expect(result.ClinicLocation).toEqual([{ resourceType: 'Location', id: 'loc1' }]);
+    });
+});
+
+describe('resolveItemPopulationContext', () => {
+    const baseContext: ItemContext = {
+        questionnaire: { resourceType: 'Questionnaire', status: 'active' },
+        resource: { resourceType: 'QuestionnaireResponse', status: 'in-progress' },
+        context: { resourceType: 'QuestionnaireResponse', status: 'in-progress' },
+        patient: {
+            resourceType: 'Patient',
+            address: [
+                { use: 'home', line: ['1 Home St'] },
+                { type: 'postal', line: ['PO Box 5'] },
+            ],
+        },
+    } as any;
+
+    test('binds the itemPopulationContext variable so dependent expressions can use it', () => {
+        const result = resolveItemPopulationContext(baseContext, {
+            linkId: 'postal',
+            type: 'group',
+            itemPopulationContext: {
+                name: 'PostalAddressArray',
+                language: 'text/fhirpath',
+                expression: "%patient.address.where(type='postal')",
+            },
+        } as any);
+
+        expect(result.PostalAddressArray).toEqual([{ type: 'postal', line: ['PO Box 5'] }]);
+    });
+
+    test('returns the context unchanged when there is no itemPopulationContext', () => {
+        const result = resolveItemPopulationContext(baseContext, { linkId: 'x', type: 'string' } as any);
+        expect(result).toBe(baseContext);
     });
 });
 

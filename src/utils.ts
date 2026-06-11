@@ -532,6 +532,38 @@ export function getChecker(
     return _.constant(true);
 }
 
+/**
+ * Evaluates an item's `sdc-questionnaire-itemPopulationContext` (a named text/fhirpath expression) and
+ * returns a context with that named variable bound, so expressions on the item or its descendants
+ * (e.g. enableWhenExpression) can reference it. Unsupported/failing contexts are bound to an empty
+ * collection rather than crashing the form.
+ */
+export function resolveItemPopulationContext(
+    context: ItemContext,
+    qItem: FCEQuestionnaireItem,
+    evaluateFhirpath?: EvaluateFhirpath,
+): ItemContext {
+    const ipc = qItem.itemPopulationContext;
+    if (!ipc?.name || !ipc.expression || ipc.language !== 'text/fhirpath') {
+        return context;
+    }
+
+    try {
+        return {
+            ...context,
+            [ipc.name]: evaluateFHIRPathExpression(
+                ipc,
+                context,
+                `${qItem.linkId}.itemPopulationContext`,
+                evaluateFhirpath,
+            ),
+        };
+    } catch (err) {
+        console.warn(`Failed to evaluate itemPopulationContext ${ipc.name}, defined as empty. ${err}`);
+        return { ...context, [ipc.name]: [] };
+    }
+}
+
 interface IsQuestionEnabledArgs {
     qItem: FCEQuestionnaireItem;
     parentPath: string[];
@@ -556,10 +588,13 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
     }
 
     if (enableWhenExpression && enableWhenExpression.language === 'text/fhirpath') {
+        // Bind the item's own itemPopulationContext (if any) so the expression can reference it,
+        // e.g. enableWhenExpression `%PostalAddressArray.exists()`.
+        const context = resolveItemPopulationContext(args.context, args.qItem, args.evaluateFhirpath);
         try {
             const expressionResult = evaluateFHIRPathExpression(
                 enableWhenExpression,
-                args.context,
+                context,
                 `${linkId}.enableWhenExpression`,
                 args.evaluateFhirpath,
             )[0];

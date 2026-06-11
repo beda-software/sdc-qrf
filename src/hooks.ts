@@ -5,7 +5,13 @@ import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray
 
 import { QRFContext } from './context';
 import { EvaluateFhirpath, FormItems, ItemContext, QuestionnaireResponseFormData } from './types';
-import { calcInitialContext, resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
+import {
+    calcInitialContext,
+    resolveItemPopulationContext,
+    resolveTemplateExpr,
+    evaluateFHIRPathExpression,
+    getBranchItems,
+} from './utils';
 
 export function useQuestionnaireResponseFormContext() {
     return useContext(QRFContext);
@@ -41,11 +47,14 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
     useEffect(() => {
         branchItems.qrItems.forEach((qrItem, branchIndex) => {
-            const workingContext: ItemContext = {
+            let workingContext: ItemContext = {
                 ...initialContext,
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
+            // Bind the item's itemPopulationContext so the item's variables/expressions and its
+            // descendants can reference it (e.g. `%PostalAddressArray`).
+            workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
@@ -125,11 +134,14 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
     const contexts = useMemo(() => {
         return branchItems.qrItems.map<ItemContext>((qrItem, branchIndex) => {
-            const workingContext: ItemContext = {
+            let workingContext: ItemContext = {
                 ...initialContext,
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
+            // Bind the item's itemPopulationContext so the item's expressions and its descendants
+            // (rendered with this context) can reference it (e.g. `%PostalAddressArray`).
+            workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
