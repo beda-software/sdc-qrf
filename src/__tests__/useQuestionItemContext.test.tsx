@@ -3,7 +3,7 @@ import type { Questionnaire, QuestionnaireResponse, QuestionnaireResponseItem } 
 import { isSuccess, success } from '@beda.software/remote-data';
 import { describe, expect, test, vi } from 'vitest';
 
-import { useQuestionItemContext } from '../hooks';
+import { useVariablesResolver } from '../hooks';
 import type { ItemContext } from '../types';
 import type { FCEQuestionnaireItem } from '../fce.types';
 import { getBranchItems } from '../utils.js';
@@ -29,7 +29,7 @@ function buildFHIRServiceMock(mapping: Record<string, any>) {
     });
 }
 
-describe('useQuestionItemContext', () => {
+describe('useVariablesResolver', () => {
     test('returns single context for non-group question', () => {
         const questionnaire: Questionnaire = {
             resourceType: 'Questionnaire',
@@ -63,10 +63,11 @@ describe('useQuestionItemContext', () => {
         };
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService: vi.fn(),
             }),
         );
@@ -152,10 +153,11 @@ describe('useQuestionItemContext', () => {
         };
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService: vi.fn(),
             }),
         );
@@ -175,7 +177,7 @@ describe('useQuestionItemContext', () => {
     });
 });
 
-describe('useQuestionItemContext with x-fhir-query', () => {
+describe('useVariablesResolver with x-fhir-query', () => {
     test('evaluates patient/org variable chain', async () => {
         const questionnaire: Questionnaire = {
             resourceType: 'Questionnaire',
@@ -269,13 +271,18 @@ describe('useQuestionItemContext with x-fhir-query', () => {
         const initialBranchItems = getBranchItems([orgItem.linkId], questionnaire, initialQuestionnaireResponse);
 
         const { result, rerender } = renderHook(
-            (props: {
+            ({
+                questionItem,
+                ...props
+            }: {
                 initialContext: ItemContext;
                 branchItems: ReturnType<typeof getBranchItems>;
                 questionItem: FCEQuestionnaireItem;
             }) =>
-                useQuestionItemContext({
+                useVariablesResolver({
                     ...props,
+                    variable: questionItem.variable,
+                    prefix: questionItem.linkId,
                     fhirService,
                 }),
             {
@@ -452,10 +459,11 @@ describe('useQuestionItemContext with x-fhir-query', () => {
         const branchItems = getBranchItems(['row'], questionnaire, questionnaireResponse);
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService,
             }),
         );

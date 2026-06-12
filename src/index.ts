@@ -17,8 +17,8 @@ export {
     removeItemKey,
     getItemKey,
 } from './utils';
-export { useQuestionnaireResponseFormContext, useQuestionnaireContext } from './hooks';
-export type { UseQuestionnaireContextArgs } from './hooks';
+export { useQuestionnaireResponseFormContext, useVariablesResolver } from './hooks';
+export type { UseVariablesResolverArgs } from './hooks';
 export { QuestionItems, QuestionItem, QuestionnaireResponseFormProvider } from './components';
 export * from './converter';
 export type * from './fce.types';

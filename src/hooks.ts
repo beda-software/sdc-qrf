@@ -1,28 +1,23 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import type { AxiosRequestConfig } from 'axios';
-import { FCEQuestionnaireItem } from './fce.types';
 import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray } from '@beda.software/remote-data';
 
 import { QRFContext } from './context';
-import { EvaluateFhirpath, FormItems, ItemContext, QuestionnaireResponseFormData } from './types';
-import {
-    calcInitialContext,
-    resolveItemPopulationContext,
-    resolveTemplateExpr,
-    evaluateFHIRPathExpression,
-    getBranchItems,
-} from './utils';
+import { EvaluateFhirpath, ItemContext } from './types';
+import { resolveItemPopulationContext, resolveTemplateExpr, evaluateFHIRPathExpression } from './utils';
+import { Expression, QuestionnaireItem, QuestionnaireResponse, QuestionnaireResponseItem } from 'fhir/r4b';
 
 export function useQuestionnaireResponseFormContext() {
     return useContext(QRFContext);
 }
 
-export type UseQuestionItemContextArgs = {
+export type UseVariablesResolverArgs = {
     initialContext: ItemContext;
-    branchItems: ReturnType<typeof getBranchItems>;
+    branchItems: { qItem?: QuestionnaireItem; qrItems: Array<QuestionnaireResponseItem | QuestionnaireResponse> };
     fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
-    questionItem: FCEQuestionnaireItem;
     evaluateFhirpath?: EvaluateFhirpath;
+    variable?: Expression[];
+    prefix?: string;
 };
 
 type AsyncState = Record<
@@ -36,12 +31,11 @@ type AsyncState = Record<
     >
 >;
 
-export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
+export function useVariablesResolver(props: UseVariablesResolverArgs): {
     contexts: ItemContext[];
     evaluationResponse: RemoteData<ItemContext[]>;
 } {
-    const { initialContext, branchItems, fhirService, questionItem, evaluateFhirpath } = props;
-    const { variable, linkId } = questionItem;
+    const { initialContext, branchItems, fhirService, evaluateFhirpath, variable, prefix } = props;
     const variables = useMemo(() => variable ?? [], [variable]);
     const [asyncState, setAsyncState] = useState<AsyncState>({});
 
@@ -52,7 +46,9 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
-            workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
+            workingContext = branchItems.qItem
+                ? resolveItemPopulationContext(workingContext, branchItems.qItem, evaluateFhirpath)
+                : workingContext;
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
@@ -62,7 +58,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 const { name, expression, language } = variable;
 
                 if (language === 'application/x-fhir-query') {
-                    const url = resolveTemplateExpr(expression!, workingContext, `${linkId}.variable.${name}`, true);
+                    const url = resolveTemplateExpr(expression!, workingContext, `${prefix}.variable.${name}`, true);
 
                     if (!url) {
                         workingContext[name] = null;
@@ -122,7 +118,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     workingContext[name] = evaluateFHIRPathExpression(
                         variable,
                         workingContext,
-                        `${linkId}.variable.${name}`,
+                        `${prefix}.variable.${name}`,
                         evaluateFhirpath,
                     );
                 }
@@ -137,7 +133,9 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
-            workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
+            workingContext = branchItems.qItem
+                ? resolveItemPopulationContext(workingContext, branchItems.qItem, evaluateFhirpath)
+                : workingContext;
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
@@ -159,7 +157,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     workingContext[name] = evaluateFHIRPathExpression(
                         variable,
                         workingContext,
-                        `${linkId}.variable.${name}`,
+                        `${prefix}.variable.${name}`,
                         evaluateFhirpath,
                     );
                 }
@@ -186,112 +184,6 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
     return {
         contexts,
-        evaluationResponse,
-    };
-}
-
-export type UseQuestionnaireContextArgs = {
-    qrfDataContext: QuestionnaireResponseFormData['context'];
-    values: FormItems;
-    fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
-    evaluateFhirpath?: EvaluateFhirpath;
-};
-
-type QuestionnaireAsyncState = Record<
-    string,
-    {
-        key: string;
-        remoteData: RemoteData<unknown>;
-    }
->;
-
-export function useQuestionnaireContext(props: UseQuestionnaireContextArgs): {
-    context: ItemContext;
-    evaluationResponse: RemoteData<ItemContext>;
-} {
-    const { qrfDataContext, values, fhirService, evaluateFhirpath } = props;
-    const variables = useMemo(
-        () => qrfDataContext.fceQuestionnaire.variable ?? [],
-        [qrfDataContext.fceQuestionnaire.variable],
-    );
-    const [asyncState, setAsyncState] = useState<QuestionnaireAsyncState>({});
-
-    const resolutionContext = useMemo(
-        () => calcInitialContext(qrfDataContext, values, evaluateFhirpath),
-        [qrfDataContext, values, evaluateFhirpath],
-    );
-
-    useEffect(() => {
-        variables.forEach((variable) => {
-            if (!variable?.name || !variable.expression || variable.language !== 'application/x-fhir-query') {
-                return;
-            }
-
-            const { name, expression } = variable;
-            const url = resolveTemplateExpr(expression, resolutionContext, `questionnaire.variable.${name}`, true);
-
-            if (!url) {
-                return;
-            }
-
-            const current = asyncState[name];
-            if (current && current.key === url) {
-                // Already fetching/fetched this exact URL.
-                return;
-            }
-
-            setAsyncState((prev) => ({
-                ...prev,
-                [name]: { key: url, remoteData: loading },
-            }));
-
-            void (async () => {
-                const remoteData = await fhirService({ url, method: 'GET' });
-
-                setAsyncState((prev) => {
-                    const prevVar = prev[name];
-
-                    // Ignore outdated responses (url mismatch).
-                    if (prevVar && prevVar.key !== url) {
-                        return prev;
-                    }
-
-                    return {
-                        ...prev,
-                        [name]: { key: url, remoteData },
-                    };
-                });
-            })();
-        });
-    }, [asyncState, resolutionContext, fhirService, variables]);
-
-    const resolvedQueryVariables = useMemo(() => {
-        const resolved: Record<string, unknown> = {};
-        Object.entries(asyncState).forEach(([name, { remoteData }]) => {
-            if (isSuccess(remoteData)) {
-                resolved[name] = remoteData.data;
-            }
-        });
-        return resolved;
-    }, [asyncState]);
-
-    const context = useMemo(
-        () => calcInitialContext(qrfDataContext, values, evaluateFhirpath, resolvedQueryVariables),
-        [qrfDataContext, values, evaluateFhirpath, resolvedQueryVariables],
-    );
-
-    const evaluationResponse: RemoteData<ItemContext> = useMemo(() => {
-        const remoteList = Object.values(asyncState).map(({ remoteData }) => remoteData);
-
-        if (!remoteList.length) {
-            return success<ItemContext>(context);
-        }
-
-        return mapSuccess(sequenceArray(remoteList), () => context);
-    }, [asyncState, context]);
-
-    return {
-        context,
         evaluationResponse,
     };
 }

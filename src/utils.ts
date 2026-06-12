@@ -540,28 +540,23 @@ export function getChecker(
  */
 export function resolveItemPopulationContext(
     context: ItemContext,
-    qItem: FCEQuestionnaireItem,
+    qItem: FCEQuestionnaireItem | undefined,
     evaluateFhirpath?: EvaluateFhirpath,
 ): ItemContext {
-    const ipc = qItem.itemPopulationContext;
+    const ipc = qItem?.itemPopulationContext;
     if (!ipc?.name || !ipc.expression || ipc.language !== 'text/fhirpath') {
         return context;
     }
 
-    try {
-        return {
-            ...context,
-            [ipc.name]: evaluateFHIRPathExpression(
-                ipc,
-                context,
-                `${qItem.linkId}.itemPopulationContext`,
-                evaluateFhirpath,
-            ),
-        };
-    } catch (err) {
-        console.warn(`Failed to evaluate itemPopulationContext ${ipc.name}, defined as empty. ${err}`);
-        return { ...context, [ipc.name]: [] };
-    }
+    return {
+        ...context,
+        [ipc.name]: evaluateFHIRPathExpression(
+            ipc,
+            context,
+            `${qItem?.linkId}.itemPopulationContext`,
+            evaluateFhirpath,
+        ),
+    };
 }
 
 interface IsQuestionEnabledArgs {
@@ -588,8 +583,6 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
     }
 
     if (enableWhenExpression && enableWhenExpression.language === 'text/fhirpath') {
-        // Bind the item's own itemPopulationContext (if any) so the expression can reference it,
-        // e.g. enableWhenExpression `%PostalAddressArray.exists()`.
         const context = resolveItemPopulationContext(args.context, args.qItem, args.evaluateFhirpath);
         try {
             const expressionResult = evaluateFHIRPathExpression(
@@ -764,15 +757,13 @@ export function getEnabledQuestions(
 export function calcInitialContext(
     qrfDataContext: QuestionnaireResponseFormData['context'],
     values: FormItems,
-    evaluateFhirpath?: EvaluateFhirpath,
-    resolvedQueryVariables?: Record<string, unknown>,
 ): ItemContext {
     const questionnaireResponse = {
         ...qrfDataContext.questionnaireResponse,
         ...mapFormToResponse(values, qrfDataContext.questionnaire),
     };
 
-    const baseContext: ItemContext = {
+    return {
         ...qrfDataContext.launchContextParameters.reduce((acc, { name, resource, ...param }) => {
             const value = getChoiceTypeValue(param, 'value');
 
@@ -791,37 +782,6 @@ export function calcInitialContext(
         Questionnaire: qrfDataContext.questionnaire,
         QuestionnaireResponse: questionnaireResponse,
     };
-
-    // Evaluate questionnaire-level variables in declaration order. Each variable is defined (as an
-    // empty collection at worst) so that dependent FHIRPath expressions referencing it resolve to
-    // empty instead of throwing "undefined environment variable" and crashing the whole form.
-    return (qrfDataContext.fceQuestionnaire.variable ?? []).reduce((ctx: ItemContext, variable) => {
-        if (!variable?.name) {
-            return ctx;
-        }
-
-        // x-fhir-query variables are resolved asynchronously elsewhere (useQuestionnaireContext) and
-        // passed in via `resolvedQueryVariables`. Anything not (yet) resolved is defined as empty.
-        if (variable.language !== 'text/fhirpath' || !variable.expression) {
-            return { ...ctx, [variable.name]: resolvedQueryVariables?.[variable.name] ?? [] };
-        }
-
-        try {
-            return {
-                ...ctx,
-                [variable.name]: evaluateFHIRPathExpression(
-                    variable,
-                    ctx,
-                    `questionnaire.variable.${variable.name}`,
-                    evaluateFhirpath,
-                ),
-            };
-        } catch (err) {
-            // A single failing variable must not crash the whole form.
-            console.warn(`Failed to evaluate questionnaire variable ${variable.name}, defined as empty. ${err}`);
-            return { ...ctx, [variable.name]: [] };
-        }
-    }, baseContext);
 }
 
 export function resolveTemplateExpr(
