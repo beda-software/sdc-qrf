@@ -52,8 +52,6 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
-            // Bind the item's itemPopulationContext so the item's variables/expressions and its
-            // descendants can reference it (e.g. `%PostalAddressArray`).
             workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
 
             variables.forEach((variable) => {
@@ -139,8 +137,6 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
-            // Bind the item's itemPopulationContext so the item's expressions and its descendants
-            // (rendered with this context) can reference it (e.g. `%PostalAddressArray`).
             workingContext = resolveItemPopulationContext(workingContext, questionItem, evaluateFhirpath);
 
             variables.forEach((variable) => {
