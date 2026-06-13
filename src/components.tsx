@@ -14,7 +14,7 @@ import {
     stripNonEnumerable,
     wrapAnswerValue,
 } from './utils.js';
-import { useQuestionItemContext } from './hooks';
+import { useVariablesResolver } from './hooks';
 
 function usePreviousValue<T>(value: T) {
     const prevValue = useRef<T | undefined>(value);
@@ -65,11 +65,13 @@ export function QuestionItem(props: QuestionItemProps) {
         () => getBranchItems(fieldPath, initialContext.questionnaire, initialContext.resource),
         [fieldPath, initialContext.questionnaire, initialContext.resource],
     );
-    const { contexts } = useQuestionItemContext({
+    const { contexts } = useVariablesResolver({
         initialContext,
         branchItems,
         fhirService,
-        questionItem,
+        evaluateFhirpath,
+        variable: questionItem.variable,
+        prefix: linkId,
     });
     const context = type === 'group' ? contexts : contexts[0]!;
     const prevAnswers: FormAnswerItems[] | undefined = usePreviousValue(_.get(formValues, fieldPath));

@@ -3,10 +3,10 @@ import type { Questionnaire, QuestionnaireResponse, QuestionnaireResponseItem } 
 import { isSuccess, success } from '@beda.software/remote-data';
 import { describe, expect, test, vi } from 'vitest';
 
-import { useQuestionItemContext } from '../hooks';
+import { useVariablesResolver } from '../hooks';
 import type { ItemContext } from '../types';
 import type { FCEQuestionnaireItem } from '../fce.types';
-import { getBranchItems } from '../utils.js';
+import { getBranchItems, getEnabledQuestions } from '../utils.js';
 
 function createInitialContext(questionnaire: Questionnaire, questionnaireResponse: QuestionnaireResponse): ItemContext {
     return {
@@ -29,7 +29,7 @@ function buildFHIRServiceMock(mapping: Record<string, any>) {
     });
 }
 
-describe('useQuestionItemContext', () => {
+describe('useVariablesResolver', () => {
     test('returns single context for non-group question', () => {
         const questionnaire: Questionnaire = {
             resourceType: 'Questionnaire',
@@ -63,10 +63,11 @@ describe('useQuestionItemContext', () => {
         };
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService: vi.fn(),
             }),
         );
@@ -152,10 +153,11 @@ describe('useQuestionItemContext', () => {
         };
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService: vi.fn(),
             }),
         );
@@ -175,7 +177,7 @@ describe('useQuestionItemContext', () => {
     });
 });
 
-describe('useQuestionItemContext with x-fhir-query', () => {
+describe('useVariablesResolver with x-fhir-query', () => {
     test('evaluates patient/org variable chain', async () => {
         const questionnaire: Questionnaire = {
             resourceType: 'Questionnaire',
@@ -269,13 +271,18 @@ describe('useQuestionItemContext with x-fhir-query', () => {
         const initialBranchItems = getBranchItems([orgItem.linkId], questionnaire, initialQuestionnaireResponse);
 
         const { result, rerender } = renderHook(
-            (props: {
+            ({
+                questionItem,
+                ...props
+            }: {
                 initialContext: ItemContext;
                 branchItems: ReturnType<typeof getBranchItems>;
                 questionItem: FCEQuestionnaireItem;
             }) =>
-                useQuestionItemContext({
+                useVariablesResolver({
                     ...props,
+                    variable: questionItem.variable,
+                    prefix: questionItem.linkId,
                     fhirService,
                 }),
             {
@@ -452,10 +459,11 @@ describe('useQuestionItemContext with x-fhir-query', () => {
         const branchItems = getBranchItems(['row'], questionnaire, questionnaireResponse);
 
         const { result } = renderHook(() =>
-            useQuestionItemContext({
+            useVariablesResolver({
                 initialContext,
                 branchItems,
-                questionItem,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
                 fhirService,
             }),
         );
@@ -487,5 +495,141 @@ describe('useQuestionItemContext with x-fhir-query', () => {
                 url: 'Organization?_id=org2',
             }),
         );
+    });
+});
+
+describe('useVariablesResolver with itemPopulationContext', () => {
+    const patient = {
+        resourceType: 'Patient',
+        address: [
+            { use: 'home', line: ['1 Home St'] },
+            { type: 'postal', line: ['PO Box 5'] },
+        ],
+    };
+
+    function buildPostalContext(patientResource: any): ItemContext {
+        const questionnaire: Questionnaire = { resourceType: 'Questionnaire', status: 'active', item: [] };
+        const questionnaireResponse: QuestionnaireResponse = {
+            resourceType: 'QuestionnaireResponse',
+            status: 'in-progress',
+            item: [{ linkId: 'postal', item: [{ linkId: 'city' }] }],
+        };
+
+        return {
+            ...createInitialContext(questionnaire, questionnaireResponse),
+            patient: patientResource,
+        } as ItemContext;
+    }
+
+    const postalQuestionnaire: Questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        item: [
+            {
+                linkId: 'postal',
+                type: 'group',
+                itemPopulationContext: {
+                    name: 'PostalAddressArray',
+                    language: 'text/fhirpath',
+                    expression: "%patient.address.where(type='postal')",
+                },
+                item: [{ linkId: 'city', type: 'string' }],
+            } as any,
+        ],
+    };
+
+    const postalQuestionnaireResponse: QuestionnaireResponse = {
+        resourceType: 'QuestionnaireResponse',
+        status: 'in-progress',
+        item: [{ linkId: 'postal', item: [{ linkId: 'city' }] }],
+    };
+
+    test('binds the itemPopulationContext variable into the resolved context', () => {
+        const initialContext = buildPostalContext(patient);
+        const branchItems = getBranchItems(['postal'], postalQuestionnaire, postalQuestionnaireResponse);
+        const questionItem = postalQuestionnaire.item![0] as FCEQuestionnaireItem;
+
+        const { result } = renderHook(() =>
+            useVariablesResolver({
+                initialContext,
+                branchItems,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
+                fhirService: vi.fn(),
+            }),
+        );
+
+        expect(result.current.contexts).toHaveLength(1);
+        expect(result.current.contexts[0].PostalAddressArray).toEqual([{ type: 'postal', line: ['PO Box 5'] }]);
+    });
+
+    test('a variable can reference the bound itemPopulationContext', () => {
+        const questionnaire: Questionnaire = {
+            resourceType: 'Questionnaire',
+            status: 'active',
+            item: [
+                {
+                    linkId: 'postal',
+                    type: 'group',
+                    itemPopulationContext: {
+                        name: 'PostalAddressArray',
+                        language: 'text/fhirpath',
+                        expression: "%patient.address.where(type='postal')",
+                    },
+                    variable: [
+                        {
+                            name: 'PostalLine',
+                            language: 'text/fhirpath',
+                            expression: '%PostalAddressArray.line',
+                        },
+                    ],
+                    item: [{ linkId: 'city', type: 'string' }],
+                } as any,
+            ],
+        };
+
+        const initialContext = buildPostalContext(patient);
+        const branchItems = getBranchItems(['postal'], questionnaire, postalQuestionnaireResponse);
+        const questionItem = questionnaire.item![0] as FCEQuestionnaireItem;
+
+        const { result } = renderHook(() =>
+            useVariablesResolver({
+                initialContext,
+                branchItems,
+                variable: questionItem.variable,
+                prefix: questionItem.linkId,
+                fhirService: vi.fn(),
+            }),
+        );
+
+        expect((result.current.contexts[0].PostalLine as string[])[0]).toEqual('PO Box 5');
+    });
+
+    test('enableWhenExpression can reference an item itemPopulationContext variable', () => {
+        const item = {
+            linkId: 'postal',
+            type: 'group',
+            itemPopulationContext: {
+                name: 'PostalAddressArray',
+                language: 'text/fhirpath',
+                expression: "%patient.address.where(type='postal')",
+            },
+            enableWhenExpression: {
+                language: 'text/fhirpath',
+                expression: '%PostalAddressArray.exists()',
+            },
+            item: [{ linkId: 'city', type: 'string' }],
+        } as unknown as FCEQuestionnaireItem;
+
+        const enabled = getEnabledQuestions([item], [], {}, buildPostalContext(patient));
+        expect(enabled).toHaveLength(1);
+
+        const disabled = getEnabledQuestions(
+            [item],
+            [],
+            {},
+            buildPostalContext({ resourceType: 'Patient', address: [{ use: 'home', line: ['1 Home St'] }] }),
+        );
+        expect(disabled).toHaveLength(0);
     });
 });

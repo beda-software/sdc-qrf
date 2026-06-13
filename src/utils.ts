@@ -532,6 +532,33 @@ export function getChecker(
     return _.constant(true);
 }
 
+/**
+ * Evaluates an item's `sdc-questionnaire-itemPopulationContext` (a named text/fhirpath expression) and
+ * returns a context with that named variable bound, so expressions on the item or its descendants
+ * (e.g. enableWhenExpression) can reference it. Unsupported/failing contexts are bound to an empty
+ * collection rather than crashing the form.
+ */
+export function resolveItemPopulationContext(
+    context: ItemContext,
+    qItem: FCEQuestionnaireItem | undefined,
+    evaluateFhirpath?: EvaluateFhirpath,
+): ItemContext {
+    const ipc = qItem?.itemPopulationContext;
+    if (!ipc?.name || !ipc.expression || ipc.language !== 'text/fhirpath') {
+        return context;
+    }
+
+    return {
+        ...context,
+        [ipc.name]: evaluateFHIRPathExpression(
+            ipc,
+            context,
+            `${qItem?.linkId}.itemPopulationContext`,
+            evaluateFhirpath,
+        ),
+    };
+}
+
 interface IsQuestionEnabledArgs {
     qItem: FCEQuestionnaireItem;
     parentPath: string[];
@@ -556,10 +583,11 @@ function isQuestionEnabled(args: IsQuestionEnabledArgs) {
     }
 
     if (enableWhenExpression && enableWhenExpression.language === 'text/fhirpath') {
+        const context = resolveItemPopulationContext(args.context, args.qItem, args.evaluateFhirpath);
         try {
             const expressionResult = evaluateFHIRPathExpression(
                 enableWhenExpression,
-                args.context,
+                context,
                 `${linkId}.enableWhenExpression`,
                 args.evaluateFhirpath,
             )[0];
@@ -729,14 +757,13 @@ export function getEnabledQuestions(
 export function calcInitialContext(
     qrfDataContext: QuestionnaireResponseFormData['context'],
     values: FormItems,
-    evaluateFhirpath?: EvaluateFhirpath,
 ): ItemContext {
     const questionnaireResponse = {
         ...qrfDataContext.questionnaireResponse,
         ...mapFormToResponse(values, qrfDataContext.questionnaire),
     };
 
-    const baseContext: ItemContext = {
+    return {
         ...qrfDataContext.launchContextParameters.reduce((acc, { name, resource, ...param }) => {
             const value = getChoiceTypeValue(param, 'value');
 
@@ -755,23 +782,6 @@ export function calcInitialContext(
         Questionnaire: qrfDataContext.questionnaire,
         QuestionnaireResponse: questionnaireResponse,
     };
-
-    // Evaluate questionnaire-level FHIRPath variables in declaration order
-    return (qrfDataContext.fceQuestionnaire.variable ?? []).reduce((ctx: ItemContext, variable) => {
-        if (!variable?.name || !variable.expression || variable.language !== 'text/fhirpath') {
-            console.warn(`Only fhirpath variables are supported. Variable ${variable.name} is not supported.`);
-            return ctx;
-        }
-        return {
-            ...ctx,
-            [variable.name]: evaluateFHIRPathExpression(
-                variable,
-                ctx,
-                `questionnaire.variable.${variable.name}`,
-                evaluateFhirpath,
-            ),
-        };
-    }, baseContext);
 }
 
 export function resolveTemplateExpr(

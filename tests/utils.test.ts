@@ -23,6 +23,7 @@ import {
     findAnswersForQuestion,
     ITEM_KEY,
     stripNonEnumerable,
+    resolveItemPopulationContext,
 } from '../src/utils';
 import {
     ParametersParameter,
@@ -2549,74 +2550,39 @@ describe('calcInitialContext', () => {
             StringValue: 'string',
         });
     });
+});
 
-    test('evaluates questionnaire-level variables and adds them to the context', () => {
-        const result = calcInitialContext(
-            {
-                ...qrfDataContext,
-                fceQuestionnaire: {
-                    ...questionnaire,
-                    variable: [{ name: 'Greeting', language: 'text/fhirpath', expression: "'Hello'" }],
-                },
+describe('resolveItemPopulationContext', () => {
+    const baseContext: ItemContext = {
+        questionnaire: { resourceType: 'Questionnaire', status: 'active' },
+        resource: { resourceType: 'QuestionnaireResponse', status: 'in-progress' },
+        context: { resourceType: 'QuestionnaireResponse', status: 'in-progress' },
+        patient: {
+            resourceType: 'Patient',
+            address: [
+                { use: 'home', line: ['1 Home St'] },
+                { type: 'postal', line: ['PO Box 5'] },
+            ],
+        },
+    } as any;
+
+    test('binds the itemPopulationContext variable so dependent expressions can use it', () => {
+        const result = resolveItemPopulationContext(baseContext, {
+            linkId: 'postal',
+            type: 'group',
+            itemPopulationContext: {
+                name: 'PostalAddressArray',
+                language: 'text/fhirpath',
+                expression: "%patient.address.where(type='postal')",
             },
-            formValues,
-        );
+        } as any);
 
-        expect(result.Greeting).toStrictEqual(['Hello']);
+        expect(result.PostalAddressArray).toEqual([{ type: 'postal', line: ['PO Box 5'] }]);
     });
 
-    test('evaluates variables in declaration order so later ones can reference earlier ones', () => {
-        const result = calcInitialContext(
-            {
-                ...qrfDataContext,
-                fceQuestionnaire: {
-                    ...questionnaire,
-                    variable: [
-                        { name: 'First', language: 'text/fhirpath', expression: "'First'" },
-                        { name: 'Second', language: 'text/fhirpath', expression: "%First + 'Second'" },
-                    ],
-                },
-            },
-            formValues,
-        );
-
-        expect(result.First).toStrictEqual(['First']);
-        expect(result.Second).toStrictEqual(['FirstSecond']);
-    });
-
-    test('variables can reference launch context and questionnaire response values', () => {
-        const result = calcInitialContext(
-            {
-                ...qrfDataContext,
-                fceQuestionnaire: {
-                    ...questionnaire,
-                    variable: [{ name: 'PatientType', language: 'text/fhirpath', expression: '%Patient.resourceType' }],
-                },
-            },
-            formValues,
-        );
-
-        expect(result.PatientType).toStrictEqual(['Patient']);
-    });
-
-    test('skips variables that are not text/fhirpath or are missing name/expression', () => {
-        const result = calcInitialContext(
-            {
-                ...qrfDataContext,
-                fceQuestionnaire: {
-                    ...questionnaire,
-                    variable: [
-                        { name: 'Query', language: 'application/x-fhir-query', expression: '/Patient' } as any,
-                        { language: 'text/fhirpath', expression: "'no-name'" } as any,
-                        { name: 'NoExpression', language: 'text/fhirpath' } as any,
-                    ],
-                },
-            },
-            formValues,
-        );
-
-        expect(result).not.toHaveProperty('Query');
-        expect(result).not.toHaveProperty('NoExpression');
+    test('returns the context unchanged when there is no itemPopulationContext', () => {
+        const result = resolveItemPopulationContext(baseContext, { linkId: 'x', type: 'string' } as any);
+        expect(result).toBe(baseContext);
     });
 });
 

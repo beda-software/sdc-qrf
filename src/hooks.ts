@@ -1,22 +1,23 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import type { AxiosRequestConfig } from 'axios';
-import { FCEQuestionnaireItem } from './fce.types';
 import { type RemoteData, isSuccess, loading, success, mapSuccess, sequenceArray } from '@beda.software/remote-data';
 
 import { QRFContext } from './context';
 import { EvaluateFhirpath, ItemContext } from './types';
-import { resolveTemplateExpr, evaluateFHIRPathExpression, getBranchItems } from './utils';
+import { resolveItemPopulationContext, resolveTemplateExpr, evaluateFHIRPathExpression } from './utils';
+import { Expression, QuestionnaireItem, QuestionnaireResponse, QuestionnaireResponseItem } from 'fhir/r4b';
 
 export function useQuestionnaireResponseFormContext() {
     return useContext(QRFContext);
 }
 
-export type UseQuestionItemContextArgs = {
+export type UseVariablesResolverArgs = {
     initialContext: ItemContext;
-    branchItems: ReturnType<typeof getBranchItems>;
+    branchItems: { qItem?: QuestionnaireItem; qrItems: Array<QuestionnaireResponseItem | QuestionnaireResponse> };
     fhirService: (config: AxiosRequestConfig) => Promise<RemoteData<unknown>>;
-    questionItem: FCEQuestionnaireItem;
     evaluateFhirpath?: EvaluateFhirpath;
+    variable?: Expression[];
+    prefix?: string;
 };
 
 type AsyncState = Record<
@@ -30,22 +31,24 @@ type AsyncState = Record<
     >
 >;
 
-export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
+export function useVariablesResolver(props: UseVariablesResolverArgs): {
     contexts: ItemContext[];
     evaluationResponse: RemoteData<ItemContext[]>;
 } {
-    const { initialContext, branchItems, fhirService, questionItem, evaluateFhirpath } = props;
-    const { variable, linkId } = questionItem;
+    const { initialContext, branchItems, fhirService, evaluateFhirpath, variable, prefix } = props;
     const variables = useMemo(() => variable ?? [], [variable]);
     const [asyncState, setAsyncState] = useState<AsyncState>({});
 
     useEffect(() => {
         branchItems.qrItems.forEach((qrItem, branchIndex) => {
-            const workingContext: ItemContext = {
+            let workingContext: ItemContext = {
                 ...initialContext,
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
+            workingContext = branchItems.qItem
+                ? resolveItemPopulationContext(workingContext, branchItems.qItem, evaluateFhirpath)
+                : workingContext;
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
@@ -55,7 +58,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                 const { name, expression, language } = variable;
 
                 if (language === 'application/x-fhir-query') {
-                    const url = resolveTemplateExpr(expression!, workingContext, `${linkId}.variable.${name}`, true);
+                    const url = resolveTemplateExpr(expression!, workingContext, `${prefix}.variable.${name}`, true);
 
                     if (!url) {
                         workingContext[name] = null;
@@ -115,7 +118,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     workingContext[name] = evaluateFHIRPathExpression(
                         variable,
                         workingContext,
-                        `${linkId}.variable.${name}`,
+                        `${prefix}.variable.${name}`,
                         evaluateFhirpath,
                     );
                 }
@@ -125,11 +128,14 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
 
     const contexts = useMemo(() => {
         return branchItems.qrItems.map<ItemContext>((qrItem, branchIndex) => {
-            const workingContext: ItemContext = {
+            let workingContext: ItemContext = {
                 ...initialContext,
                 context: qrItem,
                 qitem: branchItems.qItem,
             };
+            workingContext = branchItems.qItem
+                ? resolveItemPopulationContext(workingContext, branchItems.qItem, evaluateFhirpath)
+                : workingContext;
 
             variables.forEach((variable) => {
                 if (!variable?.name || !variable.expression) {
@@ -151,7 +157,7 @@ export function useQuestionItemContext(props: UseQuestionItemContextArgs): {
                     workingContext[name] = evaluateFHIRPathExpression(
                         variable,
                         workingContext,
-                        `${linkId}.variable.${name}`,
+                        `${prefix}.variable.${name}`,
                         evaluateFhirpath,
                     );
                 }
