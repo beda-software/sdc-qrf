@@ -1,3 +1,8 @@
+## 1.1.0-alpha.8
+
+- Resolve questionnaire-level application/x-fhir-query variables
+- Evaluate sdc-questionnaire-itemPopulationContext at runtime
+
 ## 1.1.0-alpha.6
 
 - Add support for questionnaire-level variables defined with fhirpath
