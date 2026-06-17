@@ -1,4 +1,4 @@
-import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression } from 'fhir/r4b';
+import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression, Attachment } from 'fhir/r4b';
 
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     launchContext?: any[];
@@ -9,6 +9,8 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     assembleContext?: string[];
     itemPopulationContext?: FHIRExpression;
     variable?: FHIRExpression[];
+    printableHeader?: Attachment;
+    printableFooter?: Attachment;
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
@@ -18,6 +20,8 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     const assembleContext = processAssembleContext(fhirQuestionnaire);
     const itemPopulationContext = processItemPopulationContext(fhirQuestionnaire);
     const variable = processVariable(fhirQuestionnaire);
+    const printableHeader = processPrintableHeader(fhirQuestionnaire);
+    const printableFooter = processPrintableFooter(fhirQuestionnaire);
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
@@ -28,6 +32,8 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
         assembleContext: assembleContext.length ? assembleContext : undefined,
         itemPopulationContext: itemPopulationContext ? itemPopulationContext : undefined,
         variable: variable?.length ? variable : undefined,
+        printableHeader: printableHeader ? printableHeader : undefined,
+        printableFooter: printableFooter ? printableFooter : undefined,
     };
 }
 
@@ -155,4 +161,28 @@ function processVariable(fhirQuestionnaire: FHIRQuestionnaire): FHIRExpression[]
     }
 
     return extensions.map((ext) => ext.valueExpression!);
+}
+
+function processPrintableHeader(fhirQuestionnaire: FHIRQuestionnaire): Attachment | undefined {
+    const extension = fhirQuestionnaire.extension?.find(
+        (ext) => ext.url === 'https://emr-core.beda.software/StructureDefinition/printable-header',
+    );
+
+    if (!extension) {
+        return undefined;
+    }
+
+    return extension.valueAttachment;
+}
+
+function processPrintableFooter(fhirQuestionnaire: FHIRQuestionnaire): Attachment | undefined {
+    const extension = fhirQuestionnaire.extension?.find(
+        (ext) => ext.url === 'https://emr-core.beda.software/StructureDefinition/printable-footer',
+    );
+
+    if (!extension) {
+        return undefined;
+    }
+
+    return extension.valueAttachment;
 }

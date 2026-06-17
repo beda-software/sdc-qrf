@@ -32,6 +32,10 @@ export interface FCEQuestionnaire extends Questionnaire {
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/variable */
     /** Variable specifying a logic to generate a variable for use in subsequent logic. The name of the variable will be added to FHIRPath's context when processing descendants of the element that contains this extension. */
     variable?: Expression[];
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-header */
+    printableHeader?: Attachment;
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-footer */
+    printableFooter?: Attachment;
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-targetStructureMap */
     targetStructureMap?: string[];
 }

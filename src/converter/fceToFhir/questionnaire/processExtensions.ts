@@ -11,6 +11,8 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
         assembleContext,
         itemPopulationContext,
         variable,
+        printableHeader,
+        printableFooter,
         ...fhirQuestionnaire
     } = questionnaire;
 
@@ -115,6 +117,20 @@ export function processExtensions(questionnaire: FCEQuestionnaire): FHIRQuestion
                 valueExpression: expr,
             })),
         );
+    }
+
+    if (printableHeader) {
+        extensions.push({
+            url: 'https://emr-core.beda.software/StructureDefinition/printable-header',
+            valueAttachment: printableHeader,
+        });
+    }
+
+    if (printableFooter) {
+        extensions.push({
+            url: 'https://emr-core.beda.software/StructureDefinition/printable-footer',
+            valueAttachment: printableFooter,
+        });
     }
 
     if (extensions.length) {
