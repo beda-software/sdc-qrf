@@ -1,0 +1,19 @@
+{
+    "resourceType": "Questionnaire",
+    "status": "active",
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    },
+    "printableHeader": {
+        "contentType": "application/pdf",
+        "data": "base64-encoded-pdf-data",
+        "url": "https://example.com/printable-header.pdf"
+    },
+    "item": [
+        {
+            "linkId": "title",
+            "type": "string",
+            "text": "Title"
+        }
+    ]
+}
