@@ -36,7 +36,7 @@ import fce_practitioner_create from './resources/questionnaire_fce/practitioner_
 import fce_practitioner_create_structure_map from './resources/questionnaire_fce/practitioner_create_structure_map.json';
 import fce_practitioner_edit from './resources/questionnaire_fce/practitioner_edit.json';
 import fce_practitioner_role_create from './resources/questionnaire_fce/practitioner_role_create.json';
-import fce_printable_header from './resources/questionnaire_fce/printable_header.json';
+import fce_printable_elements from './resources/questionnaire_fce/printable_elements.json';
 import fce_public_appointment from './resources/questionnaire_fce/public_appointment.json';
 import fce_questionnaire_variable from './resources/questionnaire_fce/questionnaire_variable.json';
 import fce_review_of_systems from './resources/questionnaire_fce/review_of_systems.json';
@@ -82,7 +82,7 @@ import fhir_practitioner_create from './resources/questionnaire_fhir/practitione
 import fhir_practitioner_create_structure_map from './resources/questionnaire_fhir/practitioner_create_structure_map.json';
 import fhir_practitioner_edit from './resources/questionnaire_fhir/practitioner_edit.json';
 import fhir_practitioner_role_create from './resources/questionnaire_fhir/practitioner_role_create.json';
-import fhir_printable_header from './resources/questionnaire_fhir/printable_header.json';
+import fhir_printable_elements from './resources/questionnaire_fhir/printable_elements.json';
 import fhir_public_appointment from './resources/questionnaire_fhir/public_appointment.json';
 import fhir_questionnaire_variable from './resources/questionnaire_fhir/questionnaire_variable.json';
 import fhir_review_of_systems from './resources/questionnaire_fhir/review_of_systems.json';
@@ -149,7 +149,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['chart-highlight', fhir_chart_highlight, fce_chart_highlight],
         ['column-width', fhir_column_width, fce_column_width],
         ['mapping-inline', fhir_mapping_inline, fce_mapping_inline],
-        ['printable-header', fhir_printable_header, fce_printable_header],
+        ['printable-elements', fhir_printable_elements, fce_printable_elements],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -202,7 +202,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['chart-highlight', fce_chart_highlight, fhir_chart_highlight],
         ['column-width', fce_column_width, fhir_column_width],
         ['mapping-inline', fce_mapping_inline, fhir_mapping_inline],
-        ['printable-header', fce_printable_header, fhir_printable_header],
+        ['printable-elements', fce_printable_elements, fhir_printable_elements],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
