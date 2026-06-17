@@ -1,3 +1,7 @@
+## 1.1.0-alpha.11
+
+- Extend support for printable elements
+
 ## 1.1.0-alpha.10
 
 - Add support for `printableHeader` and `printableFooter` root-level extensions
