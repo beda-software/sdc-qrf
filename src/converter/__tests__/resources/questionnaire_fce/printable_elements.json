@@ -4,6 +4,42 @@
     "meta": {
         "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
     },
+    "printableCover": [
+        {
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-cover.pdf"
+            }
+        },
+        {
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "valueString": "Cover Page"
+        }
+    ],
+    "printableHeaderFirstPage": [
+        {
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-header-first-page.pdf"
+            }
+        },
+        {
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "valueString": "First Page"
+        }
+    ],
     "printableHeader": [
         {
             "valueAttachment": {
@@ -20,6 +56,42 @@
         },
         {
             "valueString": "Patient Name"
+        }
+    ],
+    "printableFooter": [
+        {
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-footer.pdf"
+            }
+        },
+        {
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "valueString": "Footer"
+        }
+    ],
+    "printableFooterLastPage": [
+        {
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-footer-last-page.pdf"
+            }
+        },
+        {
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "valueString": "Last Page"
         }
     ],
     "item": [

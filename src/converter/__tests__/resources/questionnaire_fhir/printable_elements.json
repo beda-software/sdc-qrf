@@ -6,6 +6,44 @@
     },
     "extension": [
         {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-cover",
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-cover.pdf"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-cover",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-cover",
+            "valueString": "Cover Page"
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-header-first-page",
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-header-first-page.pdf"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-header-first-page",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-header-first-page",
+            "valueString": "First Page"
+        },
+        {
             "url": "https://emr-core.beda.software/StructureDefinition/printable-header",
             "valueAttachment": {
                 "contentType": "application/pdf",
@@ -19,6 +57,44 @@
                 "language": "text/fhirpath",
                 "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
             }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer",
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-footer.pdf"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer",
+            "valueString": "Footer"
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer-last-page",
+            "valueAttachment": {
+                "contentType": "application/pdf",
+                "data": "base64-encoded-pdf-data",
+                "url": "https://example.com/printable-footer-last-page.pdf"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer-last-page",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-footer-last-page",
+            "valueString": "Last Page"
         },
         {
             "url": "https://emr-core.beda.software/StructureDefinition/printable-header",
