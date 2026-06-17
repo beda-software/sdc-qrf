@@ -32,10 +32,16 @@ export interface FCEQuestionnaire extends Questionnaire {
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/variable */
     /** Variable specifying a logic to generate a variable for use in subsequent logic. The name of the variable will be added to FHIRPath's context when processing descendants of the element that contains this extension. */
     variable?: Expression[];
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-cover */
+    printableCover?: FCEPrintableElement[];
     /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-header */
-    printableHeader?: Attachment;
+    printableHeader?: FCEPrintableElement[];
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-header-first-page */
+    printableHeaderFirstPage?: FCEPrintableElement[];
     /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-footer */
-    printableFooter?: Attachment;
+    printableFooter?: FCEPrintableElement[];
+    /** NOTE: from extension https://emr-core.beda.software/StructureDefinition/printable-footer-last-page */
+    printableFooterLastPage?: FCEPrintableElement[];
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-targetStructureMap */
     targetStructureMap?: string[];
 }
@@ -216,3 +222,17 @@ export interface FCEQuestionnaireMappingReference {
 export interface FCEQuestionnaireMappingExpression {
     valueExpression: Expression;
 }
+
+export interface FCEPrintableAttachmentElement {
+    valueAttachment: Attachment;
+}
+export interface FCEPrintableExpressionElement {
+    valueExpression: Expression;
+}
+export interface FCEPrintableStringElement {
+    valueString: string;
+}
+export type FCEPrintableElement =
+    | FCEPrintableAttachmentElement
+    | FCEPrintableExpressionElement
+    | FCEPrintableStringElement;

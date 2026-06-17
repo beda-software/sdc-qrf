@@ -12,6 +12,17 @@
                 "data": "base64-encoded-pdf-data",
                 "url": "https://example.com/printable-header.pdf"
             }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-header",
+            "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%Patient.name.given[0] + ' ' + %Patient.name.family"
+            }
+        },
+        {
+            "url": "https://emr-core.beda.software/StructureDefinition/printable-header",
+            "valueString": "Patient Name"
         }
     ],
     "item": [

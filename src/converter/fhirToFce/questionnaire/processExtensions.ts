@@ -1,4 +1,5 @@
-import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression, Attachment } from 'fhir/r4b';
+import { Questionnaire as FHIRQuestionnaire, Expression as FHIRExpression } from 'fhir/r4b';
+import { FCEPrintableElement } from '../../../fce.types';
 
 export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     launchContext?: any[];
@@ -9,8 +10,11 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     assembleContext?: string[];
     itemPopulationContext?: FHIRExpression;
     variable?: FHIRExpression[];
-    printableHeader?: Attachment;
-    printableFooter?: Attachment;
+    printableCover?: FCEPrintableElement[];
+    printableHeader?: FCEPrintableElement[];
+    printableHeaderFirstPage?: FCEPrintableElement[];
+    printableFooter?: FCEPrintableElement[];
+    printableFooterLastPage?: FCEPrintableElement[];
 } {
     const launchContext = processLaunchContext(fhirQuestionnaire);
     const mapping = processMapping(fhirQuestionnaire);
@@ -20,8 +24,26 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
     const assembleContext = processAssembleContext(fhirQuestionnaire);
     const itemPopulationContext = processItemPopulationContext(fhirQuestionnaire);
     const variable = processVariable(fhirQuestionnaire);
-    const printableHeader = processPrintableHeader(fhirQuestionnaire);
-    const printableFooter = processPrintableFooter(fhirQuestionnaire);
+    const printableCover = processPrintableElements(
+        fhirQuestionnaire,
+        'https://emr-core.beda.software/StructureDefinition/printable-cover',
+    );
+    const printableHeader = processPrintableElements(
+        fhirQuestionnaire,
+        'https://emr-core.beda.software/StructureDefinition/printable-header',
+    );
+    const printableHeaderFirstPage = processPrintableElements(
+        fhirQuestionnaire,
+        'https://emr-core.beda.software/StructureDefinition/printable-header-first-page',
+    );
+    const printableFooter = processPrintableElements(
+        fhirQuestionnaire,
+        'https://emr-core.beda.software/StructureDefinition/printable-footer',
+    );
+    const printableFooterLastPage = processPrintableElements(
+        fhirQuestionnaire,
+        'https://emr-core.beda.software/StructureDefinition/printable-footer-last-page',
+    );
 
     return {
         launchContext: launchContext?.length ? launchContext : undefined,
@@ -32,8 +54,11 @@ export function processExtensions(fhirQuestionnaire: FHIRQuestionnaire): {
         assembleContext: assembleContext.length ? assembleContext : undefined,
         itemPopulationContext: itemPopulationContext ? itemPopulationContext : undefined,
         variable: variable?.length ? variable : undefined,
-        printableHeader: printableHeader ? printableHeader : undefined,
-        printableFooter: printableFooter ? printableFooter : undefined,
+        printableCover: printableCover?.length ? printableCover : undefined,
+        printableHeader: printableHeader?.length ? printableHeader : undefined,
+        printableHeaderFirstPage: printableHeaderFirstPage?.length ? printableHeaderFirstPage : undefined,
+        printableFooter: printableFooter?.length ? printableFooter : undefined,
+        printableFooterLastPage: printableFooterLastPage?.length ? printableFooterLastPage : undefined,
     };
 }
 
@@ -163,26 +188,26 @@ function processVariable(fhirQuestionnaire: FHIRQuestionnaire): FHIRExpression[]
     return extensions.map((ext) => ext.valueExpression!);
 }
 
-function processPrintableHeader(fhirQuestionnaire: FHIRQuestionnaire): Attachment | undefined {
-    const extension = fhirQuestionnaire.extension?.find(
-        (ext) => ext.url === 'https://emr-core.beda.software/StructureDefinition/printable-header',
-    );
-
-    if (!extension) {
+function processPrintableElements(
+    fhirQuestionnaire: FHIRQuestionnaire,
+    extensionUrl: string,
+): FCEPrintableElement[] | undefined {
+    const extensions = fhirQuestionnaire.extension?.filter((ext) => ext.url === extensionUrl);
+    if (!extensions?.length) {
         return undefined;
     }
 
-    return extension.valueAttachment;
-}
+    const elements: FCEPrintableElement[] = [];
 
-function processPrintableFooter(fhirQuestionnaire: FHIRQuestionnaire): Attachment | undefined {
-    const extension = fhirQuestionnaire.extension?.find(
-        (ext) => ext.url === 'https://emr-core.beda.software/StructureDefinition/printable-footer',
-    );
-
-    if (!extension) {
-        return undefined;
+    for (const ext of extensions) {
+        if (ext.valueAttachment) {
+            elements.push({ valueAttachment: ext.valueAttachment });
+        } else if (ext.valueExpression) {
+            elements.push({ valueExpression: ext.valueExpression });
+        } else if (ext.valueString !== undefined) {
+            elements.push({ valueString: ext.valueString });
+        }
     }
 
-    return extension.valueAttachment;
+    return elements.length ? elements : undefined;
 }
