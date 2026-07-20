@@ -1,0 +1,76 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "translation-example",
+    "status": "active",
+    "title": "Chief complaint form",
+    "_title": {
+        "extension": [
+            {
+                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                "extension": [
+                    {
+                        "url": "lang",
+                        "valueCode": "de"
+                    },
+                    {
+                        "url": "content",
+                        "valueString": "Formular für Hauptbeschwerde"
+                    }
+                ]
+            },
+            {
+                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                "extension": [
+                    {
+                        "url": "lang",
+                        "valueCode": "fr"
+                    },
+                    {
+                        "url": "content",
+                        "valueString": "Formulaire de motif de consultation"
+                    }
+                ]
+            }
+        ]
+    },
+    "item": [
+        {
+            "linkId": "chief-complaint",
+            "type": "string",
+            "text": "Chief complaint",
+            "_text": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Hauptbeschwerde"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Motif de consultation"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    }
+}
