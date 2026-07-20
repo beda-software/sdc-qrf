@@ -3,6 +3,8 @@ import { FCEQuestionnaire } from '../../fce.types';
 
 import { convertQuestionnaire } from './questionnaire';
 
+export { translateQuestionnaire } from './translateQuestionnaire';
+
 export function toFirstClassExtension(fhirResource: FHIRQuestionnaire): FCEQuestionnaire {
     return convertQuestionnaire(fhirResource);
 }
