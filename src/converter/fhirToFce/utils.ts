@@ -1,4 +1,7 @@
-import { Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
+import { Extension, Questionnaire as FHIRQuestionnaire } from 'fhir/r4b';
+
+import { convertFromFHIRExtension } from '..';
+import { ExtensionIdentifier } from '../extensions';
 
 export function checkFhirQuestionnaireProfile(fhirQuestionnaire: FHIRQuestionnaire): void {
     if (
@@ -33,4 +36,49 @@ export function trimUndefined(e: any) {
     }
 
     return e;
+}
+
+export function processExtensibleElement<T extends { extension?: Extension[] }>(element: T): T {
+    let newElement = { ...element };
+    const knownExtensionUrls = Object.values(ExtensionIdentifier) as string[];
+
+    const allExtensions = element.extension ?? [];
+    const knownExtensions = allExtensions.filter((ext) => knownExtensionUrls.includes(ext.url));
+    const unknownExtensions = allExtensions.filter((ext) => !knownExtensionUrls.includes(ext.url));
+
+    if (knownExtensions.length) {
+        const uniqueExtensionUrls = new Set(knownExtensions.map((ext) => ext.url));
+        for (const extensionUrl of uniqueExtensionUrls) {
+            const extensions = knownExtensions.filter((ext) => ext.url === extensionUrl);
+
+            newElement = {
+                ...newElement,
+                ...convertFromFHIRExtension(extensions),
+            };
+        }
+    }
+
+    if (unknownExtensions.length) {
+        newElement.extension = unknownExtensions;
+    } else {
+        delete newElement.extension;
+    }
+
+    return newElement;
+}
+
+export function processPrimitiveExtensions<T extends Record<string, any>>(resource: T): T {
+    let result = { ...resource };
+
+    for (const property of Object.keys(resource)) {
+        const element = resource[property];
+        if (property.startsWith('_') && element instanceof Object && !Array.isArray(element)) {
+            result = {
+                ...result,
+                [property]: processExtensibleElement(element),
+            };
+        }
+    }
+
+    return result;
 }

@@ -3,10 +3,14 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import { processExtensions } from './processExtensions';
 import { processItems } from './processItems';
+import { processPrimitiveExtensions } from '../utils';
 import { FCEQuestionnaire } from '../../../fce.types';
 
 export function convertQuestionnaire(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
     questionnaire = cloneDeep(questionnaire);
     questionnaire.item = processItems(questionnaire.item ?? []);
-    return processExtensions(questionnaire);
+    return {
+        ...processExtensions(questionnaire),
+        ...processPrimitiveExtensions(questionnaire),
+    };
 }

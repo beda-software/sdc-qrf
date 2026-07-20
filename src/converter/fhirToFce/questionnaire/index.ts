@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import { processExtensions } from './processExtensions';
 import { processItems } from './processItems';
-import { checkFhirQuestionnaireProfile, trimUndefined } from '../utils';
+import { checkFhirQuestionnaireProfile, processPrimitiveExtensions, trimUndefined } from '../utils';
 import { FCEQuestionnaire } from '../../../fce.types';
 
 export function convertQuestionnaire(fhirQuestionnaire: FHIRQuestionnaire): FCEQuestionnaire {
@@ -12,7 +12,7 @@ export function convertQuestionnaire(fhirQuestionnaire: FHIRQuestionnaire): FCEQ
     const item = processItems(fhirQuestionnaire);
     const extensions = processExtensions(fhirQuestionnaire);
     const questionnaire = trimUndefined({
-        ...fhirQuestionnaire,
+        ...processPrimitiveExtensions(fhirQuestionnaire),
         item,
         ...extensions,
         extension: undefined,
