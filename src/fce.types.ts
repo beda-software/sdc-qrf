@@ -44,6 +44,8 @@ export interface FCEQuestionnaire extends Questionnaire {
     printableFooterLastPage?: FCEPrintableElement[];
     /** NOTE: from extension http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-targetStructureMap */
     targetStructureMap?: string[];
+    /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/translation */
+    _title?: FCEQuestionnaireTitle;
 }
 
 export interface FCEQuestionnaireItem extends QuestionnaireItem {
@@ -135,8 +137,21 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     columnWidth?: Quantity;
 }
 
+export interface FCETranslation {
+    lang: string;
+    content: string;
+}
+
 export interface FCEQuestionnaireItemText {
     cqfExpression?: Expression;
+    /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/translation */
+    translation?: FCETranslation[];
+    extension?: Extension[];
+}
+
+export interface FCEQuestionnaireTitle {
+    /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/translation */
+    translation?: FCETranslation[];
     extension?: Extension[];
 }
 

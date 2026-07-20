@@ -1,5 +1,9 @@
 import { Extension as FHIRExtension } from 'fhir/r4b';
-import { FCEQuestionnaireItem, FCEQuestionnaireItemAnswerOptionsToggleExpressionOption } from '../fce.types';
+import {
+    FCEQuestionnaireItem,
+    FCEQuestionnaireItemAnswerOptionsToggleExpressionOption,
+    FCETranslation,
+} from '../fce.types';
 
 export enum ExtensionIdentifier {
     Hidden = 'http://hl7.org/fhir/StructureDefinition/questionnaire-hidden',
@@ -60,6 +64,7 @@ export enum ExtensionIdentifier {
     ChartYAxisRange = 'https://emr-core.beda.software/StructureDefinition/chartYAxisRange',
     ChartHighlight = 'https://emr-core.beda.software/StructureDefinition/chartHighlight',
     ColumnWidth = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-width',
+    Translation = 'http://hl7.org/fhir/StructureDefinition/translation',
 }
 
 export type ExtensionTransformer = {
@@ -515,6 +520,41 @@ export const extensionTransformers: ExtensionTransformer = {
     },
     [ExtensionIdentifier.ColumnWidth]: {
         path: { extension: 'valueQuantity', questionnaire: 'columnWidth' },
+    },
+    [ExtensionIdentifier.Translation]: {
+        transform: {
+            fromExtensions: (extensions) =>
+                ({
+                    translation: extensions.map((extension) => {
+                        const translationExtension = extension.extension!;
+
+                        return {
+                            lang: translationExtension.find((obj) => obj.url === 'lang')!.valueCode!,
+                            content: translationExtension.find((obj) => obj.url === 'content')!.valueString!,
+                        };
+                    }),
+                }) as Partial<FCEQuestionnaireItem>,
+            toExtensions: (item) => {
+                const translation = (item as FCEQuestionnaireItem & { translation?: FCETranslation[] }).translation;
+                if (translation) {
+                    return translation.map((entry) => ({
+                        url: ExtensionIdentifier.Translation,
+                        extension: [
+                            {
+                                url: 'lang',
+                                valueCode: entry.lang,
+                            },
+                            {
+                                url: 'content',
+                                valueString: entry.content,
+                            },
+                        ],
+                    }));
+                }
+
+                return [];
+            },
+        },
     },
 };
 
