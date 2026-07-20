@@ -9,3 +9,66 @@ npm i sdc-qrf
 ```
 
 P.S. the package was allocated from https://github.com/beda-software/sdc-ide with commits history
+
+## Translation
+
+The FHIR ↔ FCE converter supports the [`translation`](http://hl7.org/fhir/StructureDefinition/translation) primitive extension on fields such as `Questionnaire.title` and `Questionnaire.item.text`.
+
+**FHIR**
+
+```yaml
+item:
+    - linkId: chief-complaint
+      type: string
+      text: Chief complaint
+      _text:
+          extension:
+              - url: http://hl7.org/fhir/StructureDefinition/translation
+                extension:
+                    - url: lang
+                      valueCode: de
+                    - url: content
+                      valueString: Hauptbeschwerde
+              - url: http://hl7.org/fhir/StructureDefinition/translation
+                extension:
+                    - url: lang
+                      valueCode: fr
+                    - url: content
+                      valueString: Motif de consultation
+```
+
+**FCE** (`toFirstClassExtension` / `fromFirstClassExtension`)
+
+```yaml
+item:
+    - linkId: chief-complaint
+      type: string
+      text: Chief complaint
+      _text:
+          translation:
+              - lang: de
+                content: Hauptbeschwerde
+              - lang: fr
+                content: Motif de consultation
+```
+
+### `translateQuestionnaire`
+
+To bake a single language into a FHIR Questionnaire before converting to FCE (resolves matching translations and strips translation extensions):
+
+```ts
+import { toFirstClassExtension, translateQuestionnaire } from 'sdc-qrf';
+
+const fceQuestionnaire = toFirstClassExtension(translateQuestionnaire(questionnaire, 'fr'));
+```
+
+`translateQuestionnaire(questionnaire, 'fr')` produces:
+
+```yaml
+item:
+    - linkId: chief-complaint
+      type: string
+      text: Motif de consultation
+```
+
+If the requested language is missing, the original value is kept and translation extensions are still removed.
