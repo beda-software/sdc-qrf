@@ -6,27 +6,26 @@ import { ExtensionIdentifier } from '../extensions';
 export function translateQuestionnaire(questionnaire: FHIRQuestionnaire, language: string): FHIRQuestionnaire {
     const result = cloneDeep(questionnaire);
     const originLang = result.language ?? 'en';
-    const applied = { value: false };
 
-    translateNode(result, language, originLang, applied);
-
-    if (applied.value) {
+    if (translateNode(result, language, originLang)) {
         result.language = language;
     }
 
     return result;
 }
 
-function translateNode(node: unknown, language: string, originLang: string, applied: { value: boolean }): void {
+function translateNode(node: unknown, language: string, originLang: string): boolean {
     if (node === null || typeof node !== 'object') {
-        return;
+        return false;
     }
+
+    let applied = false;
 
     if (Array.isArray(node)) {
         for (const item of node) {
-            translateNode(item, language, originLang, applied);
+            applied = translateNode(item, language, originLang) || applied;
         }
-        return;
+        return applied;
     }
 
     const object = node as Record<string, unknown>;
@@ -35,14 +34,16 @@ function translateNode(node: unknown, language: string, originLang: string, appl
         if (property.startsWith('_')) {
             const element = object[property];
             if (element instanceof Object && !Array.isArray(element)) {
-                applyTranslation(object, property, element as Element, language, originLang, applied);
+                applied = applyTranslation(object, property, element as Element, language, originLang) || applied;
             }
         }
     }
 
     for (const value of Object.values(object)) {
-        translateNode(value, language, originLang, applied);
+        applied = translateNode(value, language, originLang) || applied;
     }
+
+    return applied;
 }
 
 function applyTranslation(
@@ -51,16 +52,15 @@ function applyTranslation(
     element: Element,
     language: string,
     originLang: string,
-    applied: { value: boolean },
-): void {
+): boolean {
     const extensions = element.extension;
     if (!extensions?.length) {
-        return;
+        return false;
     }
 
     const translationExtensions = extensions.filter((ext) => ext.url === ExtensionIdentifier.Translation);
     if (!translationExtensions.length) {
-        return;
+        return false;
     }
 
     const matchedTranslation = translationExtensions.find((ext) => {
@@ -69,19 +69,19 @@ function applyTranslation(
     });
 
     if (!matchedTranslation) {
-        return;
+        return false;
     }
 
     const contentExtension = matchedTranslation.extension?.find((sub) => sub.url === 'content');
     if (!contentExtension) {
-        return;
+        return false;
     }
 
     const valueKey = Object.keys(contentExtension).find((key) => key.startsWith('value')) as
         | keyof Extension
         | undefined;
     if (!valueKey) {
-        return;
+        return false;
     }
 
     const primitiveProperty = underscoreProperty.slice(1);
@@ -92,7 +92,7 @@ function applyTranslation(
     }
 
     parent[primitiveProperty] = contentExtension[valueKey];
-    applied.value = true;
+    return true;
 }
 
 function upsertOriginalTranslation(extensions: Extension[], originLang: string, originalValue: unknown): void {
