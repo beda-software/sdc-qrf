@@ -5,18 +5,26 @@ import { ExtensionIdentifier } from '../extensions';
 
 export function translateQuestionnaire(questionnaire: FHIRQuestionnaire, language: string): FHIRQuestionnaire {
     const result = cloneDeep(questionnaire);
-    translateNode(result, language);
+    const originLang = result.language ?? 'en';
+    const applied = { value: false };
+
+    translateNode(result, language, originLang, applied);
+
+    if (applied.value) {
+        result.language = language;
+    }
+
     return result;
 }
 
-function translateNode(node: unknown, language: string): void {
+function translateNode(node: unknown, language: string, originLang: string, applied: { value: boolean }): void {
     if (node === null || typeof node !== 'object') {
         return;
     }
 
     if (Array.isArray(node)) {
         for (const item of node) {
-            translateNode(item, language);
+            translateNode(item, language, originLang, applied);
         }
         return;
     }
@@ -27,13 +35,13 @@ function translateNode(node: unknown, language: string): void {
         if (property.startsWith('_')) {
             const element = object[property];
             if (element instanceof Object && !Array.isArray(element)) {
-                applyTranslation(object, property, element as Element, language);
+                applyTranslation(object, property, element as Element, language, originLang, applied);
             }
         }
     }
 
     for (const value of Object.values(object)) {
-        translateNode(value, language);
+        translateNode(value, language, originLang, applied);
     }
 }
 
@@ -42,6 +50,8 @@ function applyTranslation(
     underscoreProperty: string,
     element: Element,
     language: string,
+    originLang: string,
+    applied: { value: boolean },
 ): void {
     const extensions = element.extension;
     if (!extensions?.length) {
@@ -58,27 +68,65 @@ function applyTranslation(
         return lang === language;
     });
 
-    if (matchedTranslation) {
-        const contentExtension = matchedTranslation.extension?.find((sub) => sub.url === 'content');
+    if (!matchedTranslation) {
+        return;
+    }
+
+    const contentExtension = matchedTranslation.extension?.find((sub) => sub.url === 'content');
+    if (!contentExtension) {
+        return;
+    }
+
+    const valueKey = Object.keys(contentExtension).find((key) => key.startsWith('value')) as
+        | keyof Extension
+        | undefined;
+    if (!valueKey) {
+        return;
+    }
+
+    const primitiveProperty = underscoreProperty.slice(1);
+    const originalValue = parent[primitiveProperty];
+
+    if (originalValue !== undefined && originalValue !== null) {
+        upsertOriginalTranslation(extensions, originLang, originalValue);
+    }
+
+    parent[primitiveProperty] = contentExtension[valueKey];
+    applied.value = true;
+}
+
+function upsertOriginalTranslation(extensions: Extension[], originLang: string, originalValue: unknown): void {
+    const existing = extensions.find((ext) => {
+        if (ext.url !== ExtensionIdentifier.Translation) {
+            return false;
+        }
+        const lang = ext.extension?.find((sub) => sub.url === 'lang')?.valueCode;
+        return lang === originLang;
+    });
+
+    if (existing) {
+        const contentExtension = existing.extension?.find((sub) => sub.url === 'content');
         if (contentExtension) {
             const valueKey = Object.keys(contentExtension).find((key) => key.startsWith('value')) as
                 | keyof Extension
                 | undefined;
             if (valueKey) {
-                const primitiveProperty = underscoreProperty.slice(1);
-                parent[primitiveProperty] = contentExtension[valueKey];
+                (contentExtension as Extension)[valueKey] = originalValue as never;
+                return;
             }
         }
+        existing.extension = [
+            { url: 'lang', valueCode: originLang },
+            { url: 'content', valueString: String(originalValue) },
+        ];
+        return;
     }
 
-    const remainingExtensions = extensions.filter((ext) => ext.url !== ExtensionIdentifier.Translation);
-    if (remainingExtensions.length) {
-        element.extension = remainingExtensions;
-    } else {
-        delete element.extension;
-    }
-
-    if (Object.keys(element).length === 0) {
-        delete parent[underscoreProperty];
-    }
+    extensions.push({
+        url: ExtensionIdentifier.Translation,
+        extension: [
+            { url: 'lang', valueCode: originLang },
+            { url: 'content', valueString: String(originalValue) },
+        ],
+    });
 }
