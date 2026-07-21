@@ -2,7 +2,7 @@ import { Extension as FHIRExtension } from 'fhir/r4b';
 
 import { ExtensionIdentifier, extensionTransformers } from './extensions';
 import { fromFirstClassExtension } from './fceToFhir';
-import { toFirstClassExtension } from './fhirToFce';
+import { toFirstClassExtension, translateQuestionnaire } from './fhirToFce';
 import { processLaunchContext as processLaunchContextToFce } from './fhirToFce/questionnaire/processExtensions';
 import { FCEQuestionnaireItem } from '../fce.types';
 export * from './utils';
@@ -49,4 +49,4 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
     return extensions;
 }
 
-export { toFirstClassExtension, fromFirstClassExtension, processLaunchContextToFce };
+export { toFirstClassExtension, fromFirstClassExtension, translateQuestionnaire, processLaunchContextToFce };

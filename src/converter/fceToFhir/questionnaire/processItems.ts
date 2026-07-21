@@ -2,6 +2,7 @@ import { QuestionnaireItem as FHIRQuestionnaireItem } from 'fhir/r4b';
 import _ from 'lodash';
 
 import { convertFromFHIRExtension, convertToFHIRExtension } from '../..';
+import { processPrimitiveExtensions } from '../utils';
 import { FCEQuestionnaireItem } from '../../../fce.types';
 
 export function processItems(items: FCEQuestionnaireItem[]): FHIRQuestionnaireItem[] {
@@ -24,20 +25,8 @@ export function processItems(items: FCEQuestionnaireItem[]): FHIRQuestionnaireIt
         const fhirItem: FHIRQuestionnaireItem = {
             ...commonOptions,
             type: type,
+            ...processPrimitiveExtensions(item),
         };
-
-        for (const property of Object.keys(item)) {
-            const element = item[property as keyof FCEQuestionnaireItem];
-
-            if (property.startsWith('_') && element instanceof Object) {
-                //@ts-expect-error: Element implicitly has an 'any' type
-                fhirItem[property] = {
-                    // TODO: update convertToFHIRExtension to accept element type to convert
-                    //@ts-expect-error: Argument of type is not assignable to parameter of type 'QuestionnaireItem'
-                    extension: convertToFHIRExtension(element),
-                };
-            }
-        }
 
         if (answerOption !== undefined) {
             fhirItem.answerOption = answerOption;

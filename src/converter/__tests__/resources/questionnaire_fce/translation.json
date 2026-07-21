@@ -1,0 +1,40 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "translation-example",
+    "status": "active",
+    "title": "Chief complaint form",
+    "_title": {
+        "translation": [
+            {
+                "lang": "de",
+                "content": "Formular für Hauptbeschwerde"
+            },
+            {
+                "lang": "fr",
+                "content": "Formulaire de motif de consultation"
+            }
+        ]
+    },
+    "item": [
+        {
+            "linkId": "chief-complaint",
+            "type": "string",
+            "text": "Chief complaint",
+            "_text": {
+                "translation": [
+                    {
+                        "lang": "de",
+                        "content": "Hauptbeschwerde"
+                    },
+                    {
+                        "lang": "fr",
+                        "content": "Motif de consultation"
+                    }
+                ]
+            }
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    }
+}
