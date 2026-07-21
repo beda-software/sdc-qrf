@@ -1,3 +1,8 @@
+## 1.1.0-alpha.12
+
+- Add translation extension support and `translateQuestionnaire` helper
+- Process primitive extensions on Questionnaire root for FHIR↔FCE
+
 ## 1.1.0-alpha.11
 
 - Extend support for printable elements
