@@ -54,7 +54,7 @@ item:
 
 ### `translateQuestionnaire`
 
-To bake a single language into a FHIR Questionnaire before converting to FCE (resolves matching translations and strips translation extensions):
+To bake a single language into a FHIR Questionnaire before converting to FCE (resolves matching translations, keeps translation extensions, and stashes the original value):
 
 ```ts
 import { toFirstClassExtension, translateQuestionnaire } from 'sdc-qrf';
@@ -65,10 +65,31 @@ const fceQuestionnaire = toFirstClassExtension(translateQuestionnaire(questionna
 `translateQuestionnaire(questionnaire, 'fr')` produces:
 
 ```yaml
+language: fr
 item:
     - linkId: chief-complaint
       type: string
       text: Motif de consultation
+      _text:
+          extension:
+              - url: http://hl7.org/fhir/StructureDefinition/translation
+                extension:
+                    - url: lang
+                      valueCode: de
+                    - url: content
+                      valueString: Hauptbeschwerde
+              - url: http://hl7.org/fhir/StructureDefinition/translation
+                extension:
+                    - url: lang
+                      valueCode: fr
+                    - url: content
+                      valueString: Motif de consultation
+              - url: http://hl7.org/fhir/StructureDefinition/translation
+                extension:
+                    - url: lang
+                      valueCode: en
+                    - url: content
+                      valueString: Chief complaint
 ```
 
-If the requested language is missing, the original value is kept and translation extensions are still removed.
+Before replacing a value, the original is stored as a translation extension using `Questionnaire.language` (or `en` if missing). If at least one translation is applied, `Questionnaire.language` is set to the requested language. If the requested language is missing, the original value and all translation extensions are left unchanged.
