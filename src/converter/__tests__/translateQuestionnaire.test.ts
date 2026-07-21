@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { translateQuestionnaire } from '../fhirToFce/translateQuestionnaire';
+import fhir_gad_7 from './resources/questionnaire_fhir/gad_7.json';
 
 const translationQuestionnaire: FHIRQuestionnaire = {
     resourceType: 'Questionnaire',
@@ -72,35 +73,380 @@ const translationQuestionnaire: FHIRQuestionnaire = {
 };
 
 describe('translateQuestionnaire', () => {
-    test('translates item.text for the requested language', () => {
+    test('translates item.text and nested item.text for the requested language', () => {
         const result = translateQuestionnaire(translationQuestionnaire, 'fr');
 
-        expect(result.item?.[0]?.text).toBe('Motif de consultation');
-        expect(result.item?.[0]?._text).toBeUndefined();
-    });
-
-    test('translates nested item.text', () => {
-        const result = translateQuestionnaire(translationQuestionnaire, 'fr');
-
-        expect(result.item?.[0]?.item?.[0]?.text).toBe('Détails');
-        expect(result.item?.[0]?.item?.[0]?._text).toBeUndefined();
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_title": {
+              "extension": [
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "de",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formular für Hauptbeschwerde",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "fr",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formulaire de motif de consultation",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "en",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Chief complaint form",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+              ],
+            },
+            "item": [
+              {
+                "_text": {
+                  "extension": [
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "de",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Hauptbeschwerde",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "fr",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Motif de consultation",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "en",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Chief complaint",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                  ],
+                },
+                "item": [
+                  {
+                    "_text": {
+                      "extension": [
+                        {
+                          "extension": [
+                            {
+                              "url": "lang",
+                              "valueCode": "fr",
+                            },
+                            {
+                              "url": "content",
+                              "valueString": "Détails",
+                            },
+                          ],
+                          "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        },
+                        {
+                          "extension": [
+                            {
+                              "url": "lang",
+                              "valueCode": "en",
+                            },
+                            {
+                              "url": "content",
+                              "valueString": "Details",
+                            },
+                          ],
+                          "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        },
+                      ],
+                    },
+                    "linkId": "details",
+                    "text": "Détails",
+                    "type": "string",
+                  },
+                ],
+                "linkId": "chief-complaint",
+                "text": "Motif de consultation",
+                "type": "string",
+              },
+            ],
+            "language": "fr",
+            "resourceType": "Questionnaire",
+            "status": "active",
+            "title": "Formulaire de motif de consultation",
+          }
+        `);
     });
 
     test('translates Questionnaire.title', () => {
         const result = translateQuestionnaire(translationQuestionnaire, 'de');
 
-        expect(result.title).toBe('Formular für Hauptbeschwerde');
-        expect(result._title).toBeUndefined();
-        expect(result.item?.[0]?.text).toBe('Hauptbeschwerde');
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_title": {
+              "extension": [
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "de",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formular für Hauptbeschwerde",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "fr",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formulaire de motif de consultation",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "en",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Chief complaint form",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+              ],
+            },
+            "item": [
+              {
+                "_text": {
+                  "extension": [
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "de",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Hauptbeschwerde",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "fr",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Motif de consultation",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "en",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Chief complaint",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                  ],
+                },
+                "item": [
+                  {
+                    "_text": {
+                      "extension": [
+                        {
+                          "extension": [
+                            {
+                              "url": "lang",
+                              "valueCode": "fr",
+                            },
+                            {
+                              "url": "content",
+                              "valueString": "Détails",
+                            },
+                          ],
+                          "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        },
+                      ],
+                    },
+                    "linkId": "details",
+                    "text": "Details",
+                    "type": "string",
+                  },
+                ],
+                "linkId": "chief-complaint",
+                "text": "Hauptbeschwerde",
+                "type": "string",
+              },
+            ],
+            "language": "de",
+            "resourceType": "Questionnaire",
+            "status": "active",
+            "title": "Formular für Hauptbeschwerde",
+          }
+        `);
     });
 
-    test('keeps original value when language is missing and strips translation extensions', () => {
+    test('keeps original value and translation extensions when language is missing', () => {
         const result = translateQuestionnaire(translationQuestionnaire, 'es');
 
-        expect(result.title).toBe('Chief complaint form');
-        expect(result._title).toBeUndefined();
-        expect(result.item?.[0]?.text).toBe('Chief complaint');
-        expect(result.item?.[0]?._text).toBeUndefined();
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "_title": {
+              "extension": [
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "de",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formular für Hauptbeschwerde",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "lang",
+                      "valueCode": "fr",
+                    },
+                    {
+                      "url": "content",
+                      "valueString": "Formulaire de motif de consultation",
+                    },
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                },
+              ],
+            },
+            "item": [
+              {
+                "_text": {
+                  "extension": [
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "de",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Hauptbeschwerde",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "fr",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Motif de consultation",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                  ],
+                },
+                "item": [
+                  {
+                    "_text": {
+                      "extension": [
+                        {
+                          "extension": [
+                            {
+                              "url": "lang",
+                              "valueCode": "fr",
+                            },
+                            {
+                              "url": "content",
+                              "valueString": "Détails",
+                            },
+                          ],
+                          "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        },
+                      ],
+                    },
+                    "linkId": "details",
+                    "text": "Details",
+                    "type": "string",
+                  },
+                ],
+                "linkId": "chief-complaint",
+                "text": "Chief complaint",
+                "type": "string",
+              },
+            ],
+            "resourceType": "Questionnaire",
+            "status": "active",
+            "title": "Chief complaint form",
+          }
+        `);
     });
 
     test('preserves unrelated extensions on the same primitive element', () => {
@@ -136,18 +482,96 @@ describe('translateQuestionnaire', () => {
 
         const result = translateQuestionnaire(questionnaire, 'fr');
 
-        expect(result.item?.[0]?.text).toBe('Libellé');
-        expect(result.item?.[0]?._text).toEqual({
-            extension: [
-                {
-                    url: 'http://hl7.org/fhir/StructureDefinition/cqf-expression',
-                    valueExpression: {
-                        language: 'text/fhirpath',
-                        expression: "'Computed'",
+        expect(result).toMatchInlineSnapshot(`
+          {
+            "item": [
+              {
+                "_text": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                      "valueExpression": {
+                        "expression": "'Computed'",
+                        "language": "text/fhirpath",
+                      },
                     },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "fr",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Libellé",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "lang",
+                          "valueCode": "en",
+                        },
+                        {
+                          "url": "content",
+                          "valueString": "Default label",
+                        },
+                      ],
+                      "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                    },
+                  ],
                 },
+                "linkId": "input-1",
+                "text": "Libellé",
+                "type": "string",
+              },
             ],
-        });
+            "language": "fr",
+            "resourceType": "Questionnaire",
+            "status": "active",
+          }
+        `);
+    });
+
+    test('stashes original under Questionnaire.language when present', () => {
+        const questionnaire: FHIRQuestionnaire = {
+            ...cloneDeep(translationQuestionnaire),
+            language: 'en-US',
+        };
+
+        const result = translateQuestionnaire(questionnaire, 'fr');
+
+        expect(result.language).toBe('fr');
+        expect(result._title?.extension).toEqual(
+            expect.arrayContaining([
+                {
+                    url: 'http://hl7.org/fhir/StructureDefinition/translation',
+                    extension: [
+                        { url: 'lang', valueCode: 'en-US' },
+                        { url: 'content', valueString: 'Chief complaint form' },
+                    ],
+                },
+            ]),
+        );
+        expect(result.item?.[0]._text?.extension).toEqual(
+            expect.arrayContaining([
+                {
+                    url: 'http://hl7.org/fhir/StructureDefinition/translation',
+                    extension: [
+                        { url: 'lang', valueCode: 'en-US' },
+                        { url: 'content', valueString: 'Chief complaint' },
+                    ],
+                },
+            ]),
+        );
+    });
+
+    test('leaves questionnaires without translations unchanged', () => {
+        const result = translateQuestionnaire(fhir_gad_7 as FHIRQuestionnaire, 'fr');
+
+        expect(result).toStrictEqual(fhir_gad_7);
     });
 
     test('does not mutate the input questionnaire', () => {
