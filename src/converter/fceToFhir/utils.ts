@@ -1,18 +1,34 @@
 import { convertToFHIRExtension } from '..';
 
-export function processPrimitiveExtensions(element: Record<string, any>): Record<string, any> {
-    const result: Record<string, any> = {};
+export function processPrimitiveExtensions<T>(element: T): T {
+    walk(element);
+    return element;
+}
 
-    for (const property of Object.keys(element)) {
-        const value = element[property];
-
-        if (property.startsWith('_') && value instanceof Object && !Array.isArray(value)) {
-            result[property] = {
-                // TODO: update convertToFHIRExtension to accept element type to convert
-                extension: convertToFHIRExtension(value),
-            };
-        }
+function walk(node: unknown): void {
+    if (node === null || typeof node !== 'object') {
+        return;
     }
 
-    return result;
+    if (Array.isArray(node)) {
+        for (const item of node) {
+            walk(item);
+        }
+        return;
+    }
+
+    const object = node as Record<string, unknown>;
+
+    for (const property of Object.keys(object)) {
+        const value = object[property];
+
+        if (property.startsWith('_') && value instanceof Object && !Array.isArray(value)) {
+            object[property] = {
+                // TODO: update convertToFHIRExtension to accept element type to convert
+                extension: convertToFHIRExtension(value as any),
+            };
+        } else {
+            walk(value);
+        }
+    }
 }

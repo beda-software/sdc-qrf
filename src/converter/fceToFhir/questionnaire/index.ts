@@ -8,9 +8,12 @@ import { FCEQuestionnaire } from '../../../fce.types';
 
 export function convertQuestionnaire(questionnaire: FCEQuestionnaire): FHIRQuestionnaire {
     questionnaire = cloneDeep(questionnaire);
-    questionnaire.item = processItems(questionnaire.item ?? []);
+    const processedItem = processItems(questionnaire.item ?? []);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { item: _item, ...rest } = questionnaire;
+
     return {
-        ...processExtensions(questionnaire),
-        ...processPrimitiveExtensions(questionnaire),
+        ...processPrimitiveExtensions(processExtensions(rest as FCEQuestionnaire)),
+        item: processedItem,
     };
 }
