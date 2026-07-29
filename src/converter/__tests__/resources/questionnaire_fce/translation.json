@@ -31,7 +31,81 @@
                         "content": "Motif de consultation"
                     }
                 ]
-            }
+            },
+            "initial": [
+                {
+                    "valueString": "Headache",
+                    "_valueString": {
+                        "translation": [
+                            {
+                                "lang": "de",
+                                "content": "Kopfschmerzen"
+                            },
+                            {
+                                "lang": "fr",
+                                "content": "Mal de tête"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "linkId": "pain-level",
+            "type": "choice",
+            "text": "Pain level",
+            "_text": {
+                "translation": [
+                    {
+                        "lang": "de",
+                        "content": "Schmerzintensität"
+                    },
+                    {
+                        "lang": "fr",
+                        "content": "Niveau de douleur"
+                    }
+                ]
+            },
+            "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "mild",
+                        "system": "http://example.org/pain-level",
+                        "display": "Mild",
+                        "_display": {
+                            "translation": [
+                                {
+                                    "lang": "de",
+                                    "content": "Leicht"
+                                },
+                                {
+                                    "lang": "fr",
+                                    "content": "Léger"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "severe",
+                        "system": "http://example.org/pain-level",
+                        "display": "Severe",
+                        "_display": {
+                            "translation": [
+                                {
+                                    "lang": "de",
+                                    "content": "Schwer"
+                                },
+                                {
+                                    "lang": "fr",
+                                    "content": "Sévère"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         }
     ],
     "meta": {

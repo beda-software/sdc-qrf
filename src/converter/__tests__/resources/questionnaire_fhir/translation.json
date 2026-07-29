@@ -67,7 +67,153 @@
                         ]
                     }
                 ]
-            }
+            },
+            "initial": [
+                {
+                    "valueString": "Headache",
+                    "_valueString": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Kopfschmerzen"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Mal de tête"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "linkId": "pain-level",
+            "type": "choice",
+            "text": "Pain level",
+            "_text": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Schmerzintensität"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Niveau de douleur"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "mild",
+                        "system": "http://example.org/pain-level",
+                        "display": "Mild",
+                        "_display": {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "de"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Leicht"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "fr"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Léger"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "severe",
+                        "system": "http://example.org/pain-level",
+                        "display": "Severe",
+                        "_display": {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "de"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Schwer"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "fr"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Sévère"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         }
     ],
     "meta": {

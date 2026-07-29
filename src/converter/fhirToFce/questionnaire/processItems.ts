@@ -8,14 +8,12 @@ export function processItems(fhirQuestionnaire: FHIRQuestionnaire) {
 }
 
 function convertItemProperties(item: FHIRQuestionnaireItem): FCEQuestionnaireItem {
-    const newItem = getUpdatedPropertiesFromItem(item);
+    const { item: nestedItems, ...rest } = item;
+    const newItem = processExtensibleElement(processPrimitiveExtensions(rest)) as FCEQuestionnaireItem;
 
-    if (item.item) {
-        newItem.item = item.item.map((nestedItem) => convertItemProperties(nestedItem));
+    if (nestedItems) {
+        newItem.item = nestedItems.map((nestedItem) => convertItemProperties(nestedItem));
     }
-    return newItem;
-}
 
-function getUpdatedPropertiesFromItem(item: FHIRQuestionnaireItem) {
-    return processExtensibleElement(processPrimitiveExtensions({ ...item }));
+    return newItem;
 }

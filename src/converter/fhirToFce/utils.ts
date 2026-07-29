@@ -67,18 +67,32 @@ export function processExtensibleElement<T extends { extension?: Extension[] }>(
     return newElement;
 }
 
-export function processPrimitiveExtensions<T extends Record<string, any>>(resource: T): T {
-    let result = { ...resource };
+export function processPrimitiveExtensions<T>(resource: T): T {
+    walk(resource);
+    return resource;
+}
 
-    for (const property of Object.keys(resource)) {
-        const element = resource[property];
-        if (property.startsWith('_') && element instanceof Object && !Array.isArray(element)) {
-            result = {
-                ...result,
-                [property]: processExtensibleElement(element),
-            };
-        }
+function walk(node: unknown): void {
+    if (node === null || typeof node !== 'object') {
+        return;
     }
 
-    return result;
+    if (Array.isArray(node)) {
+        for (const item of node) {
+            walk(item);
+        }
+        return;
+    }
+
+    const object = node as Record<string, unknown>;
+
+    for (const property of Object.keys(object)) {
+        const value = object[property];
+
+        if (property.startsWith('_') && value instanceof Object && !Array.isArray(value)) {
+            object[property] = processExtensibleElement(value as { extension?: Extension[] });
+        } else {
+            walk(value);
+        }
+    }
 }

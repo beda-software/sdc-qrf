@@ -20,29 +20,8 @@ export function processItems(items: FCEQuestionnaireItem[]): FHIRQuestionnaireIt
             item.extension = extensions.sort();
         }
 
-        const { enableBehavior, enableWhen, answerOption, initial, item: nestedItems, type, ...commonOptions } = item;
-
-        const fhirItem: FHIRQuestionnaireItem = {
-            ...commonOptions,
-            type: type,
-            ...processPrimitiveExtensions(item),
-        };
-
-        if (answerOption !== undefined) {
-            fhirItem.answerOption = answerOption;
-        }
-
-        if (enableBehavior !== undefined) {
-            fhirItem.enableBehavior = enableBehavior;
-        }
-
-        if (enableWhen !== undefined) {
-            fhirItem.enableWhen = enableWhen;
-        }
-
-        if (initial) {
-            fhirItem.initial = initial;
-        }
+        const { item: nestedItems, ...rest } = item;
+        const fhirItem = processPrimitiveExtensions(rest) as FHIRQuestionnaireItem;
 
         if (nestedItems) {
             fhirItem.item = processItems(nestedItems);
