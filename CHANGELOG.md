@@ -1,3 +1,7 @@
+## 1.1.0-alpha.13
+
+- Process primitive extensions recursively across the questionnaire tree
+
 ## 1.1.0-alpha.12
 
 - Add translation extension support and `translateQuestionnaire` helper
