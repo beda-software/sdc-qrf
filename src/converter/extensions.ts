@@ -216,13 +216,15 @@ export const extensionTransformers: ExtensionTransformer = {
                 return {
                     itemConstraint: extensions.map((extension) => {
                         const itemConstraintExtension = extension.extension!;
+                        const humanExtension = itemConstraintExtension.find((obj) => obj.url === 'human');
 
                         return {
                             key: itemConstraintExtension.find((obj) => obj.url === 'key')!.valueId!,
                             requirements: itemConstraintExtension.find((obj) => obj.url === 'requirements')
                                 ?.valueString,
                             severity: itemConstraintExtension.find((obj) => obj.url === 'severity')!.valueCode!,
-                            human: itemConstraintExtension.find((obj) => obj.url === 'human')!.valueString!,
+                            human: humanExtension!.valueString!,
+                            ...(humanExtension?._valueString ? { _human: humanExtension._valueString } : {}),
                             expression: itemConstraintExtension.find((obj) => obj.url === 'expression')!.valueString!,
                         };
                     }),
@@ -248,6 +250,7 @@ export const extensionTransformers: ExtensionTransformer = {
                             {
                                 url: 'human',
                                 valueString: itemConstraint?.human,
+                                ...(itemConstraint._human ? { _valueString: itemConstraint._human } : {}),
                             },
                             {
                                 url: 'expression',
