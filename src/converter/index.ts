@@ -50,17 +50,13 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
                 const underscoreElement = !transformer.path.isCollection ? item[underscoreKey] : undefined;
 
                 extensions.push(
-                    ...valueArray.map((extensionValue) => {
-                        const extension: FHIRExtension = {
-                            [transformer.path.extension]: extensionValue,
-                            url: identifier,
-                        };
-                        if (underscoreElement !== undefined) {
-                            (extension as Record<string, unknown>)[`_${transformer.path.extension}`] =
-                                underscoreElement;
-                        }
-                        return extension;
-                    }),
+                    ...valueArray.map((extensionValue) => ({
+                        [transformer.path.extension]: extensionValue,
+                        url: identifier,
+                        ...(underscoreElement !== undefined
+                            ? { [`_${transformer.path.extension}`]: underscoreElement }
+                            : {}),
+                    })),
                 );
             }
         }
