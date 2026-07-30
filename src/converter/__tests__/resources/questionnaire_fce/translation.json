@@ -139,7 +139,7 @@
             "itemConstraint": [
                 {
                     "key": "first",
-                    "requirements": "Lentgth must be less than 10 characters",
+                    "requirements": "Req first",
                     "severity": "error",
                     "human": "Length must be less than 10 characters",
                     "_human": {
