@@ -1,3 +1,9 @@
+## 1.1.0-alpha.14
+
+- Preserve underscore translation siblings when converting extension-backed fields
+- Add FCE types for helpText, entryFormat, and constraint human translations
+- Fix TypeScript error when attaching underscore elements to FHIR extensions
+
 ## 1.1.0-alpha.13
 
 - Process primitive extensions recursively across the questionnaire tree
