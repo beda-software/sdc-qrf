@@ -32,6 +32,19 @@
                     }
                 ]
             },
+            "helpText": "Chief complaint help text",
+            "_helpText": {
+                "translation": [
+                    {
+                        "lang": "de",
+                        "content": "Hauptbeschwerde Hilfe-Text"
+                    },
+                    {
+                        "lang": "fr",
+                        "content": "Texte d'aide du motif de consultation"
+                    }
+                ]
+            },
             "initial": [
                 {
                     "valueString": "Headache",
@@ -53,6 +66,19 @@
         {
             "linkId": "pain-level",
             "type": "choice",
+            "entryFormat": "Choose the pain level",
+            "_entryFormat": {
+                "translation": [
+                    {
+                        "lang": "de",
+                        "content": "Wählen Sie die Schmerzintensität"
+                    },
+                    {
+                        "lang": "fr",
+                        "content": "Choisir le niveau de douleur"
+                    }
+                ]
+            },
             "text": "Pain level",
             "_text": {
                 "translation": [
@@ -104,6 +130,31 @@
                             ]
                         }
                     }
+                }
+            ]
+        },
+        {
+            "type": "string",
+            "linkId": "email",
+            "itemConstraint": [
+                {
+                    "key": "first",
+                    "requirements": "Lentgth must be less than 10 characters",
+                    "severity": "error",
+                    "human": "Length must be less than 10 characters",
+                    "_human": {
+                        "translation": [
+                            {
+                                "lang": "de",
+                                "content": "Länge muss weniger als 10 Zeichen sein"
+                            },
+                            {
+                                "lang": "fr",
+                                "content": "La longueur doit être inférieure à 10 caractères"
+                            }
+                        ]
+                    },
+                    "expression": "false"
                 }
             ]
         }

@@ -37,6 +37,42 @@
         {
             "linkId": "chief-complaint",
             "type": "string",
+            "extension": [
+                {
+                    "url": "https://emr-core.beda.software/StructureDefinition/help-text",
+                    "valueString": "Chief complaint help text",
+                    "_valueString": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Hauptbeschwerde Hilfe-Text"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Texte d'aide du motif de consultation"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
             "text": "Chief complaint",
             "_text": {
                 "extension": [
@@ -107,6 +143,42 @@
         {
             "linkId": "pain-level",
             "type": "choice",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+                    "valueString": "Choose the pain level",
+                    "_valueString": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Wählen Sie die Schmerzintensität"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Choisir le niveau de douleur"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
             "text": "Pain level",
             "_text": {
                 "extension": [
@@ -212,6 +284,67 @@
                             ]
                         }
                     }
+                }
+            ]
+        },
+        {
+            "linkId": "email",
+            "type": "string",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-constraint",
+                    "extension": [
+                        {
+                            "url": "key",
+                            "valueId": "first"
+                        },
+                        {
+                            "url": "human",
+                            "valueString": "Length must be less than 10 characters",
+                            "_valueString": {
+                                "extension": [
+                                    {
+                                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                        "extension": [
+                                            {
+                                                "url": "lang",
+                                                "valueCode": "de"
+                                            },
+                                            {
+                                                "url": "content",
+                                                "valueString": "Länge muss weniger als 10 Zeichen sein"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                        "extension": [
+                                            {
+                                                "url": "lang",
+                                                "valueCode": "fr"
+                                            },
+                                            {
+                                                "url": "content",
+                                                "valueString": "La longueur doit être inférieure à 10 caractères"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "url": "severity",
+                            "valueCode": "error"
+                        },
+                        {
+                            "url": "expression",
+                            "valueString": "false"
+                        },
+                        {
+                            "url": "requirements",
+                            "valueString": "Req first"
+                        }
+                    ]
                 }
             ]
         }
