@@ -15,11 +15,22 @@ export function convertFromFHIRExtension(extensions: FHIRExtension[]): Partial<F
         if ('transform' in transformer) {
             return transformer.transform.fromExtensions(extensions);
         } else {
-            return {
-                [transformer.path.questionnaire]: transformer.path.isCollection
-                    ? extensions.map((extension) => extension[transformer.path.extension])
-                    : extensions[0]![transformer.path.extension],
+            const extensionKey = transformer.path.extension;
+            const questionnaireKey = transformer.path.questionnaire;
+            if (transformer.path.isCollection) {
+                return {
+                    [questionnaireKey]: extensions.map((extension) => extension[extensionKey]),
+                };
+            }
+
+            const result: Record<string, unknown> = {
+                [questionnaireKey]: extensions[0]![extensionKey],
             };
+            const underscoreElement = extensions[0]![`_${extensionKey}` as keyof FHIRExtension];
+            if (underscoreElement !== undefined) {
+                result[`_${questionnaireKey}`] = underscoreElement;
+            }
+            return result as Partial<FCEQuestionnaireItem>;
         }
     }
 }
@@ -35,11 +46,16 @@ export function convertToFHIRExtension(item: FCEQuestionnaireItem): FHIRExtensio
             const value = item[transformer.path.questionnaire];
             if (value !== undefined) {
                 const valueArray = Array.isArray(value) ? value : [value];
+                const underscoreKey = `_${transformer.path.questionnaire}` as keyof FCEQuestionnaireItem;
+                const underscoreElement = !transformer.path.isCollection ? item[underscoreKey] : undefined;
 
                 extensions.push(
                     ...valueArray.map((extensionValue) => ({
                         [transformer.path.extension]: extensionValue,
                         url: identifier,
+                        ...(underscoreElement !== undefined
+                            ? { [`_${transformer.path.extension}`]: underscoreElement }
+                            : {}),
                     })),
                 );
             }

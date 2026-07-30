@@ -93,6 +93,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     /** NOTE: from extension https://jira.hl7.org/browse/FHIR-22356#subQuestionnaire */
     /** Additional instructions for the user to guide their input (i.e. a human readable version of a regular expression like “nnn-nnn-nnn”). In most UIs this is the placeholder (or ‘ghost’) text placed directly inside the edit controls and that disappear when the control gets the focus. */
     entryFormat?: string;
+    _entryFormat?: FCETranslatableElement;
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/entryFormat */
     /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/variable */
     /** Variable specifying a logic to generate a variable for use in subsequent logic. The name of the variable will be added to FHIRPath's context when processing descendants of the element that contains this extension. */
@@ -103,6 +104,7 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
     start?: number;
     stop?: number;
     helpText?: string;
+    _helpText?: FCETranslatableElement;
     stopLabel?: string;
     rowsNumber?: number;
     colsNumber?: number;
@@ -140,6 +142,12 @@ export interface FCEQuestionnaireItem extends QuestionnaireItem {
 export interface FCETranslation {
     lang: string;
     content: string;
+}
+
+export interface FCETranslatableElement {
+    /** NOTE: from extension http://hl7.org/fhir/StructureDefinition/translation */
+    translation?: FCETranslation[];
+    extension?: Extension[];
 }
 
 export interface FCEQuestionnaireItemText {
@@ -185,6 +193,7 @@ export interface FCEQuestionnaireItemConstraint {
     expression: string;
     /** NOTE: from extension human */
     human: string;
+    _human?: FCETranslatableElement;
     /** NOTE: from extension key */
     key: string;
     /** NOTE: from extension location */

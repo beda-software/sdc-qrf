@@ -38,6 +38,7 @@ import fce_practitioner_edit from './resources/questionnaire_fce/practitioner_ed
 import fce_practitioner_role_create from './resources/questionnaire_fce/practitioner_role_create.json';
 import fce_printable_elements from './resources/questionnaire_fce/printable_elements.json';
 import fce_translation from './resources/questionnaire_fce/translation.json';
+import fce_translation_mixed_extensions from './resources/questionnaire_fce/translation-mixed-extensions.json';
 import fce_public_appointment from './resources/questionnaire_fce/public_appointment.json';
 import fce_questionnaire_variable from './resources/questionnaire_fce/questionnaire_variable.json';
 import fce_review_of_systems from './resources/questionnaire_fce/review_of_systems.json';
@@ -85,6 +86,7 @@ import fhir_practitioner_edit from './resources/questionnaire_fhir/practitioner_
 import fhir_practitioner_role_create from './resources/questionnaire_fhir/practitioner_role_create.json';
 import fhir_printable_elements from './resources/questionnaire_fhir/printable_elements.json';
 import fhir_translation from './resources/questionnaire_fhir/translation.json';
+import fhir_translation_mixed_extensions from './resources/questionnaire_fhir/translation-mixed-extensions.json';
 import fhir_public_appointment from './resources/questionnaire_fhir/public_appointment.json';
 import fhir_questionnaire_variable from './resources/questionnaire_fhir/questionnaire_variable.json';
 import fhir_review_of_systems from './resources/questionnaire_fhir/review_of_systems.json';
@@ -153,6 +155,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['mapping-inline', fhir_mapping_inline, fce_mapping_inline],
         ['printable-elements', fhir_printable_elements, fce_printable_elements],
         ['translation', fhir_translation, fce_translation],
+        ['translation-mixed-extensions', fhir_translation_mixed_extensions, fce_translation_mixed_extensions],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
@@ -207,6 +210,7 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['mapping-inline', fce_mapping_inline, fhir_mapping_inline],
         ['printable-elements', fce_printable_elements, fhir_printable_elements],
         ['translation', fce_translation, fhir_translation],
+        ['translation-mixed-extensions', fce_translation_mixed_extensions, fhir_translation_mixed_extensions],
     ])('Each FCE Questionnaire should convert to FHIR %s', async (_, fce_questionnaire, fhir_questionnaire) => {
         expect(sortExtensionsList(fromFirstClassExtension(fce_questionnaire as FCEQuestionnaire))).toStrictEqual(
             sortExtensionsList(fhir_questionnaire),
