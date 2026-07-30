@@ -1,0 +1,62 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "translation-mixed-extensions",
+    "status": "active",
+    "item": [
+        {
+            "linkId": "chief-complaint",
+            "type": "string",
+            "text": "Chief complaint",
+            "extension": [
+                {
+                    "url": "https://emr-core.beda.software/StructureDefinition/help-text",
+                    "valueString": "Chief complaint help text",
+                    "_valueString": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Hauptbeschwerde Hilfe-Text"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Texte d'aide du motif de consultation"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/cqf-expression",
+                                "valueExpression": {
+                                    "language": "text/fhirpath",
+                                    "expression": "'Computed help text'"
+                                }
+                            },
+                            {
+                                "url": "urn:unknown-help-text-extension",
+                                "valueString": "Unknown extension on helpText"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    }
+}

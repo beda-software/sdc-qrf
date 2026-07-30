@@ -1,0 +1,38 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "translation-mixed-extensions",
+    "status": "active",
+    "item": [
+        {
+            "linkId": "chief-complaint",
+            "type": "string",
+            "text": "Chief complaint",
+            "helpText": "Chief complaint help text",
+            "_helpText": {
+                "translation": [
+                    {
+                        "lang": "de",
+                        "content": "Hauptbeschwerde Hilfe-Text"
+                    },
+                    {
+                        "lang": "fr",
+                        "content": "Texte d'aide du motif de consultation"
+                    }
+                ],
+                "cqfExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "'Computed help text'"
+                },
+                "extension": [
+                    {
+                        "url": "urn:unknown-help-text-extension",
+                        "valueString": "Unknown extension on helpText"
+                    }
+                ]
+            }
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    }
+}
