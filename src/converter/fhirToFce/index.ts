@@ -5,6 +5,6 @@ import { convertQuestionnaire } from './questionnaire';
 
 export { translateQuestionnaire } from './translateQuestionnaire';
 
-export function toFirstClassExtension(fhirResource: FHIRQuestionnaire): FCEQuestionnaire {
-    return convertQuestionnaire(fhirResource);
+export function toFirstClassExtension(fhirResource: FHIRQuestionnaire, withTranslations = false): FCEQuestionnaire {
+    return convertQuestionnaire(fhirResource, withTranslations);
 }

@@ -39,6 +39,8 @@ import fce_practitioner_role_create from './resources/questionnaire_fce/practiti
 import fce_printable_elements from './resources/questionnaire_fce/printable_elements.json';
 import fce_translation from './resources/questionnaire_fce/translation.json';
 import fce_translation_mixed_extensions from './resources/questionnaire_fce/translation-mixed-extensions.json';
+import fce_translation_skipped from './resources/questionnaire_fce/translation-skipped.json';
+import fce_translation_mixed_extensions_skipped from './resources/questionnaire_fce/translation-mixed-extensions-skipped.json';
 import fce_public_appointment from './resources/questionnaire_fce/public_appointment.json';
 import fce_questionnaire_variable from './resources/questionnaire_fce/questionnaire_variable.json';
 import fce_review_of_systems from './resources/questionnaire_fce/review_of_systems.json';
@@ -154,11 +156,27 @@ describe('Questionanire and QuestionnaireResponses transformation', () => {
         ['column-width', fhir_column_width, fce_column_width],
         ['mapping-inline', fhir_mapping_inline, fce_mapping_inline],
         ['printable-elements', fhir_printable_elements, fce_printable_elements],
-        ['translation', fhir_translation, fce_translation],
-        ['translation-mixed-extensions', fhir_translation_mixed_extensions, fce_translation_mixed_extensions],
+        ['translation-skipped', fhir_translation, fce_translation_skipped],
+        [
+            'translation-mixed-extensions-skipped',
+            fhir_translation_mixed_extensions,
+            fce_translation_mixed_extensions_skipped,
+        ],
     ])('Each FHIR Questionnaire should convert to FCE %s', async (_, fhir_questionnaire, fce_questionnaire) => {
         expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire)).toStrictEqual(fce_questionnaire);
     });
+
+    test.each([
+        ['translation', fhir_translation, fce_translation],
+        ['translation-mixed-extensions', fhir_translation_mixed_extensions, fce_translation_mixed_extensions],
+    ])(
+        'Each FHIR Questionnaire should convert to FCE with translations %s',
+        async (_, fhir_questionnaire, fce_questionnaire) => {
+            expect(toFirstClassExtension(fhir_questionnaire as FHIRQuestionnaire, true)).toStrictEqual(
+                fce_questionnaire,
+            );
+        },
+    );
 
     test.each([
         ['allergies', fce_allergies, fhir_allergies],

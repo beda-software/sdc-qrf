@@ -14,6 +14,18 @@ P.S. the package was allocated from https://github.com/beda-software/sdc-ide wit
 
 The FHIR ↔ FCE converter supports the [`translation`](http://hl7.org/fhir/StructureDefinition/translation) primitive extension on fields such as `Questionnaire.title` and `Questionnaire.item.text`.
 
+By default, `toFirstClassExtension(questionnaire)` keeps translation extensions in FHIR format (they stay under `extension` and are not promoted to FCE `translation` fields). Pass `withTranslations: true` as the second argument to convert them:
+
+```ts
+import { toFirstClassExtension } from 'sdc-qrf';
+
+// Default: translation extensions stay in FHIR format
+const fceWithoutTranslations = toFirstClassExtension(questionnaire);
+
+// Opt in: convert translation extensions to FCE `translation` fields
+const fceWithTranslations = toFirstClassExtension(questionnaire, true);
+```
+
 **FHIR**
 
 ```yaml
@@ -37,7 +49,7 @@ item:
                       valueString: Motif de consultation
 ```
 
-**FCE** (`toFirstClassExtension` / `fromFirstClassExtension`)
+**FCE** (`toFirstClassExtension(questionnaire, true)` / `fromFirstClassExtension`)
 
 ```yaml
 item:
@@ -59,7 +71,7 @@ To bake a single language into a FHIR Questionnaire before converting to FCE (re
 ```ts
 import { toFirstClassExtension, translateQuestionnaire } from 'sdc-qrf';
 
-const fceQuestionnaire = toFirstClassExtension(translateQuestionnaire(questionnaire, 'fr'));
+const fceQuestionnaire = toFirstClassExtension(translateQuestionnaire(questionnaire, 'fr'), true);
 ```
 
 `translateQuestionnaire(questionnaire, 'fr')` produces:

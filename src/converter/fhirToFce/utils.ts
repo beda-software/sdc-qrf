@@ -38,9 +38,14 @@ export function trimUndefined(e: any) {
     return e;
 }
 
-export function processExtensibleElement<T extends { extension?: Extension[] }>(element: T): T {
+export function processExtensibleElement<T extends { extension?: Extension[] }>(
+    element: T,
+    withTranslations = false,
+): T {
     let newElement = { ...element };
-    const knownExtensionUrls = Object.values(ExtensionIdentifier) as string[];
+    const knownExtensionUrls = (Object.values(ExtensionIdentifier) as string[]).filter(
+        (url) => withTranslations || url !== ExtensionIdentifier.Translation,
+    );
 
     const allExtensions = element.extension ?? [];
     const knownExtensions = allExtensions.filter((ext) => knownExtensionUrls.includes(ext.url));
@@ -67,19 +72,19 @@ export function processExtensibleElement<T extends { extension?: Extension[] }>(
     return newElement;
 }
 
-export function processPrimitiveExtensions<T>(resource: T): T {
-    walk(resource);
+export function processPrimitiveExtensions<T>(resource: T, withTranslations = false): T {
+    walk(resource, withTranslations);
     return resource;
 }
 
-function walk(node: unknown): void {
+function walk(node: unknown, withTranslations = false): void {
     if (node === null || typeof node !== 'object') {
         return;
     }
 
     if (Array.isArray(node)) {
         for (const item of node) {
-            walk(item);
+            walk(item, withTranslations);
         }
         return;
     }
@@ -90,9 +95,9 @@ function walk(node: unknown): void {
         const value = object[property];
 
         if (property.startsWith('_') && value instanceof Object && !Array.isArray(value)) {
-            object[property] = processExtensibleElement(value as { extension?: Extension[] });
+            object[property] = processExtensibleElement(value as { extension?: Extension[] }, withTranslations);
         } else {
-            walk(value);
+            walk(value, withTranslations);
         }
     }
 }
