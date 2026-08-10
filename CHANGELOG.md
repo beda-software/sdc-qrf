@@ -1,3 +1,7 @@
+## 1.1.0-alpha.15
+
+- Add optional `withTranslations` flag to `toFirstClassExtension` (default `false`) so translation extensions stay in FHIR format unless callers opt in
+
 ## 1.1.0-alpha.14
 
 - Preserve underscore translation siblings when converting extension-backed fields
