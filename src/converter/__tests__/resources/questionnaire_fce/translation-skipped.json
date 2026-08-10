@@ -1,0 +1,327 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "translation-example",
+    "status": "active",
+    "title": "Chief complaint form",
+    "_title": {
+        "extension": [
+            {
+                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                "extension": [
+                    {
+                        "url": "lang",
+                        "valueCode": "de"
+                    },
+                    {
+                        "url": "content",
+                        "valueString": "Formular für Hauptbeschwerde"
+                    }
+                ]
+            },
+            {
+                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                "extension": [
+                    {
+                        "url": "lang",
+                        "valueCode": "fr"
+                    },
+                    {
+                        "url": "content",
+                        "valueString": "Formulaire de motif de consultation"
+                    }
+                ]
+            }
+        ]
+    },
+    "item": [
+        {
+            "linkId": "chief-complaint",
+            "type": "string",
+            "text": "Chief complaint",
+            "_text": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Hauptbeschwerde"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Motif de consultation"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "helpText": "Chief complaint help text",
+            "_helpText": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Hauptbeschwerde Hilfe-Text"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Texte d'aide du motif de consultation"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "initial": [
+                {
+                    "valueString": "Headache",
+                    "_valueString": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Kopfschmerzen"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Mal de tête"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "linkId": "pain-level",
+            "type": "choice",
+            "entryFormat": "Choose the pain level",
+            "_entryFormat": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Wählen Sie die Schmerzintensität"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Choisir le niveau de douleur"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "text": "Pain level",
+            "_text": {
+                "extension": [
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "de"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Schmerzintensität"
+                            }
+                        ]
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                        "extension": [
+                            {
+                                "url": "lang",
+                                "valueCode": "fr"
+                            },
+                            {
+                                "url": "content",
+                                "valueString": "Niveau de douleur"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "mild",
+                        "system": "http://example.org/pain-level",
+                        "display": "Mild",
+                        "_display": {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "de"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Leicht"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "fr"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Léger"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "severe",
+                        "system": "http://example.org/pain-level",
+                        "display": "Severe",
+                        "_display": {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "de"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Schwer"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                    "extension": [
+                                        {
+                                            "url": "lang",
+                                            "valueCode": "fr"
+                                        },
+                                        {
+                                            "url": "content",
+                                            "valueString": "Sévère"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "string",
+            "linkId": "email",
+            "itemConstraint": [
+                {
+                    "key": "first",
+                    "requirements": "Req first",
+                    "severity": "error",
+                    "human": "Length must be less than 10 characters",
+                    "_human": {
+                        "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "de"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "Länge muss weniger als 10 Zeichen sein"
+                                    }
+                                ]
+                            },
+                            {
+                                "url": "http://hl7.org/fhir/StructureDefinition/translation",
+                                "extension": [
+                                    {
+                                        "url": "lang",
+                                        "valueCode": "fr"
+                                    },
+                                    {
+                                        "url": "content",
+                                        "valueString": "La longueur doit être inférieure à 10 caractères"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "expression": "false"
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "profile": ["https://emr-core.beda.software/StructureDefinition/fhir-emr-questionnaire"]
+    }
+}
