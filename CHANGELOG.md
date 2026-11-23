@@ -1,3 +1,8 @@
+## 1.1.0-alpha.16
+
+- Upgrade `query-string` to 9.5.1 to fix the decode-uri-component DoS vulnerability (CVE-2026-118664)
+- Update js-yaml to 3.15.2 and lodash to 4.18.1 to fix known vulnerabilities
+
 ## 1.1.0-alpha.15
 
 - Add optional `withTranslations` flag to `toFirstClassExtension` (default `false`) so translation extensions stay in FHIR format unless callers opt in
